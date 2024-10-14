@@ -1,6 +1,6 @@
 /** Example purpose only */
-const SingleMenuView = () => {
+const Paciente = () => {
     return <div>Gestion de paciente</div>
 }
 
-export default SingleMenuView
+export default Paciente

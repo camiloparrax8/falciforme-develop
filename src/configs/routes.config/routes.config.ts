@@ -8,17 +8,78 @@ export const publicRoutes: Routes = [...authRoute]
 export const protectedRoutes: Routes = [
     {
         key: 'home',
-        path: '/home',
+        path: '/inicio',
         component: lazy(() => import('@/views/Home')),
         authority: [],
     },
     /** Example purpose only, please remove */
     {
-        key: 'singleMenuItem',
-        path: '/single-menu-view',
-        component: lazy(() => import('@/views/demo/SingleMenuView')),
+        key: 'paciente',
+        path: '/paciente',
+        component: lazy(() => import('@/views/paciente/paciente')),
         authority: [],
     },
+    {
+        key: 'historia',
+        path: '/historia-clinica',
+        component: lazy(() => import('@/views/historia/historia')),
+        authority: [],
+    },
+    {
+        key: 'laboratorio',
+        path: 'laboratorio',
+        component: lazy(() => import('@/views/laboratorio/laboratorio')),
+        authority: [],
+    },
+    {
+        key: 'citas',
+        path: 'citas',
+        component: lazy(() => import('@/views/citas/citas')),
+        authority: [],
+    },
+    {
+        key: 'medicamentos',
+        path: 'medicamentos',
+        component: lazy(() => import('@/views/medicamentos/medicamentos')),
+        authority: [],
+    },
+    {
+        key: 'sintomas-crisis',
+        path: 'sintomas-crisis',
+        component: lazy(() => import('@/views/sintomas-crisis/sintomas-crisis')),
+        authority: [],
+    },
+    {
+        key: 'educate',
+        path: 'educate',
+        component: lazy(() => import('@/views/educate/educate')),
+        authority: [],
+    },
+    {
+        key: 'informes',
+        path: 'informes',
+        component: lazy(() => import('@/views/informes/informes')),
+        authority: [],
+    },
+    {
+        key: 'costos',
+        path: 'costos',
+        component: lazy(() => import('@/views/costos/costos')),
+        authority: [],
+    },
+    {
+        key: 'seguridad',
+        path: 'seguridad',
+        component: lazy(() => import('@/views/seguridad/seguridad')),
+        authority: [],
+    },
+    {
+        key: 'integracion',
+        path: 'integracion',
+        component: lazy(() => import('@/views/integracion/integracion')),
+        authority: [],
+    },
+    /*
     {
         key: 'collapseMenu.item1',
         path: '/collapse-menu-item-view-1',
@@ -54,6 +115,6 @@ export const protectedRoutes: Routes = [
             import('@/views/demo/GroupCollapseMenuItemView2')
         ),
         authority: [],
-    },
+    },*/
     ...othersRoute,
-]
+ ]

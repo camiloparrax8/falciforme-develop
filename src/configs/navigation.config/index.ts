@@ -1,7 +1,7 @@
 import {
-    NAV_ITEM_TYPE_TITLE,
+    // NAV_ITEM_TYPE_TITLE,
     NAV_ITEM_TYPE_ITEM,
-    NAV_ITEM_TYPE_COLLAPSE
+    // NAV_ITEM_TYPE_COLLAPSE
 } from '@/constants/navigation.constant'
 
 import type { NavigationTree } from '@/@types/navigation'
@@ -9,9 +9,9 @@ import type { NavigationTree } from '@/@types/navigation'
 const navigationConfig: NavigationTree[] = [
     {
         key: 'home',
-        path: '/home',
-        title: 'Home',
-        translateKey: 'nav.home',
+        path: '/inicio',
+        title: 'Inicio',
+        translateKey: '',
         icon: 'home',
         type: NAV_ITEM_TYPE_ITEM,
         authority: [],
@@ -19,15 +19,116 @@ const navigationConfig: NavigationTree[] = [
     },
     /** Example purpose only, please remove */
     {
-        key: 'singleMenuItem',
-        path: '/single-menu-view',
-        title: 'Single menu item',
-        translateKey: 'nav.singleMenuItem',
-        icon: 'singleMenu',
+        key: 'paciente',
+        path: '/paciente',
+        title: 'Paciente',
+        translateKey: '',
+        icon: 'paciente',
         type: NAV_ITEM_TYPE_ITEM,
         authority: [],
         subMenu: [],
     },
+    {
+        key: 'historia',
+        path: '/historia-clinica',
+        title: 'Historia clinica',
+        translateKey: '',
+        icon: 'historiaClinica',
+        type: NAV_ITEM_TYPE_ITEM,
+        authority: [],
+        subMenu: [],
+    },
+    {
+        key: 'laboratorio',
+        path: 'laboratorio',
+        title: 'Laboratorio',
+        translateKey: '',
+        icon: 'laboratorio',
+        type: NAV_ITEM_TYPE_ITEM,
+        authority: [],
+        subMenu: [],
+    },
+    {
+        key: 'citas',
+        path: 'citas',
+        title: 'Citas',
+        translateKey: '',
+        icon: 'cita',
+        type: NAV_ITEM_TYPE_ITEM,
+        authority: [],
+        subMenu: [],
+    },
+    {
+        key: 'medicamentos',
+        path: 'medicamentos',
+        title: 'Medicamentos',
+        translateKey: '',
+        icon: 'medicamento',
+        type: NAV_ITEM_TYPE_ITEM,
+        authority: [],
+        subMenu: [],
+    },
+    {
+        key: 'sintomas-crisis',
+        path: 'sintomas-crisis',
+        title: 'Sintomas y Crisis',
+        translateKey: '',
+        icon: 'sintomasCrisis',
+        type: NAV_ITEM_TYPE_ITEM,
+        authority: [],
+        subMenu: [],
+    },
+    {
+        key: 'educate',
+        path: 'educate',
+        title: 'Educate',
+        translateKey: '',
+        icon: 'educate',
+        type: NAV_ITEM_TYPE_ITEM,
+        authority: [],
+        subMenu: [],
+    },
+    {
+        key: 'informes',
+        path: 'informes',
+        title: 'Informes',
+        translateKey: '',
+        icon: 'informe',
+        type: NAV_ITEM_TYPE_ITEM,
+        authority: [],
+        subMenu: [],
+    },
+    {
+        key: 'costos',
+        path: 'costos',
+        title: 'Costos',
+        translateKey: '',
+        icon: 'costo',
+        type: NAV_ITEM_TYPE_ITEM,
+        authority: [],
+        subMenu: [],
+    },
+    {
+        key: 'seguridad',
+        path: 'seguridad',
+        title: 'Seguridad',
+        translateKey: '',
+        icon: 'seguridad',
+        type: NAV_ITEM_TYPE_ITEM,
+        authority: [],
+        subMenu: [],
+    },
+    {
+        key: 'integracion',
+        path: 'integracion',
+        title: 'Integracion',
+        translateKey: '',
+        icon: 'integracion',
+        type: NAV_ITEM_TYPE_ITEM,
+        authority: [],
+        subMenu: [],
+    },
+    /*
     {
         key: 'collapseMenu',
         path: '',
@@ -110,7 +211,7 @@ const navigationConfig: NavigationTree[] = [
                 ],
             },
         ],
-    },
+    }, */
 ]
 
 export default navigationConfig

@@ -1,0 +1,75 @@
+{
+    "columns": [
+        "paciente",
+        "identificacion",
+        "acompañante",
+        "estado",
+        "direccion",
+        "opciones"
+    ],
+    "data": [
+        {
+            "id": 1,
+            "paciente": "Gabey Colam",
+            "identificacion": 8993945020,
+            "acompañante": "Isabeau Winchurst",
+            "estado": "Activo",
+            "direccion": "7 Merrick Junction",
+            "opciones": "Editar Borrar"
+        },
+        {
+            "id": 2,
+            "paciente": "Averil Lupson",
+            "identificacion": 8292721886,
+            "acompañante": "Galvan Steinhammer",
+            "estado": "Inactivo",
+            "direccion": "21034 Kedzie Plaza",
+            "opciones": "Editar Borrar"
+        },
+        {
+            "id": 3,
+            "paciente": "Herman Shutler",
+            "identificacion": 5158684200,
+            "acompañante": "Graeme Stuck",
+            "estado": "Inactivo",
+            "direccion": "1 International Center",
+            "opciones": "Editar Borrar"
+        },
+        {
+            "id": 4,
+            "paciente": "Rebecka Dufton",
+            "identificacion": 1558127364,
+            "acompañante": "Broderic Moncreif",
+            "estado": "Activo",
+            "direccion": "950 Duke Way",
+            "opciones": "Editar Borrar"
+        },
+        {
+            "id": 5,
+            "paciente": "Lacie Coleridge",
+            "identificacion": 1858301890,
+            "acompañante": "Darsie Caught",
+            "estado": "Inactivo",
+            "direccion": "4 Red Cloud Hill",
+            "opciones": "Editar Borrar"
+        },
+        {
+            "id": 6,
+            "paciente": "Lucia Corsham",
+            "identificacion": 1577921011,
+            "acompañante": "Ariella Goalley",
+            "estado": "Inactivo",
+            "direccion": "653 Basil Crossing",
+            "opciones": "Editar Borrar"
+        },
+        {
+            "id": 7,
+            "paciente": "Siffre Peeke",
+            "identificacion": 4361164185,
+            "acompañante": "Cindi Wicks",
+            "estado": "Activo",
+            "direccion": "70444 Fremont Alley",
+            "opciones": "Editar Borrar"
+        }
+    ]
+}

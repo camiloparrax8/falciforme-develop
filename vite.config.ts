@@ -13,6 +13,8 @@ export default defineConfig({
     },
   },
   server: {
+    host: '0.0.0.0', // Permite conexiones desde cualquier dispositivo en la red local
+    port: 3000, // Puerto donde correrá la aplicación
     proxy: {
       '/api': {
         target: 'http://localhost:3000',

@@ -7,6 +7,19 @@ import {
 import type { NavigationTree } from '@/@types/navigation'
 
 const navigationConfig: NavigationTree[] = [
+
+    {
+        key: 'uiComponent',
+        path: '',
+        title: 'Ui Component',
+        translateKey: 'nav.uiComponents',
+        icon: 'uiComponents',
+        type: NAV_ITEM_TYPE_TITLE,
+        authority: [ADMIN, USER],
+        subMenu: [],
+        
+        },
+ 
     {
         key: 'home',
         path: '/inicio',

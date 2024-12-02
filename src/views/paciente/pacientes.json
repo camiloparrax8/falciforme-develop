@@ -1,0 +1,97 @@
+[
+    {
+      "nombre": "Camilo Andres Parra Urueta",
+      "tipo": "CC",
+      "cedula": "123456789",
+      "nacimiento": "23/08/2007",
+      "edad": 17,
+      "sexo": "Masculino",
+      "identidad_genero": "Heterosexual",
+      "identidad_sexual": "Heterosexual",
+      "ocupacion": "Estudiante",
+      "residente": "lore impund",
+      "procedente": "lore impund",
+      "regimen": "contributivo",
+      "estrato": "1",
+      "departamento": "Cordoba",
+      "municipio": "Monteria",
+      "direccion": "Calle 33 #4-27 centro",
+      "correo": "cparraurueta@gmail.com",
+      "celular": "(301) 254 68 86",
+      "antecedente_familiar": {
+        "id": 1,
+        "id_usuario_registro": 101,
+        "fecha_registro": "25/09/2024",
+        "estado_hbs": [
+          {
+            "parentesco": "Madre",
+            "linea_parentesco": "Materno",
+            "estado": "No Portador"
+          },
+          {
+            "parentesco": "Padre",
+            "linea_parentesco": "Paterno",
+            "estado": "Portador"
+          }
+        ],
+        "enfermedades_cronicas": [
+          {
+            "id": 1,
+            "enfermedad": "Hematológicas Benignas",
+            "enfermedad_especifica": "Falciforme",
+            "portadores": [
+              {
+                "parentesco": "Padre",
+                "linea_parentesco": "Paterno"
+              },
+              {
+                "parentesco": "Abuelo",
+                "linea_parentesco": "Materno"
+              }
+            ]
+          },
+          {
+            "id": 2,
+            "enfermedad": "Cardiovasculares",
+            "enfermedad_especifica": "Hipertensión",
+            "portadores": [
+              {
+                "parentesco": "Madre",
+                "linea_parentesco": "Materno"
+              }
+            ]
+          }
+        ]
+      },
+      "antecedentes_perinatologicos": {
+        "peso_al_nacer": "2 lb",
+        "talla_al_nacer": "30 cm",
+        "nota": "Lore impun",
+        "condicion_nacimiento": "A término",
+        "requiere_uci": "Sí",
+        "ictericia_neonatal": "Sí"
+      },
+      "vacunas": [
+        {
+          "vacuna": "Meningococo",
+          "dosis": 2,
+          "fecha": "2022-05-22"
+        },
+        {
+          "vacuna": "Neumococo",
+          "dosis": 2,
+          "fecha": "2020-06-01"
+        }
+      ],
+      "dato_ingreso": {
+        "fecha_primer_consulta": "22 de mayo de 2022",
+        "edad_consulta": "2 años",
+        "fecha_inicio_sintomas": "2 años",
+        "sintomas": {
+          "lista": ["Anemia", "Dactilitis", "Infecciones", "Ictericia"],
+          "otro": "Dolor abdominal"
+        }
+      }
+    }
+  ]
+  

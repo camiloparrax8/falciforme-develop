@@ -9,8 +9,8 @@ import {
     PiHeartbeatDuotone,
     PiBrowsersDuotone,
     PiMoneyDuotone,
-    PiShieldCheckeredDuotone,
-    PiArrowsLeftRightFill
+    PiArrowsLeftRightFill,
+    PiFolderUserBold
 } from 'react-icons/pi'
 
 export type NavigationIcons = Record<string, JSX.Element>
@@ -26,7 +26,7 @@ const navigationIcon: NavigationIcons = {
     educate: <PiBookOpenTextDuotone />,
     informe: <PiBrowsersDuotone />,
     costo: <PiMoneyDuotone />,
-    seguridad: <PiShieldCheckeredDuotone />,
+    seguridad: <PiFolderUserBold />,
     integracion: <PiArrowsLeftRightFill />,
 }
 

@@ -1,5 +1,5 @@
 import {
-    // NAV_ITEM_TYPE_TITLE,
+    NAV_ITEM_TYPE_TITLE,
     NAV_ITEM_TYPE_ITEM,
     // NAV_ITEM_TYPE_COLLAPSE
 } from '@/constants/navigation.constant'
@@ -7,26 +7,23 @@ import {
 import type { NavigationTree } from '@/@types/navigation'
 
 const navigationConfig: NavigationTree[] = [
-
-    {
-        key: 'uiComponent',
-        path: '',
-        title: 'Ui Component',
-        translateKey: 'nav.uiComponents',
-        icon: 'uiComponents',
-        type: NAV_ITEM_TYPE_TITLE,
-        authority: [ADMIN, USER],
+        {
+        key: 'home',
+        path: '/inicio',
+        title: 'Menu',
+        translateKey: '',
+        icon: 'home',
+        type:  NAV_ITEM_TYPE_TITLE,  
+        authority: [],
         subMenu: [],
-        
-        },
- 
-    {
+    },
+        {
         key: 'home',
         path: '/inicio',
         title: 'Inicio',
         translateKey: '',
         icon: 'home',
-        type: NAV_ITEM_TYPE_ITEM,
+        type: NAV_ITEM_TYPE_ITEM,  
         authority: [],
         subMenu: [],
     },
@@ -48,7 +45,7 @@ const navigationConfig: NavigationTree[] = [
         translateKey: '',
         icon: 'historiaClinica',
         type: NAV_ITEM_TYPE_ITEM,
-        authority: [],
+        authority: [""],
         subMenu: [],
     },
     {
@@ -58,7 +55,7 @@ const navigationConfig: NavigationTree[] = [
         translateKey: '',
         icon: 'laboratorio',
         type: NAV_ITEM_TYPE_ITEM,
-        authority: [],
+        authority: [""],
         subMenu: [],
     },
     {
@@ -68,7 +65,7 @@ const navigationConfig: NavigationTree[] = [
         translateKey: '',
         icon: 'cita',
         type: NAV_ITEM_TYPE_ITEM,
-        authority: [],
+        authority: [""],
         subMenu: [],
     },
     {
@@ -78,7 +75,7 @@ const navigationConfig: NavigationTree[] = [
         translateKey: '',
         icon: 'medicamento',
         type: NAV_ITEM_TYPE_ITEM,
-        authority: [],
+        authority: [""],
         subMenu: [],
     },
     {
@@ -88,7 +85,7 @@ const navigationConfig: NavigationTree[] = [
         translateKey: '',
         icon: 'sintomasCrisis',
         type: NAV_ITEM_TYPE_ITEM,
-        authority: [],
+        authority: [""],
         subMenu: [],
     },
     {
@@ -98,7 +95,7 @@ const navigationConfig: NavigationTree[] = [
         translateKey: '',
         icon: 'educate',
         type: NAV_ITEM_TYPE_ITEM,
-        authority: [],
+        authority: [""],
         subMenu: [],
     },
     {
@@ -108,7 +105,7 @@ const navigationConfig: NavigationTree[] = [
         translateKey: '',
         icon: 'informe',
         type: NAV_ITEM_TYPE_ITEM,
-        authority: [],
+        authority: [""],
         subMenu: [],
     },
     {
@@ -118,13 +115,13 @@ const navigationConfig: NavigationTree[] = [
         translateKey: '',
         icon: 'costo',
         type: NAV_ITEM_TYPE_ITEM,
-        authority: [],
+        authority: [""],
         subMenu: [],
     },
     {
-        key: 'seguridad',
-        path: 'seguridad',
-        title: 'Seguridad',
+        key: 'usuario',
+        path: 'usuario',
+        title: 'Usuarios',
         translateKey: '',
         icon: 'seguridad',
         type: NAV_ITEM_TYPE_ITEM,
@@ -138,7 +135,7 @@ const navigationConfig: NavigationTree[] = [
         translateKey: '',
         icon: 'integracion',
         type: NAV_ITEM_TYPE_ITEM,
-        authority: [],
+        authority: [""],
         subMenu: [],
     },
     /*

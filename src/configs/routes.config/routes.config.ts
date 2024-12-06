@@ -123,4 +123,4 @@ export const protectedRoutes: Routes = [
         authority: [],
     },*/
     ...othersRoute,
- ]
+]

@@ -16,14 +16,16 @@ export const useLocaleStore = create<LocaleState>()(
             (set) => ({
                 currentLang: appConfig.locale,
                 setLang: (lang: string) => {
-                    const formattedLang = lang.replace(/-([a-z])/g, function (g) {
-                        return g[1].toUpperCase()
-                    })
+                    const formattedLang = lang.replace(
+                        /-([a-z])/g,
+                        function (g) {
+                            return g[1].toUpperCase()
+                        },
+                    )
 
                     i18n.changeLanguage(formattedLang)
 
-                    dateLocales[formattedLang]()
-                    .then(() => {
+                    dateLocales[formattedLang]().then(() => {
                         dayjs.locale(formattedLang)
                     })
 

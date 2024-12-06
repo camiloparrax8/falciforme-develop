@@ -19,12 +19,17 @@ export const SignInBase = ({
 }: SignInProps) => {
     const [message, setMessage] = useTimeOutMessage()
 
-    const mode = useThemeStore(state => state.mode)
+    const mode = useThemeStore((state) => state.mode)
 
     return (
         <>
             <div className="mb-8">
-                <Logo type="streamline" mode={mode} imgClass="mx-auto" logoWidth={60} />
+                <Logo
+                    type="streamline"
+                    mode={mode}
+                    imgClass="mx-auto"
+                    logoWidth={60}
+                />
             </div>
             <div className="mb-10">
                 <h2 className="mb-2">Welcome back!</h2>

@@ -29,8 +29,7 @@ type SearchResult = {
 const recommendedSearch: SearchResult[] = [
     {
         title: 'Recommended',
-        data: [
-        ],
+        data: [],
     },
 ]
 

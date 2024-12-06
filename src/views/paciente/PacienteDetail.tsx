@@ -46,8 +46,8 @@ export const PacienteDetail = ({ item }) => {
                                         Nombre Completo
                                     </label>
                                     <Input
-                                        size="sm"
                                         disabled
+                                        size="sm"
                                         value={item.nombre}
                                     />
                                 </div>
@@ -56,8 +56,8 @@ export const PacienteDetail = ({ item }) => {
                                         Tipo
                                     </label>
                                     <Input
-                                        size="sm"
                                         disabled
+                                        size="sm"
                                         value={item.tipo}
                                     />
                                 </div>
@@ -66,8 +66,8 @@ export const PacienteDetail = ({ item }) => {
                                         Identificación
                                     </label>
                                     <Input
-                                        size="sm"
                                         disabled
+                                        size="sm"
                                         value={item.cedula}
                                     />
                                 </div>
@@ -76,8 +76,8 @@ export const PacienteDetail = ({ item }) => {
                                         Nacimiento
                                     </label>
                                     <Input
-                                        size="sm"
                                         disabled
+                                        size="sm"
                                         value={item.nacimiento}
                                     />
                                 </div>
@@ -86,8 +86,8 @@ export const PacienteDetail = ({ item }) => {
                                         Edad
                                     </label>
                                     <Input
-                                        size="sm"
                                         disabled
+                                        size="sm"
                                         value={`${item.edad} Años`}
                                     />
                                 </div>
@@ -97,8 +97,8 @@ export const PacienteDetail = ({ item }) => {
                             <div className="flex mt-4 gap-x-1">
                                 <Button
                                     variant="solid"
-                                    onClick={() => openDialog()}
                                     icon={hc}
+                                    onClick={() => openDialog()}
                                 ></Button>
                                 <ButtonNavigation
                                     title=""

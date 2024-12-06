@@ -5,10 +5,7 @@ import type { DropdownMenuProps, DropdownMenuRef } from './DropdownMenu'
 import type { HTMLProps } from 'react'
 
 export interface DropdownSubProps
-    extends Omit<
-        DropdownMenuProps,
-        'trigger' | 'disabled' | 'activeKey'
-    > {
+    extends Omit<DropdownMenuProps, 'trigger' | 'disabled' | 'activeKey'> {
     eventKey?: string
     id?: string
 }

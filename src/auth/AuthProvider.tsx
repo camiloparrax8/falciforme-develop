@@ -25,15 +25,11 @@ export type IsolatedNavigatorRef = {
 const IsolatedNavigator = forwardRef<IsolatedNavigatorRef>((_, ref) => {
     const navigate = useNavigate()
 
-    useImperativeHandle(
-        ref,
-        () => {
-            return {
-                navigate,
-            }
-        },
-        [navigate],
-    )
+    useImperativeHandle(ref, () => {
+        return {
+            navigate,
+        }
+    }, [navigate])
 
     return <></>
 })

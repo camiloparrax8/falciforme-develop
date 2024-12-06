@@ -10,7 +10,7 @@ import {
     PiBrowsersDuotone,
     PiMoneyDuotone,
     PiArrowsLeftRightFill,
-    PiFolderUserBold
+    PiFolderUserBold,
 } from 'react-icons/pi'
 
 export type NavigationIcons = Record<string, JSX.Element>

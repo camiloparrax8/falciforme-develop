@@ -88,14 +88,17 @@ const Switcher = forwardRef<HTMLInputElement, SwitcherProps>((props, ref) => {
     const switcherColor = switcherClass || 'bg-primary dark:bg-primary'
 
     return (
-        <label ref={labelRef} className={classNames(
-            'switcher',
-            (switcherChecked || controlProps.checked) &&
-                `switcher-checked ${switcherColor}`,
-            disabled && 'switcher-disabled',
-            className,
-            switcherClass
-        )}>
+        <label
+            ref={labelRef}
+            className={classNames(
+                'switcher',
+                (switcherChecked || controlProps.checked) &&
+                    `switcher-checked ${switcherColor}`,
+                disabled && 'switcher-disabled',
+                className,
+                switcherClass,
+            )}
+        >
             <input
                 ref={ref}
                 type="checkbox"

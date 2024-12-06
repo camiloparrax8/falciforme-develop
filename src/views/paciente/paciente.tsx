@@ -10,8 +10,7 @@ import pacientes_json from './pacientes.json'
 const Paciente = () => {
     const pacientes = pacientes_json
 
-    const [paciente, setPaciente] = useState(null);
-
+    const [paciente, setPaciente] = useState(null)
 
     const [isSearching, setIsSearching] = useState(false) // Nuevo estado
     const [showMessage, setShowMessage] = useState(false)

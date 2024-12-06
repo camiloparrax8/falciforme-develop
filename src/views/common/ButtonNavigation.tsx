@@ -1,27 +1,25 @@
-import Button from '@/components/ui/Button';
-import { TbEdit, TbReportMedical, TbUserPlus } from 'react-icons/tb';
-import { useNavigate } from 'react-router-dom';
+import Button from '@/components/ui/Button'
+import { TbEdit, TbReportMedical, TbUserPlus } from 'react-icons/tb'
+import { useNavigate } from 'react-router-dom'
 
 const navigationIcons = {
     add: <TbUserPlus />,
     edit: <TbEdit />,
-    hc : <TbReportMedical />,
-};
+    hc: <TbReportMedical />,
+}
 
 const ButtonNavigation = ({ title, uri, iconName }) => {
-    const navigate = useNavigate();
+    const navigate = useNavigate()
 
     return (
-       
-            <Button
-                variant="solid"
-                icon={navigationIcons[iconName]}
-                onClick={() => navigate(uri)} 
-            >
-                {title}
-            </Button>
-    
-    );
-};
+        <Button
+            variant="solid"
+            icon={navigationIcons[iconName]}
+            onClick={() => navigate(uri)}
+        >
+            {title}
+        </Button>
+    )
+}
 
-export default ButtonNavigation;
+export default ButtonNavigation

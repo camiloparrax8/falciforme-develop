@@ -24,16 +24,12 @@ const ToggleDrawer = forwardRef<ToggleDrawerRef, ToggleDrawerProps>(
             setToggled(true)
         }
 
-        useImperativeHandle(
-            ref,
-            () => {
-                return {
-                    handleCloseDrawer,
-                    handleOpenDrawer,
-                }
-            },
-            [],
-        )
+        useImperativeHandle(ref, () => {
+            return {
+                handleCloseDrawer,
+                handleOpenDrawer,
+            }
+        }, [])
 
         return (
             <>

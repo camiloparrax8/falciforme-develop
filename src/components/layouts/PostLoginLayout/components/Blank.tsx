@@ -8,9 +8,7 @@ const Blank = ({ children }: CommonProps) => {
             type={LAYOUT_BLANK}
             className="app-layout-blank flex flex-auto flex-col h-[100vh]"
         >
-            <div className="flex min-w-0 w-full flex-1">
-                {children}
-            </div>
+            <div className="flex min-w-0 w-full flex-1">{children}</div>
         </LayoutBase>
     )
 }

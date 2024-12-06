@@ -1,10 +1,10 @@
 type OAuthResponse = {
-    token: string;
+    token: string
     user: {
-        id: string;
-        name: string;
-        email: string;
-    };
+        id: string
+        name: string
+        email: string
+    }
 }
 
 async function placeholderFunction(): Promise<OAuthResponse> {
@@ -15,17 +15,17 @@ async function placeholderFunction(): Promise<OAuthResponse> {
                 user: {
                     id: 'placeholder_id',
                     name: 'Placeholder User',
-                    email: 'user@example.com'
-                }
-            });
-        }, 500);
-    });
+                    email: 'user@example.com',
+                },
+            })
+        }, 500)
+    })
 }
 
 export async function apiGoogleOauthSignIn(): Promise<OAuthResponse> {
-    return await placeholderFunction();
+    return await placeholderFunction()
 }
 
 export async function apiGithubOauthSignIn(): Promise<OAuthResponse> {
-    return await placeholderFunction();
+    return await placeholderFunction()
 }

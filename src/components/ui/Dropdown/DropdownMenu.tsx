@@ -30,7 +30,7 @@ import {
     useInteractions,
     useListItem,
     useListNavigation,
-useMergeRefs,
+    useMergeRefs,
     useRole,
     useTypeahead,
     useTransitionStyles,
@@ -217,22 +217,18 @@ const DropdownMenu = forwardRef<
 
     const toggleRef = useMergeRefs([refs.setReference, item.ref, forwardedRef])
 
-    useImperativeHandle(
-        forwardedRef,
-        () => {
-            return {
-                handleDropdownOpen: () => {
-                    setIsOpen(true)
-                    onOpen?.(true)
-                },
-                handleDropdownClose: () => {
-                    setIsOpen(false)
-                    onOpen?.(false)
-                },
-            }
-        },
-        [onOpen],
-    )
+    useImperativeHandle(forwardedRef, () => {
+        return {
+            handleDropdownOpen: () => {
+                setIsOpen(true)
+                onOpen?.(true)
+            },
+            handleDropdownClose: () => {
+                setIsOpen(false)
+                onOpen?.(false)
+            },
+        }
+    }, [onOpen])
 
     const toggleProps = {
         ...getReferenceProps(

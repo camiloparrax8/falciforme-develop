@@ -110,7 +110,11 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>((props, ref) => {
                 <input
                     ref={ref}
                     type="radio"
-                    className={classNames(radioDefaultClass, radioColorClass, radioClass)}
+                    className={classNames(
+                        radioDefaultClass,
+                        radioColorClass,
+                        radioClass,
+                    )}
                     disabled={disabled}
                     value={value}
                     name={name}

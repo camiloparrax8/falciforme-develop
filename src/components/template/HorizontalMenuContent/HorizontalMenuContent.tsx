@@ -36,59 +36,51 @@ const HorizontalMenuContent = (props: HorizontalMenuContentProps) => {
                     userAuthority={userAuthority}
                     authority={nav.authority}
                 >
-                    {
-                        nav.subMenu.length > 0 ?
-                        (
-                            <HorizontalMenuDropdown
-                                dropdownLean={
-                                    nav.meta?.horizontalMenu?.layout === 'default'
-                                }
-                                triggerContent={({ ref, props }) => (
-                                    <HorizontalMenuDropdownTrigger
-                                        ref={ref}
-                                        {...props}
-                                        asElement="button"
-                                    >
-                                        <div className="flex items-center gap-1">
-                                            <span>
-                                                {t(nav.translateKey, nav.title)}
-                                            </span>
-                                            <TbChevronDown />
-                                        </div>
-                                    </HorizontalMenuDropdownTrigger>
-                                )}
-                                menuContent={({ styles, handleDropdownClose }) => (
-                                    <HorizontalMenuDropdownContent
-                                        style={styles}
-                                        navigationTree={nav.subMenu}
-                                        t={t as TraslationFn}
-                                        layoutMeta={nav?.meta?.horizontalMenu}
-                                        routeKey={routeKey}
-                                        routeParentKey={activedRoute?.parentKey}
-                                        userAuthority={userAuthority}
-                                        onDropdownClose={handleDropdownClose}
-                                    />
-                                )}
-                            ></HorizontalMenuDropdown>
-                        )
-                        :
-                        (
-                            <HorizontalMenuDropdownTrigger
-                                {...props}
-                                path={nav.path}
-                                isExternalLink={nav.isExternalLink}
-                                active={activedRoute?.key === nav.key}
-                                asElement="a"
-                            >
-                                <div className="flex items-center gap-1">
-                                    <span>
-                                        {t(nav.translateKey, nav.title)}
-                                    </span>
-                                </div>
-                            </HorizontalMenuDropdownTrigger>
-                        )
-                    }
-                    
+                    {nav.subMenu.length > 0 ? (
+                        <HorizontalMenuDropdown
+                            dropdownLean={
+                                nav.meta?.horizontalMenu?.layout === 'default'
+                            }
+                            triggerContent={({ ref, props }) => (
+                                <HorizontalMenuDropdownTrigger
+                                    ref={ref}
+                                    {...props}
+                                    asElement="button"
+                                >
+                                    <div className="flex items-center gap-1">
+                                        <span>
+                                            {t(nav.translateKey, nav.title)}
+                                        </span>
+                                        <TbChevronDown />
+                                    </div>
+                                </HorizontalMenuDropdownTrigger>
+                            )}
+                            menuContent={({ styles, handleDropdownClose }) => (
+                                <HorizontalMenuDropdownContent
+                                    style={styles}
+                                    navigationTree={nav.subMenu}
+                                    t={t as TraslationFn}
+                                    layoutMeta={nav?.meta?.horizontalMenu}
+                                    routeKey={routeKey}
+                                    routeParentKey={activedRoute?.parentKey}
+                                    userAuthority={userAuthority}
+                                    onDropdownClose={handleDropdownClose}
+                                />
+                            )}
+                        ></HorizontalMenuDropdown>
+                    ) : (
+                        <HorizontalMenuDropdownTrigger
+                            {...props}
+                            path={nav.path}
+                            isExternalLink={nav.isExternalLink}
+                            active={activedRoute?.key === nav.key}
+                            asElement="a"
+                        >
+                            <div className="flex items-center gap-1">
+                                <span>{t(nav.translateKey, nav.title)}</span>
+                            </div>
+                        </HorizontalMenuDropdownTrigger>
+                    )}
                 </AuthorityCheck>
             ))}
         </div>

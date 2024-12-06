@@ -16,12 +16,17 @@ export const SignUpBase = ({
 }: SignUpProps) => {
     const [message, setMessage] = useTimeOutMessage()
 
-    const mode = useThemeStore(state => state.mode)
+    const mode = useThemeStore((state) => state.mode)
 
     return (
         <>
             <div className="mb-8">
-                <Logo type="streamline" mode={mode} imgClass="mx-auto" logoWidth={60} />
+                <Logo
+                    type="streamline"
+                    mode={mode}
+                    imgClass="mx-auto"
+                    logoWidth={60}
+                />
             </div>
             <div className="mb-8">
                 <h3 className="mb-1">Sign Up</h3>

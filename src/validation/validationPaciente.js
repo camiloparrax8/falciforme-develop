@@ -71,6 +71,70 @@ const validationPaciente = {
             message: 'Formato de correo inválido',
         },
     },
+    birthDate: {
+        required: 'La fecha de nacimiento es obligatoria',
+        validate: {
+            notFutureDate: (value) =>
+                new Date(value) <= new Date() ||
+                'No se permite una fecha futura',
+        },
+    },
+
+    residency: {
+        required: 'El lugar de residencia es obligatorio',
+        minLength: {
+            value: 3,
+            message: 'Debe tener al menos 3 caracteres',
+        },
+        maxLength: {
+            value: 50,
+            message: 'No puede exceder los 50 caracteres',
+        },
+    },
+
+    provenance: {
+        required: 'El lugar de procedencia es obligatorio',
+        minLength: {
+            value: 3,
+            message: 'Debe tener al menos 3 caracteres',
+        },
+        maxLength: {
+            value: 50,
+            message: 'No puede exceder los 50 caracteres',
+        },
+    },
+
+    stratum: {
+        required: 'El estrato es obligatorio',
+        pattern: {
+            value: /^[1-6]$/,
+            message: 'El estrato debe ser un número entre 1 y 6',
+        },
+    },
+
+    occupation: {
+        required: 'La ocupación es obligatoria',
+        minLength: {
+            value: 3,
+            message: 'Debe tener al menos 3 caracteres',
+        },
+        maxLength: {
+            value: 50,
+            message: 'No puede exceder los 50 caracteres',
+        },
+    },
+
+    regime: {
+        required: 'El régimen es obligatorio',
+        minLength: {
+            value: 3,
+            message: 'Debe tener al menos 3 caracteres',
+        },
+        maxLength: {
+            value: 50,
+            message: 'No puede exceder los 50 caracteres',
+        },
+    },
 }
 
 export default validationPaciente

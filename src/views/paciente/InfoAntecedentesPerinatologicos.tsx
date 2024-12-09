@@ -1,5 +1,6 @@
 import React from 'react'
 import Input from '@/components/ui/Input'
+import SectionTitle from '../common/form/SectionTitle'
 
 const InfoAntecedentesPerinatologicos = () => {
     // JSON quemado
@@ -17,6 +18,8 @@ const InfoAntecedentesPerinatologicos = () => {
             <div className="w-full p-4">
                 {/* Peso, Talla y Nota */}
                 <div className="grid grid-cols-3 gap-4 mb-6">
+                <SectionTitle text="Información General" className="col-span-1 md:col-span-2 lg:col-span-4"></SectionTitle>
+
                     <div>
                         <label className="block text-sm font-bold mb-1">
                             Peso al nacer
@@ -39,9 +42,10 @@ const InfoAntecedentesPerinatologicos = () => {
 
                 {/* Condición del nacimiento */}
                 <div className="mb-6">
-                    <h6 className="text-md font-semibold mb-4">
-                        Condición del nacimiento
-                    </h6>
+                    
+                <SectionTitle text="Condición del nacimiento" className="col-span-1 md:col-span-2 lg:col-span-4"></SectionTitle>
+
+                  
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <label className="block text-sm font-bold mb-1">
@@ -76,7 +80,8 @@ const InfoAntecedentesPerinatologicos = () => {
 
                 {/* Unidad de cuidado neonatal */}
                 <div className="mb-6">
-                    <h6 className="text-md font-semibold mb-4">Neonatal</h6>
+                <SectionTitle text="Información Neonatal" className="col-span-1 md:col-span-2 lg:col-span-4"></SectionTitle>
+
                     <div className="grid grid-cols-3 gap-4">
                         <div>
                             <label className="block text-sm font-bold mb-1">

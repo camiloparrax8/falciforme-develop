@@ -1,6 +1,7 @@
 import React from 'react'
 import Input from '@/components/ui/Input'
 import Tag from '@/components/ui/Tag'
+import SectionTitle from '../common/form/SectionTitle'
 
 const InfoDatosIngreso = () => {
     // JSON quemado
@@ -23,6 +24,8 @@ const InfoDatosIngreso = () => {
             <div className="w-full p-4">
                 {/* Información básica */}
                 <div className="grid grid-cols-3 gap-4 mb-6">
+                <SectionTitle text="Informacion Basica" className="col-span-1 md:col-span-2 lg:col-span-4"></SectionTitle>
+
                     <div>
                         <label className="block text-sm font-bold mb-1">
                             Fecha 1ra consulta hematología
@@ -53,7 +56,8 @@ const InfoDatosIngreso = () => {
 
                 {/* Síntomas */}
                 <div className="mb-6">
-                    <h6 className="text-md font-semibold mb-4">Síntomas</h6>
+                <SectionTitle text="Sintomas" className="col-span-1 md:col-span-2 lg:col-span-4"></SectionTitle>
+
                     <div className="flex flex-wrap gap-2">
                         {item.sintomas.map((sintoma, index) => (
                             <Tag

@@ -1,5 +1,6 @@
 import React from 'react'
 import Input from '@/components/ui/Input'
+import SectionTitle from '../common/form/SectionTitle'
 
 function InfoAcompañante() {
     // JSON quemado
@@ -22,9 +23,11 @@ function InfoAcompañante() {
             <div className="w-full p-4">
                 {/* Información Personal */}
                 <div className="mb-6">
-                    <h6 className="text-md font-semibold mb-4">
-                        Información Personal
-                    </h6>
+                    <SectionTitle
+                        text="Información personal"
+                        className="col-span-1 md:col-span-2 lg:col-span-4"
+                    ></SectionTitle>
+
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         <div className="col-span-2">
                             <label className="block text-sm font-bold mb-1">
@@ -53,9 +56,8 @@ function InfoAcompañante() {
 
                 {/* Información de Ubicación */}
                 <div className="mb-6">
-                    <h6 className="text-md font-semibold mb-4">
-                        Información de Ubicación
-                    </h6>
+                <SectionTitle text="Información Ubicación" className="col-span-1 md:col-span-2 lg:col-span-4"></SectionTitle>
+
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         <div>
                             <label className="block text-sm font-bold mb-1">
@@ -84,9 +86,11 @@ function InfoAcompañante() {
 
                 {/* Información Socioeconómica */}
                 <div className="mb-6">
-                    <h6 className="text-md font-semibold mb-4">
-                        Información Socioeconómica
-                    </h6>
+                    <SectionTitle
+                        text="Información Socioeconómica"
+                        className="col-span-1 md:col-span-2 lg:col-span-4"
+                    ></SectionTitle>
+
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         <div>
                             <label className="block text-sm font-bold mb-1">
@@ -129,9 +133,11 @@ function InfoAcompañante() {
 
                 {/* Información Adicional */}
                 <div className="mb-6">
-                    <h6 className="text-md font-semibold mb-4">
-                        Información Adicional
-                    </h6>
+                    <SectionTitle
+                        text="Información Adicional"
+                        className="col-span-1 md:col-span-2 lg:col-span-4"
+                    ></SectionTitle>
+
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         <div>
                             <label className="block text-sm font-bold mb-1">

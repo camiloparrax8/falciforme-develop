@@ -1,5 +1,6 @@
 import React from 'react'
 import Input from '@/components/ui/Input'
+import SectionTitle from '../common/form/SectionTitle'
 
 function InfoRedPrimaria() {
     // JSON quemado
@@ -17,6 +18,8 @@ function InfoRedPrimaria() {
         <>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
                 {/* Fecha */}
+                <SectionTitle text="Información General" className="col-span-1 md:col-span-2 lg:col-span-4"></SectionTitle>
+
                 <div>
                     <label className="block text-sm font-bold mb-1">
                         Fecha

@@ -17,10 +17,11 @@ const navigationConfig: NavigationTree[] = [
         authority: [],
         subMenu: [],
     },
+
     {
         key: 'home',
-        path: '/inicio',
-        title: 'Inicio',
+        path: '/home',
+        title: 'Home',
         translateKey: '',
         icon: 'home',
         type: NAV_ITEM_TYPE_ITEM,
@@ -29,7 +30,7 @@ const navigationConfig: NavigationTree[] = [
     },
     /** Example purpose only, please remove */
     {
-        key: 'paciente',
+        key: 'Paciente',
         path: '/paciente',
         title: 'Paciente',
         translateKey: '',
@@ -38,7 +39,6 @@ const navigationConfig: NavigationTree[] = [
         authority: [],
         subMenu: [],
     },
-    
     {
         key: 'usuario',
         path: 'usuario',
@@ -49,8 +49,6 @@ const navigationConfig: NavigationTree[] = [
         authority: [],
         subMenu: [],
     },
-    
-   
 ]
 
 export default navigationConfig

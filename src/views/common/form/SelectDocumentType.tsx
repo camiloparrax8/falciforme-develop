@@ -3,7 +3,7 @@ import Select from '@/components/ui/Select'
 import { Controller } from 'react-hook-form'
 import Label from './Label'
 
-const SelectDocumentType = ({ control, name, rules, errors }) => {
+const SelectDocumentType = ({ control, name, rules, errors, className  }) => {
     // Opciones quemadas para el tipo de documento
     const documentTypeOptions = [
         { value: 'CC', label: 'Cédula de Ciudadanía (CC)' },
@@ -12,7 +12,7 @@ const SelectDocumentType = ({ control, name, rules, errors }) => {
     ]
 
     return (
-        <div>
+        <div className={className}>
             <Label htmlFor={name} text="Tipo de Documento" />
 
             <Controller

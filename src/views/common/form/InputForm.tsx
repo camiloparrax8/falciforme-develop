@@ -2,9 +2,18 @@ import Input from '@/components/ui/Input';
 import { Controller } from 'react-hook-form';
 import Label from './Label';
 
-const InputForm = ({ control, name, rules, errors, label,  inputPlaceholder}) => {
+const InputForm = ({
+    control,
+    name,
+    rules,
+    errors,
+    label,
+    inputPlaceholder,
+    className,
+    value, // Prop adicional para manejar el valor inicial
+}) => {
     return (
-        <div>
+        <div className={className}>
             {/* Etiqueta */}
             <Label htmlFor={name} text={label} />
 
@@ -19,6 +28,7 @@ const InputForm = ({ control, name, rules, errors, label,  inputPlaceholder}) =>
                         id={name}
                         placeholder={inputPlaceholder}
                         className={errors[name] ? 'border-red-500' : ''}
+                        value={value || field.value} // Usar el `value` solo si no está vacío
                     />
                 )}
             />

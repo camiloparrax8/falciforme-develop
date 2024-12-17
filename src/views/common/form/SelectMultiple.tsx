@@ -23,8 +23,7 @@ const SelectMultiple = ({
                         {...field}
                         isMulti
                         options={options}
-                        placeholder={placeholder}
-                       
+                        placeholder={placeholder}                       
                         onChange={(selected) => {
                             field.onChange(
                                 selected ? selected.map((option) => option.value) : []

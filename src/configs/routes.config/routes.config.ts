@@ -31,6 +31,12 @@ export const protectedRoutes: Routes = [
         component: lazy(() => import('@/views/paciente/add/AddPaciente')),
         authority: [],
     },
+    {
+        key: 'historia-clinica',
+        path: '/historia-clinica/:id',
+        component: lazy(() => import('@/views/historia/HistoriaClinica')),
+        authority: [],
+    },
 
     ...othersRoute,
 ]

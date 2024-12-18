@@ -10,6 +10,8 @@ import SelectMultiple from '@/views/common/form/SelectMultiple'
 import SelectChronicDisease from '@/views/common/form/SelectChronicDisease'
 import SelectSpecificDisease from '@/views/common/form/SelectSpecificDisease'
 import classNames from 'classnames'
+import validationAntecedentesFamiliares from '../../../validation/validationAntecedentesFamiliares';
+
 
 const { Tr, Th, Td, THead, TBody } = Table
 
@@ -19,12 +21,13 @@ function EnfermedadesCronicas() {
     const {
         control,
         handleSubmit,
+        register,
         formState: { errors },
     } = useForm({
         defaultValues: {
             enfermedad: '',
             enfermedad_especifica: '',
-            parentescosMultiples: [''],
+            parentescosMultiples: [],
         },
     })
 
@@ -171,9 +174,7 @@ function EnfermedadesCronicas() {
                             name="enfermedad"
                             control={control}
                             errors={errors}
-                            validation={{
-                                required: 'Seleccione una enfermedad crónica',
-                            }}
+                            validation={validationAntecedentesFamiliares.enfermedadesCronicas.enfermedad}
                             onDiseaseChange={handleDiseaseChange}
                         />
                         <SelectSpecificDisease
@@ -181,10 +182,7 @@ function EnfermedadesCronicas() {
                             name="enfermedad_especifica"
                             control={control}
                             errors={errors}
-                            validation={{
-                                required:
-                                    'Seleccione una enfermedad específica',
-                            }}
+                            validation={validationAntecedentesFamiliares.enfermedadesCronicas.enfermedad_especifica}
                             selectedDisease={selectedDisease}
                         />
 
@@ -201,10 +199,7 @@ function EnfermedadesCronicas() {
                             placeholder="Seleccione parentescos"
                             defaultValue={[]}
                             errors={errors}
-                            validation={{
-                                required:
-                                    'Debe seleccionar al menos un parentesco',
-                            }}
+                            validation={ validationAntecedentesFamiliares.enfermedadesCronicas.parentescosMultiples}
                             label="Parentescos"
                         />
 

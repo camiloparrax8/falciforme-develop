@@ -64,9 +64,9 @@ function SelectSpecificDisease({
                     />
                 )}
             />
-            {errors?.specificDisease && (
+            {errors?.[name] && (
                 <p className="text-red-500 text-sm mt-1">
-                    {errors.specificDisease.message}
+                    {errors[name]?.message}
                 </p>
             )}
         </div>

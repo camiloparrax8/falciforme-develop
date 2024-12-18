@@ -21,20 +21,21 @@ function SelectChronicDisease({ control, errors, validation, onDiseaseChange, cl
                     <Select
                         {...field}
                         options={chronicDiseases}
-                        placeholder="Enfermedad crónica"
+                        placeholder="Seleccione una enfermedad"
                         value={chronicDiseases.find(
                             (disease) => disease.value === field.value
                         )}
                         onChange={(option) => {
-                            field.onChange(option?.value);
-                            onDiseaseChange(option);
+                            field.onChange(option?.value); 
+                            onDiseaseChange(option); 
                         }}
                     />
                 )}
             />
-            {errors?.chronicDisease && (
+            {/* Mostrar mensaje de error */}
+            {errors?.[name] && (
                 <p className="text-red-500 text-sm mt-1">
-                    {errors.chronicDisease.message}
+                    {errors[name]?.message}
                 </p>
             )}
         </div>

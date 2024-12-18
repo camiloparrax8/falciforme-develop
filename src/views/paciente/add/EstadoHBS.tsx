@@ -9,6 +9,7 @@ import { useForm } from 'react-hook-form'
 import SelectParentesco from '@/views/common/form/SelectParentesco'
 import SelectLinea from '@/views/common/form/SelectLinea'
 import InputSelect from '@/views/common/form/InputSelect'
+import validationAntecedentesFamiliares from '../../../validation/validationAntecedentesFamiliares';
 
 const { Tr, Th, Td, THead, TBody } = Table
 
@@ -112,9 +113,7 @@ function EstadoHBS() {
                         <SelectParentesco
                             control={control}
                             errors={errors}
-                            validation={{
-                                required: 'Debe seleccionar un parentesco',
-                            }}
+                            validation={validationAntecedentesFamiliares.estadoHBS.parentesco}
                             className="col-span-2"
                         />
 
@@ -122,9 +121,7 @@ function EstadoHBS() {
                         <SelectLinea
                             control={control}
                             errors={errors}
-                            validation={{
-                                required: 'Debe seleccionar una línea',
-                            }}
+                            validation={validationAntecedentesFamiliares.estadoHBS.linea}
                             selectedParentesco={selectedParentesco}
                             className="col-span-2"
                         />
@@ -132,9 +129,7 @@ function EstadoHBS() {
                         <InputSelect
                             control={control}
                             errors={errors}
-                            validation={{
-                                required: 'Debe seleccionar un estado',
-                            }}
+                            validation={validationAntecedentesFamiliares.estadoHBS.estado}
                             options={options}
                             name="estado"
                             placeholder="Seleccione un estado"
@@ -143,7 +138,7 @@ function EstadoHBS() {
                         />
 
                         {/* Botón */}
-                        <div className="col-span-4 flex justify-end mt-6">
+                        <div className="col-span-4 flex justify-end mt-3">
                             <Button type="submit">Guardar</Button>
                         </div>
                     </form>

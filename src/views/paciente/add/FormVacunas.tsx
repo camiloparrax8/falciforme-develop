@@ -146,10 +146,10 @@ function FormVacunas() {
                                     {new Date(vacuna.fecha).toLocaleDateString()}
                                 </td>
                                 <td className="py-2 px-4 flex space-x-2">
-                                    <Button variant="solid" className="text-blue-500 flex items-center space-x-1">
+                                    <Button variant="solid" className="text-white flex items-center space-x-1">
                                         <FaEdit />
                                     </Button>
-                                    <Button variant="solid" className="text-red-500 flex items-center space-x-1">
+                                    <Button variant="solid" className="text-white flex items-center space-x-1">
                                         <FaTrash />
                                     </Button>
                                 </td>

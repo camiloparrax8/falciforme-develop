@@ -205,6 +205,7 @@ function EnfermedadesCronicas() {
                                 required:
                                     'Debe seleccionar al menos un parentesco',
                             }}
+                            label="Parentescos"
                         />
 
                         {/* Botón */}

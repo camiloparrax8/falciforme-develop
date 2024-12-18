@@ -1,5 +1,6 @@
 import { Controller } from 'react-hook-form';
 import Select from '@/components/ui/Select';
+import Label from './Label';
 
 const SelectMultiple = ({
     control,
@@ -9,10 +10,12 @@ const SelectMultiple = ({
     defaultValue,
     errors,
     validation,
-    className
+    className,
+    label
 }) => {
     return (
         <div  className={className}>
+             {label && <Label htmlFor={name} text={label} />}
             <Controller
                 name={name}
                 control={control}

@@ -1,20 +1,18 @@
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Button from '@/components/ui/Button';
+import { FaEdit, FaTrash } from 'react-icons/fa';
 import validationVacunas from '../../../validation/validationVacunas';
 import SectionTitle from '@/views/common/form/SectionTitle';
 import SelectMultiple from '@/views/common/form/SelectMultiple';
 import InputDatePickerForm from '@/views/common/form/InputDate';
 import InputForm from '@/views/common/form/InputForm';
-import { useState } from 'react';
-import { FaEdit, FaTrash } from 'react-icons/fa';
 
 function FormVacunas() {
-    const [vacunas, setVacunas] = useState([]);
     const {
         control,
         handleSubmit,
         formState: { errors },
-        reset, // Reset para limpiar el formulario después de envío
     } = useForm({
         defaultValues: {
             tipo_vacuna: [],
@@ -23,33 +21,39 @@ function FormVacunas() {
         },
     });
 
-    const onSubmit = (data) => {
-        console.log('Datos enviados:', data);
-        setVacunas([
-            ...vacunas,
-            {
-                tipo_vacuna: data.tipo_vacuna,
-                dosis: data.dosis,
-                fecha: data.fecha,
-            },
-        ]);
-        reset(); // Limpiar el formulario después de enviar
-    };
-
-    const handleDelete = (index) => {
-        const updatedVacunas = vacunas.filter((_, i) => i !== index);
-        setVacunas(updatedVacunas);
-    };
-
-    const handleEdit = (index) => {
-        const vacunaToEdit = vacunas[index];
-        reset({
-            tipo_vacuna: vacunaToEdit.tipo_vacuna,
-            dosis: vacunaToEdit.dosis,
-            fecha: vacunaToEdit.fecha,
-        });
-        handleDelete(index); // Eliminar para luego agregarlo como editado
-    };
+    // Datos de vacunas quemados directamente en el componente
+    const [vacunas, setVacunas] = useState([
+        {
+            id: 1,
+            tipo_vacuna: 'COVID-19',
+            dosis: '2',
+            fecha: '2023-05-10',
+        },
+        {
+            id: 2,
+            tipo_vacuna: 'Influenza',
+            dosis: '1',
+            fecha: '2023-10-01',
+        },
+        {
+            id: 3,
+            tipo_vacuna: 'Hepatitis A',
+            dosis: '1',
+            fecha: '2023-07-15',
+        },
+        {
+            id: 4,
+            tipo_vacuna: 'Tosferina',
+            dosis: '3',
+            fecha: '2023-03-20',
+        },
+        {
+            id: 5,
+            tipo_vacuna: 'Triple Viral (SRP)',
+            dosis: '2',
+            fecha: '2023-01-25',
+        },
+    ]);
 
     const vacunasOptions = [
         { value: 'covid_19', label: 'COVID-19' },
@@ -69,16 +73,18 @@ function FormVacunas() {
         { value: 'tifoidea', label: 'Fiebre Tifoidea' },
     ];
 
+    const onSubmit = (data) => {
+        console.log('Datos enviados:', data);
+    };
+
     return (
         <div className="w-full">
             <form
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full"
                 onSubmit={handleSubmit(onSubmit)}
             >
-                {/* Sección Información Básica */}
                 <SectionTitle text="Datos de ingreso" className="col-span-3 mb-4" />
 
-                {/* Tipo de Vacuna */}
                 <SelectMultiple
                     control={control}
                     name="tipo_vacuna"
@@ -94,19 +100,17 @@ function FormVacunas() {
                     className="col-span-2"
                 />
 
-                {/* Dosis */}
                 <InputForm
                     control={control}
+                    value=''
                     name="dosis"
                     rules={validationVacunas.dosis}
                     errors={errors}
                     label="Dosis"
                     inputPlaceholder="Número de dosis"
                     className="col-span-1"
-                    value=""
                 />
 
-                {/* Fecha */}
                 <InputDatePickerForm
                     control={control}
                     name="fecha"
@@ -117,13 +121,11 @@ function FormVacunas() {
                     className="col-span-1"
                 />
 
-                {/* Botón de Envío */}
                 <div className="col-span-3 flex justify-end mt-6">
                     <Button type="submit">Guardar</Button>
                 </div>
             </form>
 
-            {/* Tabla de Vacunas Agregadas */}
             <div className="mt-6">
                 <SectionTitle text="Vacunas Agregadas" className="col-span-3 mb-4" />
                 <table className="min-w-full table-auto">
@@ -136,22 +138,19 @@ function FormVacunas() {
                         </tr>
                     </thead>
                     <tbody>
-                        {vacunas.map((vacuna, index) => (
-                            <tr key={index} className="border-b">
+                        {vacunas.map((vacuna) => (
+                            <tr key={vacuna.id} className="border-b">
                                 <td className="py-2 px-4">{vacuna.tipo_vacuna}</td>
                                 <td className="py-2 px-4">{vacuna.dosis}</td>
                                 <td className="py-2 px-4">
                                     {new Date(vacuna.fecha).toLocaleDateString()}
                                 </td>
                                 <td className="py-2 px-4 flex space-x-2">
-                                    {/* Botón de editar con icono */}
-                                    <Button onClick={() => handleEdit(index)} className="text-blue-500 flex items-center space-x-1">
-                                        <FaEdit /> <span></span>
+                                    <Button variant="solid" className="text-blue-500 flex items-center space-x-1">
+                                        <FaEdit />
                                     </Button>
-
-                                    {/* Botón de eliminar con icono */}
-                                    <Button onClick={() => handleDelete(index)} className="text-red-500 flex items-center space-x-1">
-                                        <FaTrash /> <span></span>
+                                    <Button variant="solid" className="text-red-500 flex items-center space-x-1">
+                                        <FaTrash />
                                     </Button>
                                 </td>
                             </tr>

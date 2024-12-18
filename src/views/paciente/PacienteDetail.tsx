@@ -13,21 +13,32 @@ import InfoVacunas from './InfoVacunas'
 import InfoDatosIngreso from './InfoDatosIngreso'
 import Field from '../common/Field'
 import Section from '../common/Section'
+import { FaFileMedical } from 'react-icons/fa'
 
 const { TabNav, TabList, TabContent } = Tabs
 
 export const PacienteDetail = ({ item }) => {
-    const [dialogIsOpen, setIsOpen] = useState(false)
+    const [dialogIsOpenPaciente, setIsOpenPaciente] = useState(false)
+    const [dialogIsOpenHC, setIsOpenHC] = useState(false)
 
-    const openDialog = () => {
-        setIsOpen(true)
+    const openDialogPaciente = () => {
+        setIsOpenPaciente(true)
     }
 
-    const onDialogClose = (e: MouseEvent) => {
-        console.log('onDialogClose', e)
-        setIsOpen(false)
+    const onDialogClosePaciente = (e: MouseEvent) => {
+        console.log('onDialogClosePaciente', e)
+        setIsOpenPaciente(false)
+    }
+    const openDialogHC = () => {
+        setIsOpenHC(true)
+    }
+
+    const onDialogCloseHC = (e: MouseEvent) => {
+        console.log('onDialogCloseHC', e)
+        setIsOpenHC(false)
     }
     const hc = <TbInfoSquareRoundedFilled />
+    console.log(item)
 
     return (
         <>
@@ -98,27 +109,28 @@ export const PacienteDetail = ({ item }) => {
                                 <Button
                                     variant="solid"
                                     icon={hc}
-                                    onClick={() => openDialog()}
+                                    onClick={() => openDialogPaciente()}
                                 ></Button>
                                 <ButtonNavigation
                                     title=""
                                     uri="/usuario"
                                     iconName="edit"
                                 />
-                                <ButtonNavigation
+                                <Button
+                                    icon={<FaFileMedical />}
+                                    variant="solid"
                                     title=""
-                                    uri="/usuario"
-                                    iconName="hc"
+                                    onClick={() => openDialogHC()}
                                 />
                             </div>
 
-                            {/* Dialog */}
+                            {/* Dialog ionformacion del paciente */}
                             <Dialog
-                                isOpen={dialogIsOpen}
+                                isOpen={dialogIsOpenPaciente}
                                 width={800} // Ancho en píxeles
                                 height={500} // Altura en píxeles
-                                onClose={onDialogClose}
-                                onRequestClose={onDialogClose}
+                                onClose={onDialogClosePaciente}
+                                onRequestClose={onDialogClosePaciente}
                             >
                                 <div className="flex flex-col h-full space-y-4">
                                     <h5>Detalles del paciente</h5>
@@ -175,6 +187,27 @@ export const PacienteDetail = ({ item }) => {
                                             span={2}
                                         />
                                     </Section>
+                                </div>
+                            </Dialog>
+                            {/* Dialog ionformacion del paciente */}
+                            <Dialog
+                                isOpen={dialogIsOpenHC}
+                                onClose={onDialogCloseHC}
+                                onRequestClose={onDialogCloseHC}
+                            >
+                                <div className="flex flex-col h-full space-y-4">
+                                    <h5>Tipo de consulta</h5>
+
+                                    <ButtonNavigation
+                                        title="Seguimiento"
+                                        uri={`/historia-clinica/${item.id}`}
+                                        iconName="edit"
+                                    />
+                                    <ButtonNavigation
+                                        title="Inicial"
+                                        uri={`/historia-clinica/${item.id}`}
+                                        iconName="edit"
+                                    />
                                 </div>
                             </Dialog>
                         </Card>

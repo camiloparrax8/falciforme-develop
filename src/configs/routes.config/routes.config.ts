@@ -37,6 +37,60 @@ export const protectedRoutes: Routes = [
         component: lazy(() => import('@/views/historia/HistoriaClinica')),
         authority: [],
     },
+    {
+        key: 'historia-clinica',
+        path: '/historia-clinica/img-diagnosticas',
+        component: lazy(() => import('@/views/historia/mod/imgDiagnosticos/ImgDiagnosticos')),
+        authority: [],
+    },
+    {
+        key: 'historia-clinica',
+        path: '/historia-clinica/complicaciones-agudas',
+        component: lazy(() => import('@/views/historia/mod/complicacionesAgudas/ComplicacionesAgudas')),
+        authority: [],
+    },
+    {
+        key: 'historia-clinica',
+        path: '/historia-clinica/complicaciones-cronicas',
+        component: lazy(() => import('@/views/historia/mod/complicacionesCronicas/ComplicacionesCronicas')),
+        authority: [],
+    },
+    {
+        key: 'historia-clinica',
+        path: '/historia-clinica/examenes-fisicos',
+        component: lazy(() => import('@/views/historia/mod/examenesFisicos/ExamenesFisicos')),
+        authority: [],
+    },
+    {
+        key: 'historia-clinica',
+        path: '/historia-clinica/laboratorios',
+        component: lazy(() => import('@/views/historia/mod/laboratorios/Laboratorios')),
+        authority: [],
+    },
+    {
+        key: 'historia-clinica',
+        path: '/historia-clinica/soportes-transfucionales',
+        component: lazy(() => import('@/views/historia/mod/soportesTransfucionales/SoportesTransfucionales')),
+        authority: [],
+    },
+    {
+        key: 'historia-clinica',
+        path: '/historia-clinica/transplantes-progenitores',
+        component: lazy(() => import('@/views/historia/mod/transplantesProgenitores/TransplantesProgenitores')),
+        authority: [],
+    },
+    {
+        key: 'historia-clinica',
+        path: '/historia-clinica/tratamientos',
+        component: lazy(() => import('@/views/historia/mod/tratamientos/Tratamientos')),
+        authority: [],
+    },
+    {
+        key: 'historia-clinica',
+        path: '/historia-clinica/Vacunas',
+        component: lazy(() => import('@/views/historia/mod/vacunas/Vacunas')),
+        authority: [],
+    },
 
     ...othersRoute,
 ]

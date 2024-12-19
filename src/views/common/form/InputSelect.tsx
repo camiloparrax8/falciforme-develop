@@ -9,7 +9,7 @@ import { Controller } from 'react-hook-form';
  * @param {Object} validation - Reglas de validación del campo.
  * @param {Object} options - Opciones para el campo de selección en formato [{ value: 'portador', label: 'Portador' }].
  * @param {string} name - Nombre del campo en el formulario.
- * @param {string} placeholder - Placeholder para el campo de selección.
+ * @param {string} [placeholder] - Placeholder para el campo de selección.
  * @param {string} label - Etiqueta para el campo de selección.
  * @param {string} className - Clases adicionales para el componente.
  */
@@ -22,6 +22,15 @@ function InputSelect({
   placeholder,
   label,
   className,
+}: {
+  control: any;
+  errors: any;
+  validation: any;
+  options: { value: string; label: string }[];
+  name: string;
+  placeholder?: string; // Ahora es opcional
+  label?: string;
+  className?: string;
 }) {
   return (
     <div className={className}>

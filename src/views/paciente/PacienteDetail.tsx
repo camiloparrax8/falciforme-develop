@@ -197,15 +197,14 @@ export const PacienteDetail = ({ item }) => {
                             >
                                 <div className="flex flex-col h-full space-y-4">
                                     <h5>Tipo de consulta</h5>
-
                                     <ButtonNavigation
                                         title="Seguimiento"
-                                        uri={`/historia-clinica/${item.id}`}
+                                        uri={`/historia-clinica/${item.id}?tipo=seguimiento`}
                                         iconName="edit"
                                     />
                                     <ButtonNavigation
                                         title="Inicial"
-                                        uri={`/historia-clinica/${item.id}`}
+                                        uri={`/historia-clinica/${item.id}?tipo=inicial`}
                                         iconName="edit"
                                     />
                                 </div>

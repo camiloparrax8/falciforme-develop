@@ -6,6 +6,7 @@ import PacienteListSearch from './PacienteListSearch'
 import { PacienteDetail } from './PacienteDetail'
 import PacienteSkeleton from './PacienteSkeleton'
 import pacientes_json from './pacientes.json'
+import Alert from '@/components/ui/Alert'
 
 const Paciente = () => {
     const pacientes = pacientes_json
@@ -48,6 +49,7 @@ const Paciente = () => {
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
                         <h5>Gestión de pacientes</h5>
                         <ButtonNavigation
+                            variant="solid"
                             title="Añadir"
                             uri="/paciente/add"
                             iconName="add"
@@ -70,9 +72,12 @@ const Paciente = () => {
             )}
 
             {showMessage && !paciente && !isSearching && (
-                <p className="mt-4 text-gray-500">
-                    No se encontró un paciente con esa cédula.
-                </p>
+                <div className='mt-4'>
+
+                <Alert showIcon>
+                Advertencia: No se encontró el paciente con esa identificación. Verifica los datos ingresados e inténtalo nuevamente
+            </Alert>
+                </div>
             )}
 
             {showMessage && paciente && !isSearching && (

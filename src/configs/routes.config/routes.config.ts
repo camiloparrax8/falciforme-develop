@@ -22,7 +22,7 @@ export const protectedRoutes: Routes = [
     {
         key: 'usuario',
         path: 'usuario',
-        component: lazy(() => import('@/views/seguridad/seguridad')),
+        component: lazy(() => import('@/views/usuarios/Usuarios')),
         authority: [],
     },
     {

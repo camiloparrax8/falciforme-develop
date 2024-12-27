@@ -1,5 +1,5 @@
 import Card from '@/components/ui/Card'
-import { HiBadgeCheck, HiInformationCircle  } from "react-icons/hi";
+    import { HiBadgeCheck, HiInformationCircle } from 'react-icons/hi'
 
 import ButtonNavigation from '../../common/ButtonNavigation'
 
@@ -18,11 +18,16 @@ const CardHc = ({ title, uri, iconName, estado, recomendacion, className }) => {
                 </span>
             )}
         </span>
-    );
+    )
 
     const cardFooter = (
         <div className="flex justify-end">
-            <ButtonNavigation title="Gargar" uri={uri} iconName={iconName} />
+            <ButtonNavigation
+                variant={estado === 1 ? 'solid' : ''}
+                title={estado === 1 ? 'Editar' : 'Cargar'}
+                uri={uri}
+                iconName={estado === 1 ? 'edit' : iconName}
+            />
         </div>
     )
 
@@ -38,10 +43,7 @@ const CardHc = ({ title, uri, iconName, estado, recomendacion, className }) => {
                 }}
                 className="col-span-3"
             >
-                <p>
-                    {recomendacion}
-                    {estado}
-                </p>
+                <p>{recomendacion}</p>
             </Card>
         </div>
     )

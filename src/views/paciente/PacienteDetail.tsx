@@ -111,11 +111,7 @@ export const PacienteDetail = ({ item }) => {
                                     icon={hc}
                                     onClick={() => openDialogPaciente()}
                                 ></Button>
-                                <ButtonNavigation
-                                    title=""
-                                    uri="/usuario"
-                                    iconName="edit"
-                                />
+                              
                                 <Button
                                     icon={<FaFileMedical />}
                                     variant="solid"
@@ -198,11 +194,13 @@ export const PacienteDetail = ({ item }) => {
                                 <div className="flex flex-col h-full space-y-4">
                                     <h5>Tipo de consulta</h5>
                                     <ButtonNavigation
+                                        variant="solid"
                                         title="Seguimiento"
                                         uri={`/historia-clinica/${item.id}?tipo=seguimiento`}
                                         iconName="edit"
                                     />
                                     <ButtonNavigation
+                                        variant="solid"
                                         title="Inicial"
                                         uri={`/historia-clinica/${item.id}?tipo=inicial`}
                                         iconName="edit"

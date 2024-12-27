@@ -26,13 +26,13 @@ const navigationIcons = {
     treatments: <TbPills />,
     vaccines: <TbVaccine />
 };
-const ButtonNavigation = ({ title, uri, iconName }) => {
+const ButtonNavigation = ({ title, uri, iconName, variant }) => {
     const navigate = useNavigate()
 
     return (
             
         <Button
-            variant="solid"
+            variant={variant}
             icon={navigationIcons[iconName]}
             onClick={() => navigate(uri)}
         >

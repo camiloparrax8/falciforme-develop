@@ -1,7 +1,13 @@
+import { Card } from "@/components/ui"
+import FormTrasnfucionales from "./FormTrasnfucionales"
 
 function SoportesTransfucionales() {
   return (
-    <div>SoportesTransfucionales</div>
+    <div>
+            <Card>
+              <FormTrasnfucionales></FormTrasnfucionales>
+            </Card>
+        </div>
   )
 }
 

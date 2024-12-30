@@ -3,7 +3,7 @@ import Button from '@/components/ui/Button';
 import SectionTitle from '@/views/common/form/SectionTitle';
 import InputForm from '@/views/common/form/InputForm';
 import InputSelect from '@/views/common/form/InputSelect';
-import validationExamenesFisicos from 'C:/laragon/www/falciforme-develop/src/validation/validationExamenesFisicos';
+import validationExamenesFisicos from '../../.././../validation/validationExamenesFisicos';
 
 function ExamenesFisicos() {
     const {

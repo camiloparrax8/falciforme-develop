@@ -1,8 +1,13 @@
+import FormComplicacionesAgudas from './FormComplicacionesAgudas'
+
+import { Card } from '@/components/ui'
 
 function ComplicacionesAgudas() {
-  return (
-    <div>ComplicacionesAgudas</div>
-  )
+    return (
+        <Card>
+            <FormComplicacionesAgudas />
+        </Card>
+    )
 }
 
 export default ComplicacionesAgudas

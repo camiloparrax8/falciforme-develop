@@ -52,7 +52,7 @@ function ImgDiagnosticos() {
                         className="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500"
                     />
                 </div>
-                <TableCustom data={imagenes} header={headers} />
+                <TableCustom className={'mt-4'} data={imagenes} header={headers} />
             </section>
         </div>
     );

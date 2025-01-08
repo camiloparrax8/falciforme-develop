@@ -1,7 +1,14 @@
+import { Card } from "@/components/ui"
+import FormLaboratorios from "../laboratorios/FormLaboratorios"
 
 function Laboratorios() {
   return (
-    <div>Laboratorios</div>
+    <div>
+
+          <Card>
+          <FormLaboratorios></FormLaboratorios>
+          </Card>
+    </div>
   )
 }
 

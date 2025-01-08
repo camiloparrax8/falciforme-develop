@@ -6,7 +6,7 @@ import Dialog from '@/components/ui/Dialog'
 
 const { Tr, Th, Td, THead, TBody } = Table
 
-const TableCustom = ({ data, header }) => {
+const TableCustom = ({ data, header, className}) => {
     const [dialogIsOpenDelete, setIsOpenDelete] = useState(false)
     const [selectedRow, setSelectedRow] = useState(null)
 
@@ -25,7 +25,7 @@ const TableCustom = ({ data, header }) => {
     }
 
     return (
-        <div>
+        <div className = {className}>
             <Table compact>
                 <THead>
                     <Tr>

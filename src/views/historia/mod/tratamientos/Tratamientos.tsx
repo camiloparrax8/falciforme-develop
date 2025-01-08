@@ -1,6 +1,10 @@
+import { Card } from "@/components/ui";
+import FormTratamientos from "./FormTratamientos";
 
 export default function Tratamientos() {
   return (
-    <div>Tratamientos</div>
+    <Card>
+      <FormTratamientos></FormTratamientos>
+    </Card>
   )
 }

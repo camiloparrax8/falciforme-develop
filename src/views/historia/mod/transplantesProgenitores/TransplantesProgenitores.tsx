@@ -1,7 +1,11 @@
+import { Card } from "@/components/ui"
+import FormTransplanteProg from "./FormTransplanteProg"
 
 function TransplantesProgenitores() {
   return (
-    <div>TransplantesProgenitores</div>
+    <Card>
+      <FormTransplanteProg></FormTransplanteProg>
+    </Card>
   )
 }
 

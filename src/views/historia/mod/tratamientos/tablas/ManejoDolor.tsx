@@ -1,5 +1,7 @@
 import { Table } from '@/components/ui'
+import TableCustom from '@/views/common/TableCustom'
 import classNames from 'classnames'
+import { compact } from 'lodash'
 
 const { Tr, Th, Td, THead, TBody } = Table
 
@@ -17,25 +19,10 @@ function TableMD () {
         },
     ]
 
+    const header = ['medicamento', 'dias', 'dosis']
+
     return(
-        <Table className="w-full">
-            <THead>
-                <tr>
-                    <Th>Medicamento</Th>
-                    <Th>Número de días</Th>
-                    <Th>Número de dosis</Th>
-                </tr>
-            </THead>
-            <TBody>
-                {data.map((item, index) => (
-                    <Tr key={index}>
-                        <Td>{item.medicamento}</Td>
-                        <Td>{item.dias}</Td>
-                        <Td>{item.dosis}</Td>
-                    </Tr>
-                ))}
-            </TBody>
-        </Table>  // TableMD ends here
+        <TableCustom data={data} header={header} className={compact} />
     )
 }
 

@@ -1,16 +1,23 @@
 import { Table } from '@/components/ui'
+import TableCustom from '@/views/common/TableCustom'
 import classNames from 'classnames'
+import { compact } from 'lodash'
 
 const { Tr, Th, Td, THead, TBody } = Table
 
 function TableTi() {
+
+    const header = ['tipo', 'dias', 'dosis']
+
     const data = [
         {
+            id: 1,
             tipo: 'Profilaxis antibiótica con penicilina',
             dias: 31,
             dosis: 3
         },
         {
+            id: 2,
             tipo: 'Manejo del dolor',
             dias: 15,
             dosis: 15
@@ -18,24 +25,7 @@ function TableTi() {
     ]
 
     return(
-        <Table compact>
-            <THead>
-                <Tr>
-                    <Th>Tipo de tratamiento</Th>
-                    <Th>Días</Th>
-                    <Th>Dosis</Th>
-                </Tr>
-            </THead>
-            <TBody>
-                {data.map((item, index) => (
-                    <Tr key={index}>
-                        <Td>{item.tipo}</Td>
-                        <Td>{item.dias}</Td>
-                        <Td>{item.dosis}</Td>
-                    </Tr>
-                ))}
-            </TBody>
-        </Table>
+        <TableCustom data={data} header={header} className={compact}/>
     )
 }
 

@@ -1,9 +1,23 @@
 import { Button } from '@/components/ui'
 import SectionTitle from '@/views/common/form/SectionTitle'
+import { useState } from 'react'
 import { FaUpload } from 'react-icons/fa'
+import ModalCardiopulmunar from './modals/ModalCardiopulmunar'
+import ModalAbdominal from './modals/ModalAbdominal'
 
 export default function SeccionTwo() {
     const icon = <FaUpload />
+
+    // Estados para cada modal
+    const [Cardiopulmunar, setCardiopulmunar] = useState(false)
+    const [Abdomen, setAbdomen] = useState(false)
+
+    // Métodos para abrir y cerrar modales
+    const openDialog = (setDialog) => setDialog(true)
+    const closeDialog = (setDialog) => {
+        console.log('Modal closed')
+        setDialog(false)
+    }
 
     return (
         <>
@@ -15,7 +29,7 @@ export default function SeccionTwo() {
                 variant="solid"
                 icon={icon}
                 className="m-2"
-                onClick={() => openDialogPerimetoCefalico()}
+                onClick={() => openDialog(setCardiopulmunar)}
             >
                 Cardio Pulmunar
             </Button>
@@ -23,10 +37,21 @@ export default function SeccionTwo() {
                 variant="solid"
                 icon={icon}
                 className="m-2"
-                onClick={() => openDialogPerimetoCefalico()}
+                onClick={() => openDialog(setAbdomen)}
             >
                 Abdominal
             </Button>
+
+            <ModalCardiopulmunar
+                isOpen={Cardiopulmunar}
+                onClose={() => closeDialog( setCardiopulmunar)}
+                onRequestClose={() => closeDialog( setCardiopulmunar)}
+            ></ModalCardiopulmunar>
+            <ModalAbdominal
+                isOpen={Abdomen}
+                onClose={() => closeDialog(setAbdomen)}
+                onRequestClose={() => closeDialog(setAbdomen)}
+            ></ModalAbdominal>
         </>
     )
 }

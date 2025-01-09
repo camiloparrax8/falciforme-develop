@@ -1,9 +1,5 @@
-import { Table } from '@/components/ui'
 import TableCustom from '@/views/common/TableCustom'
-import classNames from 'classnames'
-import { compact } from 'lodash'
 
-const { Tr, Th, Td, THead, TBody } = Table
 
 function TableTi() {
 
@@ -25,7 +21,7 @@ function TableTi() {
     ]
 
     return(
-        <TableCustom data={data} header={header} className={compact}/>
+        <TableCustom data={data} header={header} className={'compact'}/>
     )
 }
 

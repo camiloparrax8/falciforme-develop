@@ -185,7 +185,7 @@ export const PacienteDetail = ({ item }) => {
                                     </Section>
                                 </div>
                             </Dialog>
-                            {/* Dialog ionformacion del paciente */}
+                            {/* Dialog tipo consulta */}
                             <Dialog
                                 isOpen={dialogIsOpenHC}
                                 onClose={onDialogCloseHC}

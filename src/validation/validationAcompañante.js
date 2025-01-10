@@ -69,6 +69,36 @@ const validationAcompañante = {
             message: 'Formato de correo inválido',
         },
     },
+    pesoAlNacer: {
+        required: 'El peso al nacer es obligatorio',
+        pattern: {
+            value: /^[0-9]+(\.[0-9]{1,2})?$/, // Permite números con hasta dos decimales
+            message: 'Debe ser un número válido',
+        },
+        min: {
+            value: 0.5, // 500 gramos es aproximadamente 0.5 kg
+            message: 'El peso al nacer debe ser mayor o igual a 0.5 kg',
+        },
+        max: {
+            value: 5, // 5000 gramos es 5 kg
+            message: 'El peso al nacer debe ser menor o igual a 5 kg',
+        },
+    },
+    tallaAlNacer: {
+        required: 'La talla al nacer es obligatoria',
+        pattern: {
+            value: /^[0-9]+(\.[0-9]{1,2})?$/, // Permite números con hasta dos decimales
+            message: 'Debe ser un número válido',
+        },
+        min: {
+            value: 20,
+            message: 'La talla al nacer debe ser mayor o igual a 20 cm',
+        },
+        max: {
+            value: 60,
+            message: 'La talla al nacer debe ser menor o igual a 60 cm',
+        },
+    },
 };
 
 export default validationAcompañante;

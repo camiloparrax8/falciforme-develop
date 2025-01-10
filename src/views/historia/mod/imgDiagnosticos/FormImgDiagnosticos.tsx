@@ -2,10 +2,9 @@ import { useForm } from 'react-hook-form';
 import Button from '@/components/ui/Button';
 import SectionTitle from '@/views/common/form/SectionTitle';
 import InputForm from '@/views/common/form/InputForm';
-import SelectMultiple from '@/views/common/form/SelectMultiple';
 import InputDatePickerForm from '@/views/common/form/InputDate';
 import validationImgDiagnosticos from '@/validation/validationImgDiagnosticos';
-
+import InputSelect from '@/views/common/form/InputSelect';
 
 function FormImgDiagnosticos({ onSubmit }) {
     const {
@@ -14,9 +13,9 @@ function FormImgDiagnosticos({ onSubmit }) {
         formState: { errors },
     } = useForm({
         defaultValues: {
-            imagenDiagnostica: [],
+            imagenDiagnostica: '',
             fecha: '',
-            tipoResultado: [],
+            tipoResultado: '',
             resultado: '',
         },
     });
@@ -34,22 +33,26 @@ function FormImgDiagnosticos({ onSubmit }) {
         { value: 'pendiente', label: 'Pendiente de Evaluación' },
     ];
 
+    const handleFormSubmit = (data) => {
+        console.log('Datos enviados:', data); // Mostrar datos enviados
+        onSubmit(data);
+    };
+
     return (
         <form
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full"
-            onSubmit={handleSubmit(onSubmit)}
+            onSubmit={handleSubmit(handleFormSubmit)}
         >
             {/* Sección Tipo de Imagen Diagnóstica */}
             <SectionTitle
                 text="Tipo de Imagen Diagnóstica"
                 className="col-span-1 md:col-span-2 lg:col-span-4"
             />
-            <SelectMultiple
+            <InputSelect
                 control={control}
                 name="imagenDiagnostica"
                 validation={validationImgDiagnosticos.imagenDiagnostica}
                 errors={errors}
-                defaultValue={[]}
                 label="Imagen Diagnóstica"
                 options={opcionesImagenDiagnostica}
                 placeholder="Imágenes diagnósticas"
@@ -64,12 +67,11 @@ function FormImgDiagnosticos({ onSubmit }) {
                 placeholder="Seleccione la fecha"
                 className="col-span-1"
             />
-            <SelectMultiple
+            <InputSelect
                 control={control}
                 name="tipoResultado"
                 validation={validationImgDiagnosticos.tipoResultado}
                 errors={errors}
-                defaultValue={[]}
                 label="Tipo de Resultado"
                 options={opcionesTipoResultado}
                 placeholder="Tipos de resultado"

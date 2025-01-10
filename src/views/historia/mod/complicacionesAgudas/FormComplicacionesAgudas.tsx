@@ -19,6 +19,7 @@ import {
     huesoafectadosOptions, 
     tratamienoInfeccionOptions,
 } from './dataSelect';
+import InputSelect from '@/views/common/form/InputSelect'
 
 function FormComplicacionesAgudas() {
     const {
@@ -211,14 +212,13 @@ function FormComplicacionesAgudas() {
                     text="Anemia Aguda"
                     className="col-span-1 md:col-span-6"
                 />
-                <SelectMultiple
+                <InputSelect
                     control={control}
                     name="anemiaCrisisAplastica"
                     label="Crisis Aplástica Infecciosa"
                     options={aplasticaOptions}
                     validation={validationComplicacionesAgudas.anemiaCrisisAplastica}
                     errors={errors}
-                    defaultValue={[]}
                     placeholder="Manejo"
                     className="col-span-1"
                 />

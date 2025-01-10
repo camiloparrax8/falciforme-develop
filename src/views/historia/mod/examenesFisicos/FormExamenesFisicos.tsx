@@ -4,7 +4,7 @@ import InputForm from '@/views/common/form/InputForm';
 import InputSelect from '@/views/common/form/InputSelect';
 import SectionTitle from '@/views/common/form/SectionTitle';
 import { useForm } from 'react-hook-form';
-import validationExamenesFisicos from '../../.././../validation/validationExamenesFisicos';
+import validationExamenes from '../../.././../validation/validationExamenesFisicos';
 import defaultValues from './defaultValues';
 
 function FormExamenesFisicos() {
@@ -39,7 +39,7 @@ function FormExamenesFisicos() {
         <InputForm
             control={control}
             name="frecuenciaCardiaca"
-            rules={validationExamenesFisicos.frecuenciaCardiaca }
+            rules={validationExamenes.frecuenciaCardiaca }
             errors={errors}
             label="Frecuencia Cardiaca (lpm)"
             inputPlaceholder="Ingrese la frecuencia cardiaca"
@@ -49,7 +49,7 @@ function FormExamenesFisicos() {
         <InputForm
             control={control}
             name="frecuenciaRespiratoria"
-            rules={validationExamenesFisicos.frecuenciaRespiratoria}
+            rules={validationExamenes.frecuenciaRespiratoria}
             errors={errors}
             label="Frecuencia Respiratoria (rpm)"
             inputPlaceholder="Ingrese la frecuencia respiratoria"
@@ -59,7 +59,7 @@ function FormExamenesFisicos() {
         <InputForm
             control={control}
             name="saturacionOxigeno"
-            rules={validationExamenesFisicos.saturacionOxigeno}
+            rules={validationExamenes.saturacionOxigeno}
             errors={errors}
             label="Saturación de Oxígeno (%)"
             inputPlaceholder="Ingrese la saturación de oxígeno"
@@ -69,7 +69,7 @@ function FormExamenesFisicos() {
         <InputForm
             control={control}
             name="tensionArterial"
-            rules={validationExamenesFisicos.tensionArterial}
+            rules={validationExamenes.tensionArterial}
             errors={errors}
             label="Tensión Arterial (mmHg)"
             inputPlaceholder="Ingrese la tensión arterial"
@@ -85,7 +85,7 @@ function FormExamenesFisicos() {
         <InputForm
             control={control}
             name="peso"
-            rules={validationExamenesFisicos.peso}
+            rules={validationExamenes.peso}
             errors={errors}
             label="Peso (kg)"
             inputPlaceholder="Ingrese el peso"
@@ -95,7 +95,7 @@ function FormExamenesFisicos() {
         <InputForm
             control={control}
             name="talla"
-            rules={validationExamenesFisicos.talla}
+            rules={validationExamenes.talla}
             errors={errors}
             label="Talla (cm)"
             inputPlaceholder="Ingrese la talla"
@@ -105,7 +105,7 @@ function FormExamenesFisicos() {
         <InputForm
             control={control}
             name="percentil"
-            rules={validationExamenesFisicos.percentil}
+            rules={validationExamenes.percentil}
             errors={errors}
             label="Percentil"
             inputPlaceholder="Ingrese el percentil"
@@ -115,7 +115,7 @@ function FormExamenesFisicos() {
         <InputForm
             control={control}
             name="imc"
-            rules={validationExamenesFisicos.imc}
+            rules={validationExamenes.imc}
             errors={errors}
             label="Índice de Masa Corporal (IMC)"
             inputPlaceholder="Ingrese el IMC"
@@ -131,7 +131,7 @@ function FormExamenesFisicos() {
        <InputSelect
             control={control}
             name="deficitZinc"
-            validation={validationExamenesFisicos.deficitZinc}
+            validation={validationExamenes.deficitZinc}
             errors={errors}
             label="Déficit de Zinc"
             options={options}
@@ -141,7 +141,7 @@ function FormExamenesFisicos() {
        <InputSelect
             control={control}
             name="deficitAcidoFolico"
-            validation={validationExamenesFisicos.deficitAcidoFolico}
+            validation={validationExamenes.deficitAcidoFolico}
             errors={errors}
             label="Déficit de Ácido Fólico"
             options={options}
@@ -150,7 +150,7 @@ function FormExamenesFisicos() {
        <InputSelect
             control={control}
             name="deficitVitaminaD"
-            validation={validationExamenesFisicos.deficitVitaminaD}
+            validation={validationExamenes.deficitVitaminaD}
             errors={errors}
             label="Déficit de Vitamina D"
             options={options}
@@ -160,7 +160,7 @@ function FormExamenesFisicos() {
         <InputSelect
             control={control}
             name="desnutricion"
-            validation={validationExamenesFisicos.desnutricion}
+            validation={validationExamenes.desnutricion}
             errors={errors}
             label="Desnutrición"
             options={options}
@@ -169,7 +169,7 @@ function FormExamenesFisicos() {
         <InputSelect
             control={control}
             name="obesidad"
-            validation={validationExamenesFisicos.obesidad}
+            validation={validationExamenes.obesidad}
             errors={errors}
             label="Obesidad"
             options={options}

@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui"
 import ImgNino from "../examenesFisicos/body/ImgNino"
-import SeccionOne from "./body/one/seccionOne"
+import SeccionOne from "./body/one/SeccionOne"
 import SeccionTwo from "./body/two/SeccionTwo"
 import SeccionTres from "./body/three/SeccionThree"
 

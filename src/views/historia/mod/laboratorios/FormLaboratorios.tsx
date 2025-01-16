@@ -45,7 +45,7 @@ function FormLaboratorios() {
             <Dialog 
             
                 width={1200}
-                height={600}
+                height={550}
                 isOpen={dialogIsOpen} 
                 onClose={closeDialog} 
                 onRequestClose={closeDialog}>

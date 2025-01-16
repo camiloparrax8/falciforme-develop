@@ -9,10 +9,6 @@ export const defaultValues = {
     infeccionesTratamiento: '',
     infeccionesDias: '',
     anemiaCrisisAplastica: '',
-    ingresoTipo: '',
-    ingresoFecha: '',
-    ingresoDuracion: '',
-    ingresoMotivo: '',
 }
 export const defaultValuesModal = {
     ingresoTipo: '',

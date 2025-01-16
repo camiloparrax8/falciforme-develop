@@ -1,4 +1,3 @@
-import { useState, MouseEvent } from 'react';
 import { useForm } from 'react-hook-form';
 import SectionTitle from '@/views/common/form/SectionTitle';
 import InputForm from '@/views/common/form/InputForm';
@@ -14,13 +13,16 @@ function FormModalLaboratorios({ eventoForm }: { eventoForm: (data: any) => void
     } = useForm({
         defaultValues: defaultValuesLaboratorios,
     });
-
+    const onSubmit = (data: any) => {
+        console.log('Datos enviados:', data); // Agregado para imprimir los datos enviados
+        eventoForm(data);
+    };
     
 
     return (
         <div>
                 <form
-                    onSubmit={handleSubmit(eventoForm)}
+                    onSubmit={handleSubmit(onSubmit)}
                     className="grid grid-cols-1 md:grid-cols-6 gap-2 "
                 >
                     <SectionTitle

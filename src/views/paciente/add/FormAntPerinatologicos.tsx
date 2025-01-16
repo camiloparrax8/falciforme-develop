@@ -34,7 +34,7 @@ function FormAntPerinatologicos() {
             <InputForm
                 control={control}
                 name="peso"
-                rules={validationAcompañante.fullName}
+                rules={validationAcompañante.pesoAlNacer}
                 errors={errors}
                 label="Peso al nacer"
                 inputPlaceholder="Peso"
@@ -45,7 +45,7 @@ function FormAntPerinatologicos() {
             <InputForm
                 control={control}
                 name="identiftallaication"
-                rules={validationAcompañante.identification}
+                rules={validationAcompañante.tallaAlNacer}
                 errors={errors}
                 label="Talla al nacer"
                 inputPlaceholder="Talla CM"

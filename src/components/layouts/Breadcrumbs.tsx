@@ -38,7 +38,7 @@ const Breadcrumb = () => {
                     const pathTo = `/${pathnames.slice(0, index + 1).join("/")}`;
 
                     // Si es dinámico, muestra el ID directamente
-                    const displayName = breadcrumbMap[value] || (isNaN(Number(value)) ? value : `Registro`);
+                    const displayName = breadcrumbMap[value] || (isNaN(Number(value)) ? value : `Modulos`);
 
                     return (
                         <li key={index}>

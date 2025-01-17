@@ -30,20 +30,19 @@ function SelectDepartment({ control, errors, validation, onDepartmentChange, cla
         { id: 19, value: 'quindio', label: 'Quindío' },
         { id: 20, value: 'risaralda', label: 'Risaralda' },
         { id: 21, value: 'san_andres', label: 'San Andrés, Providencia y Santa Catalina' },
-        { id: 21, value: 'santander', label: 'Santander' },
-        { id: 22, value: 'sucre', label: 'Sucre' },
-        { id: 23, value: 'tolima', label: 'Tolima' },
-        { id: 24, value: 'valle_del_cauca', label: 'Valle del Cauca' },
+        { id: 22, value: 'santander', label: 'Santander' },
+        { id: 23, value: 'sucre', label: 'Sucre' },
+        { id: 24, value: 'tolima', label: 'Tolima' },
+        { id: 25, value: 'valle_del_cauca', label: 'Valle del Cauca' },
         { id: 32, value: 'vaupes', label: 'Vaupés' },
-        { id: 33, value: 'vichada', label: 'Vichada' }
+        { id: 33, value: 'vichada', label: 'Vichada' },
     ];
-    
 
     return (
         <div className={className}>
-            <Label htmlFor="department" text="Departamento" />
+            <Label htmlFor="departamento" text="Departamento" />
             <Controller
-                name="department"
+                name="departamento"
                 control={control}
                 rules={validation}
                 render={({ field }) => (
@@ -61,12 +60,12 @@ function SelectDepartment({ control, errors, validation, onDepartmentChange, cla
                     />
                 )}
             />
-            {errors?.department && (
+            {errors?.departamento && (
                 <p className="text-red-500 text-sm mt-1">
-                    {errors.department.message}
+                    {errors.departamento.message}
                 </p>
             )}
-       </div>
+        </div>
     );
 }
 

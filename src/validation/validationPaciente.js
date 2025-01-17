@@ -1,6 +1,6 @@
 const validationPaciente = {
-    fullName: {
-        required: 'El nombre completo es obligatorio',
+    nombre: {
+        required: 'El nombre es obligatorio',
         minLength: {
             value: 3,
             message: 'Debe tener al menos 3 caracteres',
@@ -14,10 +14,26 @@ const validationPaciente = {
             message: 'Solo se permiten letras del alfabeto español',
         },
     },
-    documentType: {
+
+    apellido: {
+        required: 'El apellido es obligatorio',
+        minLength: {
+            value: 3,
+            message: 'Debe tener al menos 3 caracteres',
+        },
+        maxLength: {
+            value: 50,
+            message: 'No puede exceder los 50 caracteres',
+        },
+        pattern: {
+            value: /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
+            message: 'Solo se permiten letras del alfabeto español',
+        },
+    },
+    tipo_identificacion: {
         required: 'Selecciona un tipo de documento',
     },
-    identification: {
+    identificacion: {
         required: 'La identificación es obligatoria',
         pattern: {
             value: /^[0-9]+$/,
@@ -32,13 +48,13 @@ const validationPaciente = {
             message: 'No puede exceder los 11 caracteres',
         },
     },
-    department: {
+    departamento: {
         required: 'Selecciona un departamento',
     },
-    city: {
+    municipio: {
         required: 'Selecciona un municipio',
     },
-    address: {
+    direccion: {
         required: 'La dirección es obligatoria',
         minLength: {
             value: 5,
@@ -49,7 +65,7 @@ const validationPaciente = {
             message: 'No puede exceder los 100 caracteres',
         },
     },
-    phone: {
+    celular: {
         required: 'El número de celular es obligatorio',
         pattern: {
             value: /^[0-9]+$/,
@@ -64,14 +80,14 @@ const validationPaciente = {
             message: 'No puede exceder los 15 caracteres',
         },
     },
-    email: {
+    correo: {
         required: 'El correo electrónico es obligatorio',
         pattern: {
             value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
             message: 'Formato de correo inválido',
         },
     },
-    birthDate: {
+    fecha_nacimiento: {
         required: 'La fecha de nacimiento es obligatoria',
         validate: {
             notFutureDate: (value) =>
@@ -80,7 +96,7 @@ const validationPaciente = {
         },
     },
 
-    residency: {
+    residente: {
         required: 'El lugar de residencia es obligatorio',
         minLength: {
             value: 3,
@@ -92,7 +108,7 @@ const validationPaciente = {
         },
     },
 
-    provenance: {
+    procedente: {
         required: 'El lugar de procedencia es obligatorio',
         minLength: {
             value: 3,
@@ -104,7 +120,7 @@ const validationPaciente = {
         },
     },
 
-    stratum: {
+    estrato: {
         required: 'El estrato es obligatorio',
         pattern: {
             value: /^[1-6]$/,
@@ -112,7 +128,7 @@ const validationPaciente = {
         },
     },
 
-    occupation: {
+    ocupacion: {
         required: 'La ocupación es obligatoria',
         minLength: {
             value: 3,
@@ -124,7 +140,7 @@ const validationPaciente = {
         },
     },
 
-    regime: {
+    regimen: {
         required: 'El régimen es obligatorio',
         minLength: {
             value: 3,
@@ -134,6 +150,18 @@ const validationPaciente = {
             value: 50,
             message: 'No puede exceder los 50 caracteres',
         },
+    },
+    sexo: {
+        required: 'El sexo es obligatorio',
+        message: 'Selecciona una opción válida para el sexo',
+    },
+    identidad_genero: {
+        required: 'La identidad de género es obligatoria',
+        message: 'Selecciona una opción válida para la identidad de género',
+    },
+    identidad_sexual: {
+        required: 'La identidad sexual es obligatoria',
+        message: 'Selecciona una opción válida para la identidad sexual',
     },
 }
 

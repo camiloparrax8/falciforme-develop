@@ -8,7 +8,13 @@ import SelectDocumentType from '@/views/common/form/SelectDocumentType'
 import SectionTitle from '@/views/common/form/SectionTitle'
 import InputForm from '@/views/common/form/InputForm'
 import InputDatePickerForm from '@/views/common/form/InputDate'
-
+import InputSelect from '@/views/common/form/InputSelect'
+import { optionsEstrato, 
+         optionsRegimen, 
+         optionsSexo, 
+         optionsIdentidadGenero, 
+         optionsIdentidadSexual 
+    }from './dataSelectPaciente';
 function PatientForm() {
     const {
         control,
@@ -16,25 +22,27 @@ function PatientForm() {
         formState: { errors },
     } = useForm({
         defaultValues: {
-            fullName: '',
-            documentType: '',
-            identification: '',
-            birthdate: '',
-            gender: '',
-            sexualIdentity: '',
-            department: '',
-            city: '',
-            address: '',
-            resident: '',
-            source: '',
-            phone: '',
-            email: '',
-            socialStratum: '',
-            occupation: '',
-            regime: '',
+            nombre: '',
+            apellido: '',
+            tipo_identificacion: '',
+            identificacion: '',
+            fecha_nacimiento: '',
+            sexo: '',
+            identidad_genero: '',
+            identidad_sexual: '',
+            estrato: '',
+            ocupacion: '',
+            residente: '',
+            direccion: '',
+            procedente: '',
+            regimen: '',
+            celular: '',
+            correo: '',
+            municipio: '',
+            departamento: '',
         },
     })
-
+    
     const [selectedDepartment, setSelectedDepartment] = useState(null)
 
     const onSubmit = (data) => {
@@ -47,10 +55,22 @@ function PatientForm() {
       <SectionTitle text="Información Básica" className="col-span-1 md:col-span-2 lg:col-span-4" />
       <InputForm
           control={control}
-          name="fullName"
-          rules={validationPaciente.fullName}
+          name="nombre"
+          rules={validationPaciente.nombre}
           errors={errors}
-          label="Nombre completo"
+          label="Nombre"
+          inputPlaceholder="Nombre del paciente"
+          className="col-span-1"
+          value=""
+
+      />
+
+      <InputForm
+          control={control}
+          name="apellido"
+          rules={validationPaciente.apellido}
+          errors={errors}
+          label="Apellido"
           inputPlaceholder="Nombre del paciente"
           className="col-span-1"
           value=""
@@ -58,15 +78,15 @@ function PatientForm() {
       />
       <SelectDocumentType
           control={control}
-          name="documentType"
-          rules={validationPaciente.documentType}
+          name="tipo_identificacion"
+          rules={validationPaciente.tipo_identificacion}
           errors={errors}
           className="col-span-1"
       />
       <InputForm
           control={control}
-          name="identification"
-          rules={validationPaciente.identification}
+          name="identificacion"
+          rules={validationPaciente.identificacion}
           errors={errors}
           label="Identificación"
           inputPlaceholder="Número de identificación"
@@ -77,13 +97,48 @@ function PatientForm() {
       />
       <InputDatePickerForm
           control={control}
-          name="birthDate"
-          rules={validationPaciente.birthDate}
+          name="fecha_nacimiento"
+          rules={validationPaciente.fecha_nacimiento}
           errors={errors}
           label="Fecha de Nacimiento"
           placeholder="Seleccione una fecha"
           className="col-span-1"
 
+      />
+      <InputSelect
+          control={control}
+          name="sexo"
+          options={optionsSexo}
+          validation={validationPaciente.sexo}
+          errors={errors}
+          label="Sexo"
+          placeholder="Sexo"
+          className="col-span-1"
+          
+      />
+
+      <InputSelect
+          control={control}
+          name="identidad_genero"
+          options={optionsIdentidadGenero}
+          validation={validationPaciente.identidad_genero}
+          errors={errors}
+          label="Identidad genero"
+          placeholder="Identidad genero"
+          className="col-span-1"
+          
+      />
+
+      <InputSelect
+          control={control}
+          name="identidad_sexual"
+          options={ optionsIdentidadSexual}
+          validation={validationPaciente.identidad_sexual}
+          errors={errors}
+          label="Identidad Sexual"
+          placeholder="Identidad Sexual"
+          className="col-span-1"
+          
       />
   
       {/* Sección Ubicación */}
@@ -91,7 +146,7 @@ function PatientForm() {
       <SelectDepartment
           control={control}
           errors={errors}
-          validation={validationPaciente.department}
+          validation={validationPaciente.departamento}
           onDepartmentChange={setSelectedDepartment}
           className="col-span-1"
       />
@@ -99,13 +154,13 @@ function PatientForm() {
           control={control}
           selectedDepartment={selectedDepartment}
           errors={errors}
-          validation={validationPaciente.city}
+          validation={validationPaciente.municipio}
           className="col-span-1"
       />
       <InputForm
           control={control}
-          name="address"
-          rules={validationPaciente.address}
+          name="direccion"
+          rules={validationPaciente.direccion}
           errors={errors}
           label="Dirección"
           inputPlaceholder="Dirección completa"
@@ -116,8 +171,8 @@ function PatientForm() {
       />
       <InputForm
           control={control}
-          name="resident"
-          rules={validationPaciente.residency}
+          name="residente"
+          rules={validationPaciente.residente}
           errors={errors}
           label="Residente"
           inputPlaceholder="Ejemplo: Lore impun"
@@ -127,8 +182,8 @@ function PatientForm() {
       />
       <InputForm
           control={control}
-          name="source"
-          rules={validationPaciente.provenance}
+          name="procedente"
+          rules={validationPaciente.procedente}
           errors={errors}
           label="Procedente"
           inputPlaceholder="Ejemplo: Lore impun"
@@ -142,8 +197,8 @@ function PatientForm() {
       <SectionTitle text="Contacto" className="col-span-1 md:col-span-2 lg:col-span-4" />
       <InputForm
           control={control}
-          name="phone"
-          rules={validationPaciente.phone}
+          name="celular"
+          rules={validationPaciente.celular}
           errors={errors}
           label="Celular"
           inputPlaceholder="Número de celular"
@@ -154,8 +209,8 @@ function PatientForm() {
       />
       <InputForm
           control={control}
-          name="email"
-          rules={validationPaciente.email}
+          name="correo"
+          rules={validationPaciente.correo}
           errors={errors}
           label="Correo Electrónico"
           inputPlaceholder="Ingrese su correo electrónico"
@@ -167,21 +222,21 @@ function PatientForm() {
   
       {/* Sección Socioeconómica */}
       <SectionTitle text="Socioeconómico" className="col-span-1 md:col-span-2 lg:col-span-4" />
-      <InputForm
+      <InputSelect
           control={control}
-          name="socialStratum"
-          rules={validationPaciente.stratum}
+          name="estrato"
+          options={optionsEstrato}
+          validation={validationPaciente.estrato}
           errors={errors}
           label="Estrato"
-          inputPlaceholder="Ejemplo: 1"
+          placeholder="Ejemplo: 1"
           className="col-span-1"
-          value=""
-
+          
       />
       <InputForm
           control={control}
-          name="occupation"
-          rules={validationPaciente.occupation}
+          name="ocupacion"
+          rules={validationPaciente.ocupacion}
           errors={errors}
           label="Ocupación"
           inputPlaceholder="Ejemplo: Estudiante"
@@ -191,15 +246,16 @@ function PatientForm() {
 
 
       />
-      <InputForm
+      <InputSelect
           control={control}
-          name="regime"
-          rules={validationPaciente.regime}
+          name="regimen"
+          options={optionsRegimen}  
+          validation={validationPaciente.regimen}
           errors={errors}
           label="Régimen"
-          inputPlaceholder="Ejemplo: Contributivo"
+          placeholder="Ejemplo: Contributivo"
           className="col-span-1"
-          value=""
+          
 
 
       />

@@ -21,9 +21,8 @@ function FormRedPrimaria() {
             birthdate: '',
             gender: '',
             sexualIdentity: '',
-            department: '',
+            departamento: '',
             city: '',
-            address: '',
             resident: '',
             source: '',
             phone: '',
@@ -72,7 +71,7 @@ function FormRedPrimaria() {
             <SelectDepartment
                 control={control}
                 errors={errors}
-                validation={validationRedPrimaria.department}
+                validation={validationRedPrimaria.departamento}
                 onDepartmentChange={setSelectedDepartment}
                 className="col-span-2"
             />

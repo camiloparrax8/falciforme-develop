@@ -2366,9 +2366,9 @@ function SelectCity({
 
     return (
         <div className={className}>
-            <Label htmlFor="city" text="Municipio" />
+            <Label htmlFor="municipio" text="Municipio" />
             <Controller
-                name="city"
+                name="municipio"
                 control={control}
                 rules={validation}
                 render={({ field }) => (

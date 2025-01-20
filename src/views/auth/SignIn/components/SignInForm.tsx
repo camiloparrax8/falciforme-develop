@@ -9,31 +9,18 @@ import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import type { ZodType } from 'zod'
-import type { CommonProps } from '@/@types/common'
-import type { ReactNode } from 'react'
 
-interface SignInFormProps extends CommonProps {
-    disableSubmit?: boolean
-    passwordHint?: string | ReactNode
-    setMessage?: (message: string) => void
-}
-
-type SignInFormSchema = {
-    email: string
-    password: string
-}
-
-const validationSchema: ZodType<SignInFormSchema> = z.object({
+const validationSchema: ZodType = z.object({
     email: z
-        .string({ required_error: 'Please enter your email' })
-        .min(1, { message: 'Please enter your email' }),
+        .string({ required_error: 'Por favor, ingresa tu correo electrónico' })
+        .min(1, { message: 'Por favor, ingresa tu correo electrónico' }),
     password: z
-        .string({ required_error: 'Please enter your password' })
-        .min(1, { message: 'Please enter your password' }),
+        .string({ required_error: 'Por favor, ingresa tu contraseña' })
+        .min(1, { message: 'Por favor, ingresa tu contraseña' }),
 })
 
-const SignInForm = (props: SignInFormProps) => {
-    const [isSubmitting, setSubmitting] = useState<boolean>(false)
+const SignInForm = (props) => {
+    const [isSubmitting, setSubmitting] = useState(false)
 
     const { disableSubmit = false, className, setMessage, passwordHint } = props
 
@@ -41,7 +28,7 @@ const SignInForm = (props: SignInFormProps) => {
         handleSubmit,
         formState: { errors },
         control,
-    } = useForm<SignInFormSchema>({
+    } = useForm({
         defaultValues: {
             email: 'admin-01@ecme.com',
             password: '123Qwe',
@@ -51,7 +38,7 @@ const SignInForm = (props: SignInFormProps) => {
 
     const { signIn } = useAuth()
 
-    const onSignIn = async (values: SignInFormSchema) => {
+    const onSignIn = async (values) => {
         const { email, password } = values
 
         if (!disableSubmit) {
@@ -71,7 +58,7 @@ const SignInForm = (props: SignInFormProps) => {
         <div className={className}>
             <Form onSubmit={handleSubmit(onSignIn)}>
                 <FormItem
-                    label="Email"
+                    label="Usuario"
                     invalid={Boolean(errors.email)}
                     errorMessage={errors.email?.message}
                 >
@@ -81,7 +68,7 @@ const SignInForm = (props: SignInFormProps) => {
                         render={({ field }) => (
                             <Input
                                 type="email"
-                                placeholder="Email"
+                                placeholder="Correo electrónico"
                                 autoComplete="off"
                                 {...field}
                             />
@@ -89,7 +76,7 @@ const SignInForm = (props: SignInFormProps) => {
                     />
                 </FormItem>
                 <FormItem
-                    label="Password"
+                    label="Contraseña"
                     invalid={Boolean(errors.password)}
                     errorMessage={errors.password?.message}
                     className={classNames(
@@ -104,7 +91,7 @@ const SignInForm = (props: SignInFormProps) => {
                         render={({ field }) => (
                             <PasswordInput
                                 type="text"
-                                placeholder="Password"
+                                placeholder="Contraseña"
                                 autoComplete="off"
                                 {...field}
                             />
@@ -118,7 +105,7 @@ const SignInForm = (props: SignInFormProps) => {
                     variant="solid"
                     type="submit"
                 >
-                    {isSubmitting ? 'Signing in...' : 'Sign In'}
+                    {isSubmitting ? 'Iniciando...' : 'Iniciar'}
                 </Button>
             </Form>
         </div>

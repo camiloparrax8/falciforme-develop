@@ -10,9 +10,14 @@ type Session = {
 }
 
 type AuthState = {
-    session: Session
-    user: User
-}
+    session: {
+        signedIn: boolean; // Indica si el usuario está autenticado
+    };
+    user: {
+        id?: number; // ID del usuario
+        nombres?: string; // Nombres del usuario
+    };
+};
 
 type AuthAction = {
     setSessionSignedIn: (payload: boolean) => void
@@ -35,13 +40,8 @@ const initialState: AuthState = {
     session: {
         signedIn: false,
     },
-    user: {
-        avatar: '',
-        userName: '',
-        email: '',
-        authority: [],
-    },
-}
+    user: {}, // Estado inicial vacío
+};
 
 export const useSessionUser = create<AuthState & AuthAction>()(
     persist(
@@ -57,8 +57,8 @@ export const useSessionUser = create<AuthState & AuthAction>()(
             setUser: (payload) =>
                 set((state) => ({
                     user: {
-                        ...state.user,
-                        ...payload,
+                        ...state.user, // Mantiene las propiedades existentes
+                        ...payload,    // Agrega o sobrescribe las nuevas propiedades
                     },
                 })),
         }),

@@ -1,159 +1,87 @@
-import { useRef, useImperativeHandle, forwardRef } from 'react'
-import AuthContext from './AuthContext'
-import appConfig from '@/configs/app.config'
-import { useSessionUser, useToken } from '@/store/authStore'
-import { apiSignIn, apiSignOut, apiSignUp } from '@/services/AuthService'
-import { REDIRECT_URL_KEY } from '@/constants/app.constant'
-import { useNavigate } from 'react-router-dom'
-import type {
-    SignInCredential,
-    SignUpCredential,
-    AuthResult,
-    OauthSignInCallbackPayload,
-    User,
-    Token,
-} from '@/@types/auth'
-import type { ReactNode } from 'react'
-import type { NavigateFunction } from 'react-router-dom'
+import React, { useRef, useImperativeHandle, forwardRef } from "react";
+import AuthContext from "./AuthContext";
+import { serviceLogin } from "@/views/api/serviceLogin";
+import { useSessionUser, useToken } from "@/store/authStore";
+import { useNavigate } from "react-router-dom";
+import { AuthResult, SignInCredential } from "@/@types/auth";
 
-type AuthProviderProps = { children: ReactNode }
+function AuthProvider({ children }: { children: React.ReactNode }) {
+    const navigate = useNavigate();
 
-export type IsolatedNavigatorRef = {
-    navigate: NavigateFunction
-}
+    const setUser = useSessionUser((state) => state.setUser);
+    const setSessionSignedIn = useSessionUser((state) => state.setSessionSignedIn);
+    const { setToken } = useToken();
 
-const IsolatedNavigator = forwardRef<IsolatedNavigatorRef>((_, ref) => {
-    const navigate = useNavigate()
+    const authenticated = Boolean(useToken().token);
 
-    useImperativeHandle(ref, () => {
-        return {
-            navigate,
-        }
-    }, [navigate])
-
-    return <></>
-})
-
-function AuthProvider({ children }: AuthProviderProps) {
-    const signedIn = useSessionUser((state) => state.session.signedIn)
-    const user = useSessionUser((state) => state.user)
-    const setUser = useSessionUser((state) => state.setUser)
-    const setSessionSignedIn = useSessionUser(
-        (state) => state.setSessionSignedIn,
-    )
-    const { token, setToken } = useToken()
-
-    const authenticated = Boolean(token && signedIn)
-
-    const navigatorRef = useRef<IsolatedNavigatorRef>(null)
-
-    const redirect = () => {
-        const search = window.location.search
-        const params = new URLSearchParams(search)
-        const redirectUrl = params.get(REDIRECT_URL_KEY)
-
-        navigatorRef.current?.navigate(
-            redirectUrl ? redirectUrl : appConfig.authenticatedEntryPath,
-        )
-    }
-
-    const handleSignIn = (tokens: Token, user?: User) => {
-        setToken(tokens.accessToken)
-        setSessionSignedIn(true)
-
-        if (user) {
-            setUser(user)
-        }
-    }
-
-    const handleSignOut = () => {
-        setToken('')
-        setUser({})
-        setSessionSignedIn(false)
-    }
-
-    const signIn = async (values: SignInCredential): AuthResult => {
+    const signIn = async (values: SignInCredential): Promise<AuthResult> => {
         try {
-            const resp = await apiSignIn(values)
+            // Llama a la API de login
+            const resp = await serviceLogin(values);
+    
             if (resp) {
-                handleSignIn({ accessToken: resp.token }, resp.user)
-                redirect()
+                // Guarda el token en el estado
+                setToken(resp.token);
+    
+                // Marca la sesión como activa
+                setSessionSignedIn(true);
+    
+                // Guarda los datos del usuario (id y nombres) en el estado
+                setUser({
+                    id: resp.id,
+                    nombres: resp.nombres,
+                });
+    
+                // Redirige al usuario a la ruta predeterminada
+                navigate("/home");
+
+                console.log(resp);
+    
                 return {
                     status: 'success',
                     message: '',
-                }
+                };
             }
+    
             return {
                 status: 'failed',
                 message: 'Unable to sign in',
-            }
-            // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+            };
         } catch (errors: any) {
+            // Manejo de errores en caso de que la API falle
             return {
                 status: 'failed',
-                message: errors?.response?.data?.message || errors.toString(),
-            }
+                message: errors?.message || 'Error during login',
+            };
         }
-    }
+    };
+    
 
-    const signUp = async (values: SignUpCredential): AuthResult => {
-        try {
-            const resp = await apiSignUp(values)
-            if (resp) {
-                handleSignIn({ accessToken: resp.token }, resp.user)
-                redirect()
-                return {
-                    status: 'success',
-                    message: '',
-                }
-            }
-            return {
-                status: 'failed',
-                message: 'Unable to sign up',
-            }
-            // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-        } catch (errors: any) {
-            return {
-                status: 'failed',
-                message: errors?.response?.data?.message || errors.toString(),
-            }
-        }
-    }
+    const signOut = () => {
+        // Limpiar datos del usuario y token
+        setToken("");
+        setUser(null);
+        setSessionSignedIn(false);
 
-    const signOut = async () => {
-        try {
-            await apiSignOut()
-        } finally {
-            handleSignOut()
-            navigatorRef.current?.navigate(appConfig.unAuthenticatedEntryPath)
-        }
-    }
-    const oAuthSignIn = (
-        callback: (payload: OauthSignInCallbackPayload) => void,
-    ) => {
-        callback({
-            onSignIn: handleSignIn,
-            redirect,
-        })
-    }
+        // Redirigir a la página de inicio de sesión
+        navigate("/login");
+    };
 
     return (
         <AuthContext.Provider
             value={{
                 authenticated,
-                user,
+                user: useSessionUser((state) => state.user),
                 signIn,
-                signUp,
+                signUp: async () => ({ status: "failed", message: "Not implemented" }),
                 signOut,
-                oAuthSignIn,
+                oAuthSignIn: () => {},
             }}
         >
             {children}
-            <IsolatedNavigator ref={navigatorRef} />
         </AuthContext.Provider>
-    )
+    );
 }
 
-IsolatedNavigator.displayName = 'IsolatedNavigator'
+export default AuthProvider;
 
-export default AuthProvider

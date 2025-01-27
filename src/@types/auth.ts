@@ -5,9 +5,22 @@ export type SignInCredential = {
 
 export type SignInResponse = {
     data: {
-        nombres: string;
         id: number;
-    };
+        nombres: string;
+        apellidos: string;
+        cedula: string;
+        correo: string;
+        celular: string;
+        user: string;
+        password: string;
+        id_rol: number;
+        estado: boolean;
+        is_deleted: boolean;
+        deleted_at: string | null;
+        deleted_by: string | null;
+        createdAt: string; // Fecha en formato ISO
+        updatedAt: string; // Fecha en formato ISO
+    }
     token: string;
 }
 
@@ -37,7 +50,19 @@ export type AuthResult = Promise<{
 export type User = {
     id?: number | null
     nombres?: string | null
-    authority?: string[]
+    apellidos?: string | null
+    cedula?: string | null
+    correo?: string | null
+    celular?: string | null
+    user?: string | null
+    password?: string | null
+    id_rol?: number | null
+    estado?: boolean
+    is_deleted?: boolean
+    deleted_at?: string | null
+    deleted_by?: string | null
+    createdAt?: string
+    updatedAt?: string
 }
 
 export type Token = {

@@ -30,6 +30,18 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
                 setUser({
                     id: resp.id,
                     nombres: resp.nombres,
+                    apellidos: resp.apellidos,
+                    cedula: resp.cedula,
+                    correo: resp.correo,
+                    celular: resp.celular,
+                    user: resp.user,
+                    password: resp.password,
+                    id_rol: resp.id_rol,
+                    estado: resp.estado,
+                    is_deleted: resp.is_deleted,
+                    deleted_at: resp.deleted_at,
+                    createdAt: resp.createdAt,
+                    updatedAt: resp.updatedAt
                 });
     
                 // Redirige al usuario a la ruta predeterminada

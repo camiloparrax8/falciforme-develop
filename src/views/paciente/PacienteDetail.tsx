@@ -18,6 +18,8 @@ import { FaFileMedical } from 'react-icons/fa'
 const { TabNav, TabList, TabContent } = Tabs
 
 export const PacienteDetail = ({ item }) => {
+    console.log(item);
+    
     const [dialogIsOpenPaciente, setIsOpenPaciente] = useState(false)
     const [dialogIsOpenHC, setIsOpenHC] = useState(false)
 
@@ -38,7 +40,6 @@ export const PacienteDetail = ({ item }) => {
         setIsOpenHC(false)
     }
     const hc = <TbInfoSquareRoundedFilled />
-    console.log(item)
 
     return (
         <>
@@ -59,7 +60,7 @@ export const PacienteDetail = ({ item }) => {
                                     <Input
                                         disabled
                                         size="sm"
-                                        value={item.nombre}
+                                        value={`${item.data.nombre} ${item.data.apellido}`}
                                     />
                                 </div>
                                 <div>
@@ -69,7 +70,7 @@ export const PacienteDetail = ({ item }) => {
                                     <Input
                                         disabled
                                         size="sm"
-                                        value={item.tipo}
+                                        value={item.data.tipo_identificacion}
                                     />
                                 </div>
                                 <div>
@@ -79,7 +80,7 @@ export const PacienteDetail = ({ item }) => {
                                     <Input
                                         disabled
                                         size="sm"
-                                        value={item.cedula}
+                                        value={item.data.identificacion}
                                     />
                                 </div>
                                 <div>
@@ -89,7 +90,7 @@ export const PacienteDetail = ({ item }) => {
                                     <Input
                                         disabled
                                         size="sm"
-                                        value={item.nacimiento}
+                                        value={item.data.fecha_nacimiento}
                                     />
                                 </div>
                                 <div>
@@ -99,7 +100,7 @@ export const PacienteDetail = ({ item }) => {
                                     <Input
                                         disabled
                                         size="sm"
-                                        value={`${item.edad} Años`}
+                                        value={`${item.data.edad} Años`}
                                     />
                                 </div>
                             </div>
@@ -134,24 +135,24 @@ export const PacienteDetail = ({ item }) => {
                                     <Section title="Datos de Ubicación">
                                         <Field
                                             label="Departamento"
-                                            value={item.departamento}
+                                            value={item.data.departamento}
                                         />
                                         <Field
                                             label="Municipio"
-                                            value={item.municipio}
+                                            value={item.data.municipio}
                                         />
                                         <Field
                                             label="Dirección"
-                                            value={item.direccion}
+                                            value={item.data.direccion}
                                             span={2}
                                         />
                                         <Field
                                             label="Residente"
-                                            value={item.residente}
+                                            value={item.data.residente}
                                         />
                                         <Field
                                             label="Procedente"
-                                            value={item.procedente}
+                                            value={item.data.procedente}
                                         />
                                     </Section>
 

@@ -14,10 +14,10 @@ export default defineConfig({
   },
   server: {
     host: '0.0.0.0', // Permite conexiones desde cualquier dispositivo en la red local
-    port: 3000, // Puerto donde correrá la aplicación
+    port: 8000, // Puerto donde correrá la aplicación
     proxy: {
       '/api': {
-        target: 'http://localhost:3030',
+        target: 'http://localhost:3000',// uri donde se conecta con el backend
         changeOrigin: true,
         secure: false
       }

@@ -1,52 +1,123 @@
-import { AdaptiveCard, Container } from "@/components/shared"
-import ButtonNavigation from "@/views/common/ButtonNavigation"
-import { Button } from '@/components/ui';
-import { useState } from "react"
-import { FaRegIdCard, FaSearch } from "react-icons/fa";
-import FormRedPrimaria from "./FormRedPrimaria";
-import SectionTitle from "@/views/common/form/SectionTitle";
+import { useState } from 'react'
+import { AdaptiveCard, Container } from '@/components/shared'
+import { Button, Input, Table } from '@/components/ui'
+import { TbId } from 'react-icons/tb'
+import FormRedPrimaria from './FormRedPrimaria'
+import { MdAssignmentInd } from 'react-icons/md'
+import { TbSearch } from 'react-icons/tb'
+import { buscarHospital } from "@/customService/services/redPrimariaService"; 
+import { useToken } from "@/store/authStore";
+
 
 const RedPrimaria = () => {
-    const icon = <FaRegIdCard />;
-    const iconBuscar = <FaSearch/>;
-
-    // Estados para cada modal
-    const [dialogIsOpenRP, setDialogIsOpenRP] = useState(false)
-    const [dialogIsOpenRPS, setDialogIsOpenRPS] = useState(false)
-    // Métodos para abrir y cerrar modales
-    const openDialog = (setDialog) => setDialog(true);
-    const closeDialog = (setDialog) => {
-        console.log('Modal closed');
-        setDialog(false);
+    const [dialogIsOpenRP, setDialogIsOpenRP] = useState(false);
+    const [busqueda, setBusqueda] = useState("");
+    const [hospitales, setHospitales] = useState([]);
+    const [hospitalesFiltrados, setHospitalesFiltrados] = useState([]);
+    const { token } = useToken();
+   
+    const fetchHospitales = async (hospital = "") => {
+        try {
+            const data = await buscarHospital(token, hospital);
+            setHospitales(data.data);
+            setHospitalesFiltrados(data.data);
+        } catch (error) {
+            console.error("Error obteniendo los hospitales:", error);
+        }
     };
+
+    const openDialog = () => setDialogIsOpenRP(true);
+    const closeDialog = () => setDialogIsOpenRP(false);
+
+    const handleAsignar = (id) => {
+        alert(`Hospital con ID ${id} asignado.`);
+    };
+
+    // Filtrar al presionar Enter o hacer clic en el icono de búsqueda
+    const handleBuscar = () => {
+        fetchHospitales(busqueda);
+    };
+
+    
+
     return (
-        <Container>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
-            <SectionTitle text="Información Básica del Acompañante" className="col-span-1 md:col-span-2 lg:col-span-4" />
-                <Button
-                    variant="solid"
-                    icon={iconBuscar}
-                    className="col-span-1"
-                    onClick={() => openDialog(setDialogIsOpenRPS)}
-                >
-                    Buscar
-                </Button>
-                <Button
-                    variant="solid"
-                    icon={icon}
-                    className="col-span-1"
-                    onClick={() => openDialog(setDialogIsOpenRP)}
-                >
+        <Container className="flex flex-col items-center gap-4 w-full">
+            {/* Contenedor de búsqueda y botón */}
+            <div className="flex items-center w-full max-w-4xl space-x-4">
+                <div className="relative flex-grow">
+                    <Input
+                        placeholder="Buscar hospital por nombre..."
+                        value={busqueda}
+                        onChange={(e) => setBusqueda(e.target.value)}
+                        onKeyDown={(e) => e.key === "Enter" && handleBuscar()}
+                        className="w-full text-sm pr-10"
+                    />
+                    <TbSearch
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-xl cursor-pointer"
+                        onClick={handleBuscar}
+                    />
+                </div>
+
+                {/* Botón de registro */}
+                <Button variant="solid" icon={<TbId />} onClick={openDialog}>
                     Registrar
                 </Button>
             </div>
+
+            {/* Tabla centrada y alineada */}
+            <div className="w-full max-w-4xl">
+                <Table className="w-full text-sm">
+                    <thead>
+                        <tr>
+                            <th className="text-left">ID</th>
+                            <th className="text-left">Nombre</th>
+                            <th className="text-left">Ubicación</th>
+                            <th className="text-center">Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {hospitalesFiltrados.length > 0 ? (
+                            hospitalesFiltrados.map((hospital) => (
+                                <tr key={hospital.id}>
+                                    <td className="py-2 px-4">{hospital.id}</td>
+                                    <td className="py-2 px-4">
+                                        {hospital.hospital}
+                                    </td>
+                                    <td className="py-2 px-4">
+                                    {hospital.municipio}, {hospital.departamento}
+                                    </td>
+                                    <td className="py-2 px-4 text-left">
+                                        <Button
+                                            variant="solid"
+                                            size="sm"
+                                            icon={<MdAssignmentInd />}
+                                            onClick={() =>
+                                                handleAsignar(hospital.id)
+                                            }
+                                        >
+                                            Asignar
+                                        </Button>
+                                    </td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td className="text-center py-4 text-gray-500">
+                                    No se encontraron resultados
+                                </td>
+                            </tr>
+                        )}
+                    </tbody>
+                </Table>
+            </div>
+
+            {/* Modal de registro */}
             <FormRedPrimaria
                 isOpen={dialogIsOpenRP}
-                onClose={() => closeDialog(setDialogIsOpenRP)}
-                onRequestClose={() => closeDialog(setDialogIsOpenRP)}
+                onClose={closeDialog}
+                onRequestClose={closeDialog}
             />
         </Container>
-
     )
 }
 

@@ -1,11 +1,11 @@
 import { useForm } from 'react-hook-form';
 import Button from '@/components/ui/Button';
-import validationAcompañante from '../../../validation/validationAcompañante';
+import validationAcompañante from '../../../../validation/validationAcompañante';
 import SelectDocumentType from '@/views/common/form/SelectDocumentType';
 import SectionTitle from '@/views/common/form/SectionTitle';
 import InputForm from '@/views/common/form/InputForm';
-
-function FormAcompañante() {
+import { Dialog } from '@/components/ui'
+function FormAcompañante({ isOpen, onClose, onRequestClose }) {
     const {
         control,
         handleSubmit,
@@ -20,12 +20,19 @@ function FormAcompañante() {
             email: '',
         },
     });
-
+    
     const onSubmit = (data) => {
         console.log('Datos enviados:', data);
     };
 
     return (
+        <Dialog
+        width={1200}
+        height={510}
+        isOpen={isOpen}
+        onClose={onClose}
+        onRequestClose={onRequestClose}
+        >
         <form
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full"
             onSubmit={handleSubmit(onSubmit)}
@@ -98,6 +105,7 @@ function FormAcompañante() {
                 <Button type="submit">Guardar</Button>
             </div>
         </form>
+        </Dialog>
     );
 }
 

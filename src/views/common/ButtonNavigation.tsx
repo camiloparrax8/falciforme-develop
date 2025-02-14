@@ -34,7 +34,8 @@ const ButtonNavigation = ({ title, uri, iconName, variant }) => {
         <Button
             variant={variant}
             icon={navigationIcons[iconName]}
-            onClick={() => navigate(uri)}
+            onClick={() => navigate(uri, { state: { background: location.pathname } })}
+
         >
             {title}
         </Button>

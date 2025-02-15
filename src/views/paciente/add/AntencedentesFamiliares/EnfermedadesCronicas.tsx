@@ -10,7 +10,7 @@ import SelectMultiple from '@/views/common/form/SelectMultiple'
 import SelectChronicDisease from '@/views/common/form/SelectChronicDisease'
 import SelectSpecificDisease from '@/views/common/form/SelectSpecificDisease'
 import classNames from 'classnames'
-import validationAntecedentesFamiliares from '../../../validation/validationAntecedentesFamiliares';
+import validationAntecedentesFamiliares from '../../../../validation/validationAntecedentesFamiliares';
 
 
 const { Tr, Th, Td, THead, TBody } = Table

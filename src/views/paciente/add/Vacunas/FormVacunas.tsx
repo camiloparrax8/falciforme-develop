@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Button from '@/components/ui/Button';
 import { FaEdit, FaTrash } from 'react-icons/fa';
-import validationVacunas from '../../../validation/validationVacunas';
+import validationVacunas from '../../../../validation/validationVacunas';
 import SectionTitle from '@/views/common/form/SectionTitle';
 import SelectMultiple from '@/views/common/form/SelectMultiple';
 import InputDatePickerForm from '@/views/common/form/InputDate';

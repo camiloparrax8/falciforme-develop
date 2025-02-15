@@ -1,10 +1,10 @@
 import Tabs from '@/components/ui/Tabs'
 import FormPaciente from './FormPaciente'
 import Acompañante from './Acompañante/Acompañante'
-import FormAntFamiliares from './FormAntFamiliares'
-import FormAntPerinatologicos from './FormAntPerinatologicos'
-import FormVacunas from './FormVacunas'
-import FormIngreso from './FormIngreso'
+import FormAntFamiliares from './AntencedentesFamiliares/FormAntFamiliares'
+import FormAntPerinatologicos from './AntecedentesPerinatologicos/FormAntPerinatologicos'
+import FormVacunas from './Vacunas/FormVacunas'
+import FormIngreso from './Ingreso/FormIngreso'
 import RedPrimaria from './RedPrimaria/RedPrimaria'
 
 const { TabNav, TabList, TabContent } = Tabs

@@ -1,7 +1,7 @@
 import React from 'react'
 import Input from '@/components/ui/Input'
 import Tag from '@/components/ui/Tag'
-import SectionTitle from '../common/form/SectionTitle'
+import SectionTitle from '../../../common/form/SectionTitle'
 
 const InfoDatosIngreso = () => {
     // JSON quemado

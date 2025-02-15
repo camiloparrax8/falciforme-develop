@@ -9,7 +9,7 @@ import { useForm } from 'react-hook-form'
 import SelectParentesco from '@/views/common/form/SelectParentesco'
 import SelectLinea from '@/views/common/form/SelectLinea'
 import InputSelect from '@/views/common/form/InputSelect'
-import validationAntecedentesFamiliares from '../../../validation/validationAntecedentesFamiliares';
+import validationAntecedentesFamiliares from '../../../../validation/validationAntecedentesFamiliares';
 
 const { Tr, Th, Td, THead, TBody } = Table
 

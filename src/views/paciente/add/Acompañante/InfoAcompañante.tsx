@@ -1,6 +1,6 @@
 import React from 'react'
 import Input from '@/components/ui/Input'
-import SectionTitle from '../common/form/SectionTitle'
+import SectionTitle from '../../../common/form/SectionTitle'
 
 function InfoAcompañante() {
     // JSON quemado

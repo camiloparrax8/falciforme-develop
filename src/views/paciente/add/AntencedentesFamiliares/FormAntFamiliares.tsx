@@ -13,8 +13,8 @@ const navigation = [
     
 ];
 const defatultNavValue = 'estadoHBS';
-const EstadoHBS = lazy(() => import('@/views/paciente/add/EstadoHBS'));
-const EnfermedadesCronicas = lazy(() => import('@/views/paciente/add/EnfermedadesCronicas'));
+const EstadoHBS = lazy(() => import('@/views/paciente/add/AntencedentesFamiliares/EstadoHBS'));
+const EnfermedadesCronicas = lazy(() => import('@/views/paciente/add/AntencedentesFamiliares/EnfermedadesCronicas'));
 
 const FormAntFamiliares = () => {
     const [selectedNav, setSelectedNav] = useState(defatultNavValue);

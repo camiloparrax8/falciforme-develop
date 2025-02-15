@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form';
 import Button from '@/components/ui/Button';
-import validationIngreso from '../../../validation/validationIngreso';
+import validationIngreso from '../../../../validation/validationIngreso';
 import SectionTitle from '@/views/common/form/SectionTitle';
 import InputForm from '@/views/common/form/InputForm';
 import SelectMultiple from '@/views/common/form/SelectMultiple';

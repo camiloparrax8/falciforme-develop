@@ -30,7 +30,7 @@ export interface ButtonProps
     onClick?: (e: MouseEvent<HTMLButtonElement>) => void
     shape?: TypeAttributes.Shape
     size?: TypeAttributes.Size
-    variant?: 'solid' | 'plain' | 'default'
+    variant?: 'solid' | 'plain' | 'default' | 'outline'
     iconAlignment?: 'start' | 'end'
 }
 

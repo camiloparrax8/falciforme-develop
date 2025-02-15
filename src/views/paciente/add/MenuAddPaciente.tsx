@@ -1,6 +1,6 @@
 import Tabs from '@/components/ui/Tabs'
 import FormPaciente from './FormPaciente'
-import FormAcompañante from './FormAcompañante'
+import Acompañante from './Acompañante/Acompañante'
 import FormAntFamiliares from './FormAntFamiliares'
 import FormAntPerinatologicos from './FormAntPerinatologicos'
 import FormVacunas from './FormVacunas'
@@ -35,7 +35,7 @@ const MenuAddPaciente = () => {
                         <RedPrimaria></RedPrimaria>
                     </TabContent>
                     <TabContent value="acompañante">
-                        <FormAcompañante></FormAcompañante>
+                        <Acompañante></Acompañante>
                     </TabContent>
                     <TabContent value="familiar">
                         <FormAntFamiliares></FormAntFamiliares>

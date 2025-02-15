@@ -42,7 +42,7 @@ function FormRedPrimaria({ isOpen, onClose, onRequestClose }) {
     return (
         <Dialog
             width={1200}
-            height={550}
+            height={500}
             isOpen={isOpen}
             onClose={onClose}
             onRequestClose={onRequestClose}
@@ -79,16 +79,16 @@ function FormRedPrimaria({ isOpen, onClose, onRequestClose }) {
                 <SelectDepartment
                     control={control}
                     errors={errors}
-                    validation={validationRedPrimaria.departamento}
+                    validation={validationRedPrimaria.department}
                     onDepartmentChange={setSelectedDepartment}
-                    className="col-span-2"
+                    className="col-span-1"
                 />
                 <SelectCity
                     control={control}
                     selectedDepartment={selectedDepartment}
                     errors={errors}
                     validation={validationRedPrimaria.city}
-                    className="col-span-2"
+                    className="col-span-1"
                 />
 
                 {/* Sección Contacto */}

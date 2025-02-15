@@ -1,18 +1,12 @@
 import React from 'react'
 import Input from '@/components/ui/Input'
 import SectionTitle from '../common/form/SectionTitle'
+import { useFormattedDate } from '@/hooks/useFormattedDate';
 
-function InfoRedPrimaria() {
-    // JSON quemado
-    const item = {
-        fecha: '25/09/2024',
-        hospital: 'Loren Impunb',
-        correo: 'cparrarueta@gmail.com',
-        telefono_contacto: '(301) 2 54 68 86',
-        departamento: 'Córdoba',
-        municipio: 'Montería',
-        telefono_urgencias: '(301) 2 54 68 86',
-    }
+
+function InfoRedPrimaria({ data }) {
+    const { formatDate } = useFormattedDate();
+    const item = data;
 
     return (
         <>
@@ -24,7 +18,7 @@ function InfoRedPrimaria() {
                     <label className="block text-sm font-bold mb-1">
                         Fecha
                     </label>
-                    <Input disabled size="sm" value={item.fecha} />
+                    <Input disabled size="sm" value={formatDate(item.fecha)} />
                 </div>
 
                 {/* Hospital */}
@@ -46,9 +40,9 @@ function InfoRedPrimaria() {
                 {/* Teléfono contacto */}
                 <div>
                     <label className="block text-sm font-bold mb-1">
-                        Teléfono Contacto
+                        Teléfono Urgencias
                     </label>
-                    <Input disabled size="sm" value={item.telefono_contacto} />
+                    <Input disabled size="sm" value={item.telefono_urgencias} />
                 </div>
 
                 {/* Departamento */}
@@ -70,9 +64,9 @@ function InfoRedPrimaria() {
                 {/* Teléfono urgencias */}
                 <div>
                     <label className="block text-sm font-bold mb-1">
-                        Teléfono Urgencias
+                        Teléfono     
                     </label>
-                    <Input disabled size="sm" value={item.telefono_urgencias} />
+                    <Input disabled size="sm" value={item.telefono} />
                 </div>
             </div>
         </>

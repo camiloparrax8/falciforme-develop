@@ -1,16 +1,42 @@
-import React from 'react'
 import Table from '@/components/ui/Table'
+import { useToken } from '@/store/authStore';
+import { useEffect, useState } from 'react';
+import {buscarVacunas} from "../../customService/services/vacunasService";
 
-const { Tr, Th, Td, THead, TBody } = Table
 
-function InfoVacunas() {
-    // JSON quemado
-    const vacunas = [
-        { nombre: 'Meningococo', dosis: 2, fecha: '2022-05-22' },
-        { nombre: 'Neumococo', dosis: 1, fecha: '2023-01-15' },
-        { nombre: 'Influenza', dosis: 1, fecha: '2021-12-10' },
-    ]
+function InfoVacunas({idPaciente}) {
+    const { Tr, Th, Td, THead, TBody } = Table
+    const id = idPaciente;
+        const { token } = useToken();
+        const [vacunas, setVacunas] = useState([]);
+    
+    
+        useEffect(() => {
+            if (!token || !id) return;
+            const obtenerVacunas = async () => {
+                try {
+                    if (!token) {
+                    console.error("Token no disponible");
+                    return;
+                }
+    
+                const respuesta = await buscarVacunas(token, id);
+    
+                if (respuesta?.data) {
+                    setVacunas(respuesta.data); // Asumimos que 'data' es un arreglo de usuarios
+                } else {
+                    console.error("Respuesta inesperada:", respuesta);
+                }
+                } catch (error) {
+                console.error("Error al cargar usuarios:", error);
+                }
+                };
+                obtenerVacunas();
+            }, [token,id]);
 
+     
+            
+    
     return (
         <div className="w-full p-4">
             <Table compact>

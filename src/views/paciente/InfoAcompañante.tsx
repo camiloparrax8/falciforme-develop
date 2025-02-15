@@ -1,27 +1,12 @@
-import React from 'react'
 import Input from '@/components/ui/Input'
 import SectionTitle from '../common/form/SectionTitle'
 
-function InfoAcompañante() {
-    // JSON quemado
-    const item = {
-        nombre_completo: 'Alberto Mendoza',
-        cedula: '43424',
-        celular: '(301) 2 54 68 86',
-        departamento: 'Córdoba',
-        municipio: 'Montería',
-        direccion: 'Calle 33 4-27 centro',
-        ocupacion: 'Ingeniero de Sistemas',
-        tipo_vivienda: 'Arriendo',
-        nivel_ingresos: 'Entre 1 SMMLV y 2 SMMLV',
-        nivel_academico: 'Primaria',
-        tipo_vehiculo: null, // Cambia a un string si deseas mostrar algo diferente
-    }
+function InfoAcompañante({data}) {
+    const item = data;
 
     return (
         <>
             <div className="w-full p-4">
-                {/* Información Personal */}
                 <div className="mb-6">
                     <SectionTitle
                         text="Información personal"
@@ -36,14 +21,14 @@ function InfoAcompañante() {
                             <Input
                                 disabled
                                 size="sm"
-                                value={item.nombre_completo}
+                                value={`${item.nombre} ${item.apellido}`}
                             />
                         </div>
                         <div>
                             <label className="block text-sm font-bold mb-1">
                                 Cédula
                             </label>
-                            <Input disabled size="sm" value={item.cedula} />
+                            <Input disabled size="sm" value={`${item.tipo_identificacion} - ${item.identificacion}`} />
                         </div>
                         <div>
                             <label className="block text-sm font-bold mb-1">
@@ -115,7 +100,7 @@ function InfoAcompañante() {
                             <Input
                                 disabled
                                 size="sm"
-                                value={item.nivel_ingresos}
+                                value={item.nivel_ingreso}
                             />
                         </div>
                         <div>

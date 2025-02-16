@@ -1,9 +1,10 @@
-import React from 'react'
 import Input from '@/components/ui/Input'
 import Tag from '@/components/ui/Tag'
 import SectionTitle from '../../../common/form/SectionTitle'
 
-const InfoDatosIngreso = () => {
+
+const InfoDatosIngreso = ({idPaciente}) => {
+    const id = idPaciente;
     // JSON quemado
     const item = {
         fecha_primera_consulta: 'Meningococo',

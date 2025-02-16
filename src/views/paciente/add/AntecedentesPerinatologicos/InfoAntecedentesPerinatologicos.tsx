@@ -1,113 +1,157 @@
-import React from 'react'
 import Input from '@/components/ui/Input'
 import SectionTitle from '../../../common/form/SectionTitle'
+import { useToken } from '@/store/authStore';
+import { useEffect, useState } from 'react';
+import {BuscarPerinatologicos} from "../../../../customService/services/perinatologicasService.js";
 
-const InfoAntecedentesPerinatologicos = () => {
-    // JSON quemado
-    const item = {
-        peso_al_nacer: '2 lb',
-        talla_al_nacer: '30 cm',
-        nota: 'Lore impun',
-        condicion_nacimiento: 'Post término', // Puede ser "Post término" o "Pretérmino"
-        cuidado_neonatal: 'Sí',
-        ictericia_neonatal: 'Sí',
-    }
 
+const InfoAntecedentesPerinatologicos = ({idPaciente}) => {
+    const id = idPaciente;
+    const { token } = useToken();
+    const [perinatologicos, setPerinatologicos] = useState([]);
+
+
+    useEffect(() => {
+        if (!token || !id) return;
+        const antecedentePerinatologicos = async () => {
+            try {
+                if (!token) {
+                console.error("Token no disponible");
+                return;
+            }
+
+            const respuesta = await BuscarPerinatologicos(token, id);
+
+            if (respuesta?.data) {
+                setPerinatologicos(respuesta.data); // Asumimos que 'data' es un arreglo de usuarios
+            } else {
+                console.error("Respuesta inesperada:", respuesta);
+            }
+            } catch (error) {
+            console.error("Error al cargar usuarios:", error);
+            }
+            };
+            antecedentePerinatologicos();
+        }, [token,id]);
+
+        
+
+ 
     return (
         <>
-            <div className="w-full p-4">
-                {/* Peso, Talla y Nota */}
+          <div className="w-full p-4">
+            {/* Validar si existe un antecedente */}
+            {perinatologicos.length > 0 ? (
+              <>
+                {/* Información General */}
                 <div className="grid grid-cols-3 gap-4 mb-6">
-                <SectionTitle text="Información General" className="col-span-1 md:col-span-2 lg:col-span-4"></SectionTitle>
-
-                    <div>
-                        <label className="block text-sm font-bold mb-1">
-                            Peso al nacer
-                        </label>
-                        <Input disabled size="sm" value={item.peso_al_nacer} />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-bold mb-1">
-                            Talla al nacer
-                        </label>
-                        <Input disabled size="sm" value={item.talla_al_nacer} />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-bold mb-1">
-                            Nota
-                        </label>
-                        <Input disabled size="sm" value={item.nota} />
-                    </div>
+                  <SectionTitle text="Información General" className="col-span-1 md:col-span-2 lg:col-span-4" />
+      
+                  <div>
+                    <label className="block text-sm font-bold mb-1">
+                      Peso al nacer
+                    </label>
+                    <Input 
+                      disabled 
+                      size="sm" 
+                      value={perinatologicos[0]?.peso_al_nacer || 'N/A'} 
+                    />
+                  </div>
+      
+                  <div>
+                    <label className="block text-sm font-bold mb-1">
+                      Talla al nacer
+                    </label>
+                    <Input 
+                      disabled 
+                      size="sm" 
+                      value={perinatologicos[0]?.talla_al_nacer || 'N/A'} 
+                    />
+                  </div>
+      
+                  <div>
+                    <label className="block text-sm font-bold mb-1">
+                      Nota
+                    </label>
+                    <Input 
+                      disabled 
+                      size="sm" 
+                      value={perinatologicos[0]?.nota || 'N/A'} 
+                    />
+                  </div>
                 </div>
-
+      
                 {/* Condición del nacimiento */}
                 <div className="mb-6">
-                    
-                <SectionTitle text="Condición del nacimiento" className="col-span-1 md:col-span-2 lg:col-span-4"></SectionTitle>
-
-                  
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-sm font-bold mb-1">
-                                Post término
-                            </label>
-                            <Input
-                                disabled
-                                size="sm"
-                                value={
-                                    item.condicion_nacimiento === 'Post término'
-                                        ? 'Sí'
-                                        : 'No'
-                                }
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-bold mb-1">
-                                Pretérmino
-                            </label>
-                            <Input
-                                disabled
-                                size="sm"
-                                value={
-                                    item.condicion_nacimiento === 'Pretérmino'
-                                        ? 'Sí'
-                                        : 'No'
-                                }
-                            />
-                        </div>
+                  <SectionTitle text="Condición del nacimiento" className="col-span-1 md:col-span-2 lg:col-span-4" />
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-bold mb-1">
+                        Post término
+                      </label>
+                      <Input
+                        disabled
+                        size="sm"
+                        value={
+                          perinatologicos[0]?.condicion_al_nacer === 'Post término' 
+                            ? 'Sí' 
+                            : 'No'
+                        }
+                      />
                     </div>
+      
+                    <div>
+                      <label className="block text-sm font-bold mb-1">
+                        Pretérmino
+                      </label>
+                      <Input
+                        disabled
+                        size="sm"
+                        value={
+                          perinatologicos[0]?.condicion_al_nacer === 'Pretérmino' 
+                            ? 'Sí' 
+                            : 'No'
+                        }
+                      />
+                    </div>
+                  </div>
                 </div>
-
-                {/* Unidad de cuidado neonatal */}
+      
+                {/* Información Neonatal */}
                 <div className="mb-6">
-                <SectionTitle text="Información Neonatal" className="col-span-1 md:col-span-2 lg:col-span-4"></SectionTitle>
-
-                    <div className="grid grid-cols-3 gap-4">
-                        <div>
-                            <label className="block text-sm font-bold mb-1">
-                                Requirió cuidado neonatal
-                            </label>
-                            <Input
-                                disabled
-                                size="sm"
-                                value={item.cuidado_neonatal}
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-bold mb-1">
-                                Presentó ictericia
-                            </label>
-                            <Input
-                                disabled
-                                size="sm"
-                                value={item.ictericia_neonatal}
-                            />
-                        </div>
+                  <SectionTitle text="Información Neonatal" className="col-span-1 md:col-span-2 lg:col-span-4" />
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-sm font-bold mb-1">
+                        Requirió cuidado neonatal
+                      </label>
+                      <Input
+                        disabled
+                        size="sm"
+                        value={perinatologicos[0]?.cuidado_neonatal || 'No'}
+                      />
                     </div>
+      
+                    <div>
+                      <label className="block text-sm font-bold mb-1">
+                        Presentó ictericia
+                      </label>
+                      <Input
+                        disabled
+                        size="sm"
+                        value={perinatologicos[0]?.ictericia_neonatal || 'No'}
+                      />
+                    </div>
+                  </div>
                 </div>
-            </div>
+              </>
+            ) : (
+              <p className="text-center text-gray-500">
+                No se encontraron antecedentes perinatológicos.
+              </p>
+            )}
+          </div>
         </>
-    )
-}
-
+      );
+};    
 export default InfoAntecedentesPerinatologicos

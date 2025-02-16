@@ -14,10 +14,19 @@ import InfoDatosIngreso from './add/Ingreso/InfoDatosIngreso'
 import Field from '../common/Field'
 import Section from '../common/Section'
 import { FaFileMedical } from 'react-icons/fa'
+import { useFormattedDate } from '@/hooks/useFormattedDate';
+import { useCalculateAge } from '@/hooks/useCalculateAge';
+
+
 
 const { TabNav, TabList, TabContent } = Tabs
 
 export const PacienteDetail = ({ item }) => {
+
+    const { formatDate } = useFormattedDate();
+    const { calculateAge } = useCalculateAge();
+
+
     console.log(item);
     
     const [dialogIsOpenPaciente, setIsOpenPaciente] = useState(false)
@@ -90,7 +99,7 @@ export const PacienteDetail = ({ item }) => {
                                     <Input
                                         disabled
                                         size="sm"
-                                        value={item.data.fecha_nacimiento}
+                                        value={formatDate(item.data.fecha_nacimiento)}
                                     />
                                 </div>
                                 <div>
@@ -100,7 +109,7 @@ export const PacienteDetail = ({ item }) => {
                                     <Input
                                         disabled
                                         size="sm"
-                                        value={`${item.data.edad} Años`}
+                                        value={`${calculateAge(item.data.fecha_nacimiento)} Años`}
                                     />
                                 </div>
                             </div>
@@ -160,15 +169,15 @@ export const PacienteDetail = ({ item }) => {
                                     <Section title="Información Socioeconómica">
                                         <Field
                                             label="Estrato"
-                                            value={item.estrato}
+                                            value={item.data.estrato}
                                         />
                                         <Field
                                             label="Ocupación"
-                                            value={item.ocupacion}
+                                            value={item.data.ocupacion}
                                         />
                                         <Field
                                             label="Régimen"
-                                            value={item.regimen}
+                                            value={item.data.regimen}
                                         />
                                     </Section>
 
@@ -176,11 +185,11 @@ export const PacienteDetail = ({ item }) => {
                                     <Section title="Datos de Contacto">
                                         <Field
                                             label="Celular"
-                                            value={item.celular}
+                                            value={item.data.celular}
                                         />
                                         <Field
                                             label="Correo"
-                                            value={item.correo}
+                                            value={item.data.correo}
                                             span={2}
                                         />
                                     </Section>
@@ -197,13 +206,13 @@ export const PacienteDetail = ({ item }) => {
                                     <ButtonNavigation
                                         variant="solid"
                                         title="Seguimiento"
-                                        uri={`/historia-clinica/${item.id}?tipo=seguimiento`}
+                                        uri={`/historia-clinica/${item.data.id}?tipo=seguimiento`}
                                         iconName="edit"
                                     />
                                     <ButtonNavigation
                                         variant="solid"
                                         title="Inicial"
-                                        uri={`/historia-clinica/${item.id}?tipo=inicial`}
+                                        uri={`/historia-clinica/${item.data.id}?tipo=inicial`}
                                         iconName="edit"
                                     />
                                 </div>
@@ -255,22 +264,22 @@ export const PacienteDetail = ({ item }) => {
                                 </TabList>
                                 <div className="p-4">
                                     <TabContent value="redPrimaria">
-                                        <InfoRedPrimaria></InfoRedPrimaria>
+                                        <InfoRedPrimaria data={item.data.redPrimaria}></InfoRedPrimaria>
                                     </TabContent>
                                     <TabContent value="acompañante">
-                                        <InfoAcompañante></InfoAcompañante>
+                                        <InfoAcompañante data={item.data.acompaniante}></InfoAcompañante>
                                     </TabContent>
                                     <TabContent value="antFamiliar">
-                                        <InfoAntecedentes></InfoAntecedentes>
+                                        <InfoAntecedentes idPaciente ={item.data.id}></InfoAntecedentes>
                                     </TabContent>
                                     <TabContent value="antPerinatologicos">
-                                        <InfoAntecedentesPerinatologicos></InfoAntecedentesPerinatologicos>
+                                        <InfoAntecedentesPerinatologicos idPaciente ={item.data.id} ></InfoAntecedentesPerinatologicos>
                                     </TabContent>
                                     <TabContent value="vacunas">
-                                        <InfoVacunas></InfoVacunas>
+                                        <InfoVacunas idPaciente ={item.data.id} ></InfoVacunas>
                                     </TabContent>
                                     <TabContent value="primeraConsulta">
-                                        <InfoDatosIngreso></InfoDatosIngreso>
+                                        <InfoDatosIngreso idPaciente ={item.data.id}></InfoDatosIngreso>
                                     </TabContent>
                                 </div>
                             </Tabs>

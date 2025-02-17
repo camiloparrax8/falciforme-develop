@@ -8,7 +8,6 @@ import PacienteSkeleton from "./PacienteSkeleton";
 import Alert from "@/components/ui/Alert";
 import { useToken } from "@/store/authStore";
 import { buscarPaciente } from "../../customService/services/pacienteService.js";
-import { FaAddressBook } from "react-icons/fa";
 
 const Paciente = () => {
     const { token } = useToken();

@@ -6,10 +6,12 @@ import FormAntPerinatologicos from './AntecedentesPerinatologicos/FormAntPerinat
 import FormVacunas from './Vacunas/FormVacunas'
 import FormIngreso from './Ingreso/FormIngreso'
 import RedPrimaria from './RedPrimaria/RedPrimaria'
-
-const { TabNav, TabList, TabContent } = Tabs
+import { usePatient } from '@/context/PatientContext'
 
 const MenuAddPaciente = () => {
+    const { idPaciente } = usePatient()
+    const { TabNav, TabList, TabContent } = Tabs
+
     return (
         <div className="w-full">
             <Tabs defaultValue="paciente">
@@ -32,22 +34,64 @@ const MenuAddPaciente = () => {
                         <FormPaciente></FormPaciente>
                     </TabContent>
                     <TabContent value="redPrimaria">
-                        <RedPrimaria></RedPrimaria>
+                        {idPaciente === 0 ? (
+                            <p className="text-red-500 font-semibold">
+                                No se puede ingresar una red primaria sin un
+                                paciente registrado.
+                            </p>
+                        ) : (
+                            <RedPrimaria />
+                        )}
                     </TabContent>
                     <TabContent value="acompañante">
-                        <Acompañante></Acompañante>
+                        {idPaciente === 0 ? (
+                            <p className="text-red-500 font-semibold">
+                                No se puede ingresar Acompañante sin un paciente
+                                registrado.
+                            </p>
+                        ) : (
+                            <Acompañante />
+                        )}
                     </TabContent>
                     <TabContent value="familiar">
-                        <FormAntFamiliares></FormAntFamiliares>
+                        {idPaciente === 0 ? (
+                            <p className="text-red-500 font-semibold">
+                                No se puede ingresar Antecedentes Familiares sin
+                                un paciente registrado.
+                            </p>
+                        ) : (
+                            <FormAntFamiliares />
+                        )}
                     </TabContent>
                     <TabContent value="perinatologicos">
-                        <FormAntPerinatologicos></FormAntPerinatologicos>
+                        {idPaciente === 0 ? (
+                            <p className="text-red-500 font-semibold">
+                                No se puede ingresar Antecedentes
+                                Perinatologicos sin un paciente registrado.
+                            </p>
+                        ) : (
+                            <FormAntPerinatologicos />
+                        )}
                     </TabContent>
                     <TabContent value="vacunas">
-                        <FormVacunas></FormVacunas>
+                        {idPaciente === 0 ? (
+                            <p className="text-red-500 font-semibold">
+                                No se puede ingresar Vacunaas sin un paciente
+                                registrado.
+                            </p>
+                        ) : (
+                            <FormVacunas />
+                        )}
                     </TabContent>
                     <TabContent value="ingreso">
-                        <FormIngreso></FormIngreso>
+                        {idPaciente === 0 ? (
+                            <p className="text-red-500 font-semibold">
+                                No se puede ingresar Red primaria sin un
+                                paciente registrado.
+                            </p>
+                        ) : (
+                            <FormIngreso />
+                        )}
                     </TabContent>
                 </div>
             </Tabs>

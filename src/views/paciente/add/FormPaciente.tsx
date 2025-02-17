@@ -13,6 +13,8 @@ import { useToken } from '@/store/authStore'
 import { crearPaciente } from '@/customService/services/pacienteService'
 import Alert from '@/components/ui/Alert'
 import { useSessionUser } from '@/store/authStore'
+import {defaultValues} from './defaultValues'
+import { usePatient  } from '@/context/PatientContext';
 
 import {
     optionsEstrato,
@@ -27,34 +29,15 @@ function PatientForm() {
         handleSubmit,
         formState: { errors },
     } = useForm({
-        defaultValues: {
-            nombre: '',
-            apellido: '',
-            tipo_identificacion: '',
-            identificacion: '',
-            fecha_nacimiento: '',
-            sexo: '',
-            identidad_genero: '',
-            identidad_sexual: '',
-            estrato: '',
-            ocupacion: '',
-            residente: '',
-            direccion: '',
-            procedente: '',
-            regimen: '',
-            celular: '',
-            correo: '',
-            municipio: '',
-            departamento: '',
-        },
-    })
+        defaultValues:defaultValues
+        })
 
     const [selectedDepartment, setSelectedDepartment] = useState(null)
     const { token } = useToken()
     const [loading, setLoading] = useState(false)
     const [mensajes, setMensajes] = useState<{ status: string; message: string }[]>([])
-    const [idPaciente, setidPaciente] = useState([])
     const { user } = useSessionUser()
+    const { setIdPaciente } = usePatient();
 
     const onSubmit = async (data) => {
         try {
@@ -79,7 +62,9 @@ function PatientForm() {
                             'Paciente creado con éxito',
                     },
                 ])
-                setidPaciente(response)
+                    setIdPaciente(response.data.id)
+                
+            
               
             }
         } catch (error) {
@@ -120,6 +105,7 @@ function PatientForm() {
                     ))}
                 </div>
             )}
+            
 
             <form
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full"

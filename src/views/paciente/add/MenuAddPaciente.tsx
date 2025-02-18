@@ -7,95 +7,109 @@ import FormVacunas from './Vacunas/FormVacunas'
 import FormIngreso from './Ingreso/FormIngreso'
 import RedPrimaria from './RedPrimaria/RedPrimaria'
 import { usePatient } from '@/context/PatientContext'
+import { useTabsFlow } from '@/hooks/useTabsFlow'
 
 const MenuAddPaciente = () => {
-    const { idPaciente } = usePatient()
+    const { paciente } = usePatient()
     const { TabNav, TabList, TabContent } = Tabs
+    const tabs = [
+        'paciente',
+        'redPrimaria',
+        'acompañante',
+        'familiar',
+        'perinatologicos',
+        'vacunas',
+        'ingreso',
+    ]
+    const { currentTab, nextTab, goToTab } = useTabsFlow(tabs)
+
+    console.log(paciente)
 
     return (
-        <div className="w-full">
-            <Tabs defaultValue="paciente">
-                {/* Lista de pestañas */}
-                <TabList className="flex space-x-4 border-b pb-2">
-                    <TabNav value="paciente">Paciente</TabNav>
-                    <TabNav value="redPrimaria">Red Primaria</TabNav>
-                    <TabNav value="acompañante">Acompañante</TabNav>
-                    <TabNav value="familiar">Ant. Familiares</TabNav>
-                    <TabNav value="perinatologicos">
-                        Ant. Perinatológicos
-                    </TabNav>
-                    <TabNav value="vacunas">Vacunas</TabNav>
-                    <TabNav value="ingreso">Ingreso</TabNav>
-                </TabList>
 
-                {/* Contenido de las pestañas */}
-                <div className="p-4">
-                    <TabContent value="paciente">
-                        <FormPaciente></FormPaciente>
-                    </TabContent>
-                    <TabContent value="redPrimaria">
-                        {idPaciente === 0 ? (
-                            <p className="text-red-500 font-semibold">
-                                No se puede ingresar una red primaria sin un
-                                paciente registrado.
-                            </p>
-                        ) : (
-                            <RedPrimaria />
-                        )}
-                    </TabContent>
-                    <TabContent value="acompañante">
-                        {idPaciente === 0 ? (
-                            <p className="text-red-500 font-semibold">
-                                No se puede ingresar Acompañante sin un paciente
-                                registrado.
-                            </p>
-                        ) : (
-                            <Acompañante />
-                        )}
-                    </TabContent>
-                    <TabContent value="familiar">
-                        {idPaciente === 0 ? (
-                            <p className="text-red-500 font-semibold">
-                                No se puede ingresar Antecedentes Familiares sin
-                                un paciente registrado.
-                            </p>
-                        ) : (
-                            <FormAntFamiliares />
-                        )}
-                    </TabContent>
-                    <TabContent value="perinatologicos">
-                        {idPaciente === 0 ? (
-                            <p className="text-red-500 font-semibold">
-                                No se puede ingresar Antecedentes
-                                Perinatologicos sin un paciente registrado.
-                            </p>
-                        ) : (
-                            <FormAntPerinatologicos />
-                        )}
-                    </TabContent>
-                    <TabContent value="vacunas">
-                        {idPaciente === 0 ? (
-                            <p className="text-red-500 font-semibold">
-                                No se puede ingresar Vacunaas sin un paciente
-                                registrado.
-                            </p>
-                        ) : (
-                            <FormVacunas />
-                        )}
-                    </TabContent>
-                    <TabContent value="ingreso">
-                        {idPaciente === 0 ? (
-                            <p className="text-red-500 font-semibold">
-                                No se puede ingresar Red primaria sin un
-                                paciente registrado.
-                            </p>
-                        ) : (
-                            <FormIngreso />
-                        )}
-                    </TabContent>
-                </div>
-            </Tabs>
-        </div>
+            <div className="w-full">
+                <Tabs
+                    value={currentTab}
+                    onChange={(newValue) => goToTab(tabs.indexOf(newValue))}
+                >
+                    {/* Lista de pestañas */}
+                    <TabList className="flex space-x-4 border-b pb-2">
+                        {tabs.map((tab, index) => (
+                            <TabNav key={index} value={tab}>
+                                {tab}
+                            </TabNav>
+                        ))}
+                    </TabList>
+
+                    {/* Contenido de las pestañas */}
+                    <div className="p-4">
+                        <TabContent value="paciente">
+                            <FormPaciente nextTab={nextTab}></FormPaciente>
+                        </TabContent>
+                        <TabContent value="redPrimaria">
+                            {paciente === null ? (
+                                <p className="text-red-500 font-semibold">
+                                    No se puede ingresar una red primaria sin un
+                                    paciente registrado.
+                                </p>
+                            ) : (
+                                <RedPrimaria nextTab={nextTab} />
+                            )}
+                        </TabContent>
+                        <TabContent value="acompañante">
+                            {paciente === null ? (
+                                <p className="text-red-500 font-semibold">
+                                    No se puede ingresar Acompañante sin un
+                                    paciente registrado.
+                                </p>
+                            ) : (
+                                <Acompañante nextTab={nextTab} />
+                            )}
+                        </TabContent>
+                        <TabContent value="familiar">
+                            {paciente === null ? (
+                                <p className="text-red-500 font-semibold">
+                                    No se puede ingresar Antecedentes Familiares
+                                    sin un paciente registrado.
+                                </p>
+                            ) : (
+                                <FormAntFamiliares nextTab={nextTab} />
+                            )}
+                        </TabContent>
+                        <TabContent value="perinatologicos">
+                            {paciente === null ? (
+                                <p className="text-red-500 font-semibold">
+                                    No se puede ingresar Antecedentes
+                                    Perinatologicos sin un paciente registrado.
+                                </p>
+                            ) : (
+                                <FormAntPerinatologicos nextTab={nextTab} />
+                            )}
+                        </TabContent>
+                        <TabContent value="vacunas">
+                            {paciente === null ? (
+                                <p className="text-red-500 font-semibold">
+                                    No se puede ingresar Vacunaas sin un
+                                    paciente registrado.
+                                </p>
+                            ) : (
+                                <FormVacunas nextTab={nextTab} />
+                            )}
+                        </TabContent>
+                        <TabContent value="ingreso">
+                            {paciente === null ? (
+                                <p className="text-red-500 font-semibold">
+                                    No se puede ingresar Red primaria sin un
+                                    paciente registrado.
+                                </p>
+                            ) : (
+                                <FormIngreso nextTab={nextTab} />
+                            )}
+                        </TabContent>
+                    </div>
+                </Tabs>
+            </div>
+     
     )
 }
 

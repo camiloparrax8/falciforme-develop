@@ -1,6 +1,7 @@
 import AdaptiveCard from '@/components/shared/AdaptiveCard'
 import Container from '@/components/shared/Container'
 import MenuAddPaciente from './MenuAddPaciente'
+import { PatientProvider } from '@/context/PatientContext'
 
 const AddPaciente = () => {
     return (
@@ -13,7 +14,9 @@ const AddPaciente = () => {
                 </div>
 
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mt-4">
-                    <MenuAddPaciente></MenuAddPaciente>
+                    <PatientProvider>
+                        <MenuAddPaciente></MenuAddPaciente>
+                    </PatientProvider>
                 </div>
             </AdaptiveCard>
 

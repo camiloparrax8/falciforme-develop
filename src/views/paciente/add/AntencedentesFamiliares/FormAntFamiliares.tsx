@@ -16,7 +16,7 @@ const defatultNavValue = 'estadoHBS';
 const EstadoHBS = lazy(() => import('@/views/paciente/add/AntencedentesFamiliares/EstadoHBS'));
 const EnfermedadesCronicas = lazy(() => import('@/views/paciente/add/AntencedentesFamiliares/EnfermedadesCronicas'));
 
-const FormAntFamiliares = () => {
+const FormAntFamiliares = ({ nextTab }) => {
     const [selectedNav, setSelectedNav] = useState(defatultNavValue);
 
     const handleClick = (value) => {

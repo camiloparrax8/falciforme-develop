@@ -8,7 +8,7 @@ import InputDatePickerForm from '@/views/common/form/InputDate';
 
 
 
-function FormIngreso() {
+function FormIngreso({ nextTab }) {
     const {
         control,
         handleSubmit,

@@ -7,7 +7,7 @@ import { MdAssignmentInd } from "react-icons/md";
 import { BuscarAcompañante } from "@/customService/services/acompañanteService";
 import { useToken } from "@/store/authStore";
 
-const Acompañante = () => {
+const Acompañante = ({ nextTab }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [filtro, setFiltro] = useState("");
     const [acompañantes, setAcompañantes] = useState([]);
@@ -32,6 +32,9 @@ const Acompañante = () => {
     
     const handleBuscar = () => {
         fetchAcompañantes(filtro);
+        console.log(acompañantes);
+        nextTab();
+        
     };
 
     return (

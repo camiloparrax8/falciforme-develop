@@ -4,7 +4,7 @@ import validationAcompañante from '../../../../validation/validationAcompañant
 import SectionTitle from '@/views/common/form/SectionTitle';
 import InputForm from '@/views/common/form/InputForm';
 
-function FormAntPerinatologicos() {
+function FormAntPerinatologicos({ nextTab }) {
     const {
         control,
         handleSubmit,

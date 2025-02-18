@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form'
 import Button from '@/components/ui/Button'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import validationPaciente from '../../../validation/validationPaciente'
 import SelectDepartment from '@/views/common/form/SelectDepartment'
 import SelectCity from '@/views/common/form/SelectCity'
@@ -9,12 +9,11 @@ import SectionTitle from '@/views/common/form/SectionTitle'
 import InputForm from '@/views/common/form/InputForm'
 import InputDatePickerForm from '@/views/common/form/InputDate'
 import InputSelect from '@/views/common/form/InputSelect'
-import { useToken } from '@/store/authStore'
+import { useToken, useSessionUser } from '@/store/authStore'
 import { crearPaciente } from '@/customService/services/pacienteService'
 import Alert from '@/components/ui/Alert'
-import { useSessionUser } from '@/store/authStore'
-import {defaultValues} from './defaultValues'
-import { usePatient  } from '@/context/PatientContext';
+import { defaultValues } from './defaultValues'
+import { usePatient } from '@/context/PatientContext'
 
 import {
     optionsEstrato,
@@ -23,21 +22,24 @@ import {
     optionsIdentidadGenero,
     optionsIdentidadSexual,
 } from './dataSelectPaciente'
-function PatientForm() {
+function PatientForm({ nextTab }) {
+    const { setPaciente, paciente } = usePatient()
     const {
         control,
         handleSubmit,
+        setValue,
         formState: { errors },
     } = useForm({
-        defaultValues:defaultValues
-        })
+        defaultValues: paciente || defaultValues,
+    })
 
     const [selectedDepartment, setSelectedDepartment] = useState(null)
     const { token } = useToken()
     const [loading, setLoading] = useState(false)
-    const [mensajes, setMensajes] = useState<{ status: string; message: string }[]>([])
+    const [mensajes, setMensajes] = useState<
+        { status: string; message: string }[]
+    >([])
     const { user } = useSessionUser()
-    const { setIdPaciente } = usePatient();
 
     const onSubmit = async (data) => {
         try {
@@ -62,10 +64,9 @@ function PatientForm() {
                             'Paciente creado con éxito',
                     },
                 ])
-                    setIdPaciente(response.data.id)
-                
-            
-              
+                console.log(response.data)
+                setPaciente(response.data)
+                nextTab()
             }
         } catch (error) {
             const errores = error.response?.data?.errors?.map((err) => ({
@@ -84,6 +85,14 @@ function PatientForm() {
             setLoading(false)
         }
     }
+    
+    useEffect(() => {
+        if (paciente) {
+            Object.keys(paciente).forEach(key => {
+                setValue(key, paciente[key]);
+            });
+        }
+    }, [paciente, setValue]);
 
     return (
         <>
@@ -105,7 +114,6 @@ function PatientForm() {
                     ))}
                 </div>
             )}
-            
 
             <form
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full"
@@ -308,11 +316,12 @@ function PatientForm() {
                     className="col-span-1"
                 />
 
-                {/* Botón */}
                 <div className="col-span-4 flex justify-end mt-6">
-                    <Button type="submit">
-                        {loading ? 'Guardando...' : 'Guardar'}
-                    </Button>
+                    {paciente === null && (
+                        <Button type="submit">
+                            {loading ? 'Guardando...' : 'Guardar'}
+                        </Button>
+                    )}
                 </div>
             </form>
         </>

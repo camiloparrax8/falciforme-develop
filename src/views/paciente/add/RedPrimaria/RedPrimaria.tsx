@@ -1,15 +1,14 @@
 import { useState } from 'react'
-import { AdaptiveCard, Container } from '@/components/shared'
+import { Container } from '@/components/shared'
 import { Button, Input, Table } from '@/components/ui'
-import { TbId } from 'react-icons/tb'
 import FormRedPrimaria from './FormRedPrimaria'
 import { MdAssignmentInd } from 'react-icons/md'
-import { TbSearch } from 'react-icons/tb'
+import { TbSearch, TbId } from 'react-icons/tb'
 import { buscarHospital } from "@/customService/services/redPrimariaService"; 
 import { useToken } from "@/store/authStore";
 
 
-const RedPrimaria = () => {
+const RedPrimaria = ({ nextTab }) => {
     const [dialogIsOpenRP, setDialogIsOpenRP] = useState(false);
     const [busqueda, setBusqueda] = useState("");
     const [hospitales, setHospitales] = useState([]);
@@ -36,6 +35,8 @@ const RedPrimaria = () => {
     // Filtrar al presionar Enter o hacer clic en el icono de búsqueda
     const handleBuscar = () => {
         fetchHospitales(busqueda);
+        console.log(hospitales);        
+        nextTab();
     };
 
     

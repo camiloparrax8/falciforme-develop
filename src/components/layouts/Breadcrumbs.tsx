@@ -1,17 +1,10 @@
 import { useLocation, Link } from "react-router-dom";
-import { usePatient } from '@/context/PatientContext';
-import { useEffect } from 'react';
+
 
 const Breadcrumb = () => {
     const location = useLocation();
     const pathnames = location.pathname.split("/").filter((x) => x);
-    const { setIdPaciente } = usePatient();
 
-    useEffect(() => {
-        if (!location.pathname.includes('add')) {
-            setIdPaciente(0);  // Resetea el idPaciente si no está en /add
-        }
-    }, [location.pathname, setIdPaciente]);
 
     // Mapear segmentos a nombres legibles
     const breadcrumbMap: { [key: string]: string } = {

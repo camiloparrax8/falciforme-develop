@@ -3,10 +3,10 @@ import { createContext, useContext, useState } from 'react';
 const PatientContext = createContext();
 
 export const PatientProvider = ({ children }) => {
-  const [idPaciente, setIdPaciente] = useState(null);
+  const [paciente, setPaciente] = useState(null);  // Guarda todo el objeto paciente
 
   return (
-    <PatientContext.Provider value={{ idPaciente, setIdPaciente }}>
+    <PatientContext.Provider value={{ paciente, setPaciente }}>
       {children}
     </PatientContext.Provider>
   );

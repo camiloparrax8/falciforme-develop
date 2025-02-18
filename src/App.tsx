@@ -2,7 +2,6 @@ import { BrowserRouter } from 'react-router-dom'
 import Theme from '@/components/template/Theme'
 import Layout from '@/components/layouts'
 import { AuthProvider } from '@/auth'
-import { PatientProvider } from '@/context/PatientContext';
 
 import Views from '@/views'
 import appConfig from './configs/app.config'
@@ -17,11 +16,9 @@ function App() {
         <Theme>
             <BrowserRouter>
                 <AuthProvider>
-                    <PatientProvider>
-                        <Layout>
-                            <Views />
-                        </Layout>
-                    </PatientProvider>
+                    <Layout>
+                        <Views />
+                    </Layout>
                 </AuthProvider>
             </BrowserRouter>
         </Theme>

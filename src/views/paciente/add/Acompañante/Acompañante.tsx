@@ -33,7 +33,6 @@ const Acompañante = ({ nextTab }) => {
     const handleBuscar = () => {
         fetchAcompañantes(filtro);
         console.log(acompañantes);
-        nextTab();
         
     };
 

@@ -36,7 +36,7 @@ const RedPrimaria = ({ nextTab }) => {
     const handleBuscar = () => {
         fetchHospitales(busqueda);
         console.log(hospitales);        
-        nextTab();
+        
     };
 
     

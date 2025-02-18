@@ -11,30 +11,34 @@ type Session = {
 
 type AuthState = {
     session: {
-        signedIn: boolean; // Indica si el usuario está autenticado
-    };
+        signedIn: boolean // Indica si el usuario está autenticado
+    }
     user: {
-        id?: number; // ID del usuario
-        nombres?: string; // Nombres del usuario
-        apellidos?: string; // Apellidos del usuario
-        cedula?: string; // Cédula del usuario
-        correo?: string; // Correo electrónico del usuario
-        celular?: string; // Celular del usuario
-        user?: string; // Nombre de usuario (alias) del usuario
-        password?: string; // Contraseña del usuario
-        id_rol?: number; // ID del rol del usuario
-        estado?: boolean; // Estado del usuario (true: activo, false: inactivo)
-        is_deleted?: boolean; // Indica si el usuario ha sido eliminado (true: eliminado, false: no eliminado)
-        deleted_at?: string; // Fecha y hora de la eliminación del usuario
-        deleted_by?: string; // Usuario que ha eliminado el usuario
-        createdAt?: string; // Fecha y hora de creación del usuario
-        updatedAt?: string; // Fecha y hora de actualización del usuario
-    };
-};
+        id?: number // ID del usuario
+        nombres?: string // Nombres del usuario
+        apellidos?: string // Apellidos del usuario
+        cedula?: string // Cédula del usuario
+        correo?: string // Correo electrónico del usuario
+        celular?: string // Celular del usuario
+        user?: string // Nombre de usuario (alias) del usuario
+        password?: string // Contraseña del usuario
+        id_rol?: number // ID del rol del usuario
+        estado?: boolean // Estado del usuario (true: activo, false: inactivo)
+        is_deleted?: boolean // Indica si el usuario ha sido eliminado (true: eliminado, false: no eliminado)
+        deleted_at?: string // Fecha y hora de la eliminación del usuario
+        deleted_by?: string // Usuario que ha eliminado el usuario
+        createdAt?: string // Fecha y hora de creación del usuario
+        updatedAt?: string // Fecha y hora de actualización del usuario
+    }
+    token?: string // Agregar token al estado
+    expiresIn?: number
+}
 
 type AuthAction = {
     setSessionSignedIn: (payload: boolean) => void
     setUser: (payload: User) => void
+    setTokenData: (data: { token: string; expiresIn: number }) => void; // Cambiar la firma
+
 }
 
 const getPersistStorage = () => {
@@ -53,8 +57,10 @@ const initialState: AuthState = {
     session: {
         signedIn: false,
     },
-    user: {}, // Estado inicial vacío
-};
+    user: {},
+    token: null, // Agregar token al estado
+    expiresIn: null, // Estado inicial vacío
+}
 
 export const useSessionUser = create<AuthState & AuthAction>()(
     persist(
@@ -71,9 +77,14 @@ export const useSessionUser = create<AuthState & AuthAction>()(
                 set((state) => ({
                     user: {
                         ...state.user, // Mantiene las propiedades existentes
-                        ...payload,    // Agrega o sobrescribe las nuevas propiedades
+                        ...payload, // Agrega o sobrescribe las nuevas propiedades
                     },
                 })),
+            setTokenData: ({ token, expiresIn }) => // Tomar un objeto
+                set({
+                    token,
+                    expiresIn, // Guardamos el tiempo de expiración
+                })
         }),
         { name: 'sessionUser', storage: createJSONStorage(() => localStorage) },
     ),

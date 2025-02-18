@@ -2,6 +2,7 @@ import classNames from '@/utils/classNames'
 import { HEADER_HEIGHT } from '@/constants/theme.constant'
 import type { ReactNode } from 'react'
 import type { CommonProps } from '@/@types/common'
+import TokenCountdown  from '@/views/common/TokenCountdown'
 
 interface HeaderProps extends CommonProps {
     headerStart?: ReactNode
@@ -40,6 +41,7 @@ const Header = (props: HeaderProps) => {
                     </div>
                 )}
                 <div className="header-action header-action-end">
+                    <TokenCountdown />
                     {headerEnd}
                 </div>
             </div>

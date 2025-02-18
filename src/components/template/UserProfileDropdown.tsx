@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom'
 import { PiUserDuotone, PiSignOutDuotone } from 'react-icons/pi'
 import { useAuth } from '@/auth'
 
+
 type DropdownList = {
     label: string
     path: string
@@ -15,7 +16,7 @@ type DropdownList = {
 const dropdownItemList: DropdownList[] = []
 
 const _UserDropdown = () => {
-    const { avatar, userName, email } = useSessionUser((state) => state.user)
+    const { avatar, user, correo } = useSessionUser((state) => state.user)
 
     const { signOut } = useAuth()
 
@@ -43,10 +44,10 @@ const _UserDropdown = () => {
                     <Avatar {...avatarProps} />
                     <div>
                         <div className="font-bold text-gray-900 dark:text-gray-100">
-                            {userName || 'Anonymous'}
+                            {user || 'Anonymous'}
                         </div>
                         <div className="text-xs">
-                            {email || 'No email available'}
+                            {correo || 'No email available'}
                         </div>
                     </div>
                 </div>
@@ -74,7 +75,7 @@ const _UserDropdown = () => {
                 <span className="text-xl">
                     <PiSignOutDuotone />
                 </span>
-                <span>Sign Out</span>
+                <span>Salir</span>
             </Dropdown.Item>
         </Dropdown>
     )

@@ -1,31 +1,55 @@
-import React, { useRef, useImperativeHandle, forwardRef } from "react";
-import AuthContext from "./AuthContext";
-import { serviceLogin } from "@/views/api/serviceLogin";
-import { useSessionUser, useToken } from "@/store/authStore";
-import { useNavigate } from "react-router-dom";
-import { AuthResult, SignInCredential } from "@/@types/auth";
+import React, { useEffect, useCallback } from 'react'
+import AuthContext from './AuthContext'
+import { serviceLogin } from '@/views/api/serviceLogin'
+import { useSessionUser, useToken } from '@/store/authStore'
+import { useNavigate } from 'react-router-dom'
+import { AuthResult, SignInCredential } from '@/@types/auth'
 
 function AuthProvider({ children }: { children: React.ReactNode }) {
-    const navigate = useNavigate();
+    const navigate = useNavigate()
 
-    const setUser = useSessionUser((state) => state.setUser);
-    const setSessionSignedIn = useSessionUser((state) => state.setSessionSignedIn);
-    const { setToken } = useToken();
+    const setUser = useSessionUser((state) => state.setUser)
+    const setSessionSignedIn = useSessionUser(
+        (state) => state.setSessionSignedIn,
+    )
+    const { setToken } = useToken()
 
-    const authenticated = Boolean(useToken().token);
+    const authenticated = Boolean(useToken().token)
+
+    const expiresIn = useSessionUser((state) => state.expiresIn)
+    // Obtiene el expiresIn
+    const signOut = useCallback(() => {
+        setToken('')
+        setUser(null)
+        setSessionSignedIn(false)
+        navigate('/login')
+    }, [setToken, setUser, setSessionSignedIn, navigate])
+
+    useEffect(() => {
+        if (expiresIn) {
+            const expirationTime = new Date().getTime() + expiresIn * 1000 // Tiempo en ms
+            const remainingTime = expirationTime - new Date().getTime()
+
+            const timer = setTimeout(() => {
+                signOut()
+            }, remainingTime)
+
+            return () => clearTimeout(timer) // Limpia el temporizador si el componente se desmonta
+        }
+    }, [expiresIn, signOut])
 
     const signIn = async (values: SignInCredential): Promise<AuthResult> => {
         try {
             // Llama a la API de login
-            const resp = await serviceLogin(values);
-    
+            const resp = await serviceLogin(values)
+
             if (resp) {
                 // Guarda el token en el estado
-                setToken(resp.token);
-    
+                setToken(resp.token)
+
                 // Marca la sesión como activa
-                setSessionSignedIn(true);
-    
+                setSessionSignedIn(true)
+
                 // Guarda los datos del usuario (id y nombres) en el estado
                 setUser({
                     id: resp.id,
@@ -41,43 +65,34 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
                     is_deleted: resp.is_deleted,
                     deleted_at: resp.deleted_at,
                     createdAt: resp.createdAt,
-                    updatedAt: resp.updatedAt
-                });
-    
-                // Redirige al usuario a la ruta predeterminada
-                navigate("/home");
+                    updatedAt: resp.updatedAt,
+                })
 
-                console.log(resp);
-    
+                useSessionUser.setState({ expiresIn: resp.expiresIn })
+
+                // Redirige al usuario a la ruta predeterminada
+                navigate('/home')
+
+                console.log(resp)
+
                 return {
                     status: 'success',
                     message: '',
-                };
+                }
             }
-    
+
             return {
                 status: 'failed',
                 message: 'Unable to sign in',
-            };
+            }
         } catch (errors: any) {
             // Manejo de errores en caso de que la API falle
             return {
                 status: 'failed',
                 message: errors?.message || 'Error during login',
-            };
+            }
         }
-    };
-    
-
-    const signOut = () => {
-        // Limpiar datos del usuario y token
-        setToken("");
-        setUser(null);
-        setSessionSignedIn(false);
-
-        // Redirigir a la página de inicio de sesión
-        navigate("/login");
-    };
+    }
 
     return (
         <AuthContext.Provider
@@ -85,15 +100,13 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
                 authenticated,
                 user: useSessionUser((state) => state.user),
                 signIn,
-                signUp: async () => ({ status: "failed", message: "Not implemented" }),
                 signOut,
                 oAuthSignIn: () => {},
             }}
         >
             {children}
         </AuthContext.Provider>
-    );
+    )
 }
 
-export default AuthProvider;
-
+export default AuthProvider

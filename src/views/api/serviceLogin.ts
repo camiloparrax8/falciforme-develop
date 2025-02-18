@@ -19,6 +19,7 @@ type LoginApiResponse = {
         updatedAt: string; // Fecha en formato ISO
     }
     token: string;
+    expiresIn: number;
 };
 
 type LoginApiRequest = {
@@ -51,6 +52,7 @@ export async function serviceLogin(data: LoginApiRequest) {
             createdAt: response.data.createdAt, // Convierte la fecha en formato ISO a Date
             updatedAt: response.data.updatedAt, // Convierte la fecha en formato ISO a Date
             token: response.token, // Obtiene solo el token
+            expiresIn: response.expiresIn, // tiempo de expiracion token
         };
     } catch (error: any) {
         throw new Error(error.response?.data?.message || 'Error during login');

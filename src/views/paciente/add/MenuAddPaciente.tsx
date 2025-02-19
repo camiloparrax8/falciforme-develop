@@ -53,7 +53,7 @@ const MenuAddPaciente = () => {
                                     paciente registrado.
                                 </p>
                             ) : (
-                                <RedPrimaria nextTab={nextTab} />
+                                <RedPrimaria />
                             )}
                         </TabContent>
                         <TabContent value="acompañante">
@@ -63,7 +63,7 @@ const MenuAddPaciente = () => {
                                     paciente registrado.
                                 </p>
                             ) : (
-                                <Acompañante nextTab={nextTab} />
+                                <Acompañante />
                             )}
                         </TabContent>
                         <TabContent value="familiar">

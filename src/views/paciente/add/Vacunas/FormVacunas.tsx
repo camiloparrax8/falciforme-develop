@@ -1,17 +1,25 @@
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import Button from '@/components/ui/Button';
-import { FaEdit, FaTrash } from 'react-icons/fa';
-import validationVacunas from '../../../../validation/validationVacunas';
-import SectionTitle from '@/views/common/form/SectionTitle';
-import SelectMultiple from '@/views/common/form/SelectMultiple';
-import InputDatePickerForm from '@/views/common/form/InputDate';
-import InputForm from '@/views/common/form/InputForm';
+import { useState, useEffect } from 'react'
+import { useForm } from 'react-hook-form'
+import Button from '@/components/ui/Button'
+import validationVacunas from '../../../../validation/validationVacunas'
+import SectionTitle from '@/views/common/form/SectionTitle'
+import InputDatePickerForm from '@/views/common/form/InputDate'
+import InputForm from '@/views/common/form/InputForm'
+import {
+    inputVacunas,
+    crearEsquemaVacunas,
+} from '@/customService/services/vacunasService' // ✅ Importar el servicio
+import { useToken, useSessionUser } from '@/store/authStore'
+import InputSelect from '@/views/common/form/InputSelect'
+import { usePatient } from '@/context/PatientContext'
+import { Alert } from '@/components/ui'
+import TablaVacunas from './TablaVacunas'
 
-function FormVacunas({ nextTab }) {
+function FormVacunas() {
     const {
         control,
         handleSubmit,
+        reset,
         formState: { errors },
     } = useForm({
         defaultValues: {
@@ -19,78 +27,97 @@ function FormVacunas({ nextTab }) {
             dosis: '',
             fecha: '',
         },
-    });
+    })
+    const { paciente } = usePatient()
+    const { user } = useSessionUser()
 
-    // Datos de vacunas quemados directamente en el componente
-    const [vacunas, setVacunas] = useState([
-        {
-            id: 1,
-            tipo_vacuna: 'COVID-19',
-            dosis: '2',
-            fecha: '2023-05-10',
-        },
-        {
-            id: 2,
-            tipo_vacuna: 'Influenza',
-            dosis: '1',
-            fecha: '2023-10-01',
-        },
-        {
-            id: 3,
-            tipo_vacuna: 'Hepatitis A',
-            dosis: '1',
-            fecha: '2023-07-15',
-        },
-        {
-            id: 4,
-            tipo_vacuna: 'Tosferina',
-            dosis: '3',
-            fecha: '2023-03-20',
-        },
-        {
-            id: 5,
-            tipo_vacuna: 'Triple Viral (SRP)',
-            dosis: '2',
-            fecha: '2023-01-25',
-        },
-    ]);
+    const { token } = useToken()
+    const [vacunasOptions, setVacunasOptions] = useState([])
+    const [mensaje, setMensaje] = useState(null)
+    const [loading, setLoading] = useState(false)
+    const [refresh, setRefresh] = useState(false)
 
-    const vacunasOptions = [
-        { value: 'covid_19', label: 'COVID-19' },
-        { value: 'influenza', label: 'Influenza' },
-        { value: 'varicela', label: 'Varicela' },
-        { value: 'rotavirus', label: 'Rotavirus' },
-        { value: 'difteria', label: 'Difteria' },
-        { value: 'tosferina', label: 'Tosferina' },
-        { value: 'neumococo', label: 'Neumococo' },
-        { value: 'meningococo', label: 'Meningococo' },
-        { value: 'hepatitis_a', label: 'Hepatitis A' },
-        { value: 'vih', label: 'VIH' },
-        { value: 'hpv', label: 'HPV (Virus del Papiloma Humano)' },
-        { value: 'antirrabica', label: 'Antirrábica' },
-        { value: 'triple_viral', label: 'Triple Viral (SRP)' },
-        { value: 'pentavalente', label: 'Pentavalente' },
-        { value: 'tifoidea', label: 'Fiebre Tifoidea' },
-    ];
+    //  Obtener las vacunas desde la API
+    useEffect(() => {
+        const fetchVacunas = async () => {
+            const data = await inputVacunas(token) // Llamamos al servicio
+            setVacunasOptions(data.data) // Guardamos las vacunas en el estado
+        }
 
-    const onSubmit = (data) => {
-        console.log('Datos enviados:', data);
-    };
+        fetchVacunas()
+    }, [token]) // Solo se ejecuta cuando el token cambia
+
+    const onSubmit = async (data) => {
+        try {
+            setLoading(true)
+            setMensaje(null)
+
+            const response = await crearEsquemaVacunas(token, user.id, {
+                id_paciente: paciente.id,
+                id_vacunacion: data.tipo_vacuna,
+                estado: 'completado',
+                fecha_vacunacion: data.fecha,
+                dosis: data.dosis,
+                id_user_create: user.id,
+            })
+
+            if (response.status === 'success') {
+                setMensaje({
+                    status: 'success',
+                    message: 'Vacuna registrada correctamente.',
+                })
+
+                // ✅ Limpiar el formulario después de guardar
+                reset({
+                    tipo_vacuna: [],
+                    dosis: '',
+                    fecha: '',
+                })
+
+                // ✅ Forzar la actualización de la tabla
+                setRefresh((prev) => !prev)
+            } else {
+                setMensaje({ status: 'error', message: response.message })
+            }
+        } catch (error) {
+            setMensaje({
+                status: 'error',
+                message: 'Error al registrar la vacuna.',
+            })
+            console.log(error)
+        } finally {
+            setLoading(false)
+        }
+    }
 
     return (
         <div className="w-full">
+            {mensaje && (
+                <Alert
+                    title={mensaje.status === 'error' ? 'Atención' : 'Correcto'}
+                    showIcon
+                    type={mensaje.status === 'error' ? 'danger' : 'success'}
+                    closable
+                    duration={5000}
+                    onClose={() => setMensaje(null)}
+                >
+                    {mensaje.message}
+                </Alert>
+            )}
             <form
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full"
                 onSubmit={handleSubmit(onSubmit)}
             >
-                <SectionTitle text="Datos de ingreso" className="col-span-3 mb-4" />
+                <SectionTitle
+                    text="Datos de ingreso"
+                    className="col-span-3 mb-4"
+                />
 
-                <SelectMultiple
+                <InputSelect
                     control={control}
                     name="tipo_vacuna"
                     options={vacunasOptions}
                     placeholder="Seleccione el tipo de vacuna"
-                    defaultValue={[]}
                     errors={errors}
                     validation={{
                         required: validationVacunas.tipoVacuna.required,
@@ -102,13 +129,13 @@ function FormVacunas({ nextTab }) {
 
                 <InputForm
                     control={control}
-                    value=''
                     name="dosis"
                     rules={validationVacunas.dosis}
                     errors={errors}
                     label="Dosis"
                     inputPlaceholder="Número de dosis"
                     className="col-span-1"
+                    value={''}
                 />
 
                 <InputDatePickerForm
@@ -125,41 +152,9 @@ function FormVacunas({ nextTab }) {
                     <Button type="submit">Guardar</Button>
                 </div>
             </form>
-
-            <div className="mt-6">
-                <SectionTitle text="Vacunas Agregadas" className="col-span-3 mb-4" />
-                <table className="min-w-full table-auto">
-                    <thead>
-                        <tr className="border-b">
-                            <th className="py-2 px-4 text-left">Vacuna</th>
-                            <th className="py-2 px-4 text-left">Dosis</th>
-                            <th className="py-2 px-4 text-left">Fecha</th>
-                            <th className="py-2 px-4 text-left">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {vacunas.map((vacuna) => (
-                            <tr key={vacuna.id} className="border-b">
-                                <td className="py-2 px-4">{vacuna.tipo_vacuna}</td>
-                                <td className="py-2 px-4">{vacuna.dosis}</td>
-                                <td className="py-2 px-4">
-                                    {new Date(vacuna.fecha).toLocaleDateString()}
-                                </td>
-                                <td className="py-2 px-4 flex space-x-2">
-                                    <Button variant="solid" className="text-white flex items-center space-x-1">
-                                        <FaEdit />
-                                    </Button>
-                                    <Button variant="solid" className="text-white flex items-center space-x-1">
-                                        <FaTrash />
-                                    </Button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+            <TablaVacunas refresh={refresh} />
         </div>
-    );
+    )
 }
 
-export default FormVacunas;
+export default FormVacunas

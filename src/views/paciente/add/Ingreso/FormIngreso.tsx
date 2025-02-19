@@ -5,69 +5,85 @@ import SectionTitle from '@/views/common/form/SectionTitle';
 import InputForm from '@/views/common/form/InputForm';
 import SelectMultiple from '@/views/common/form/SelectMultiple';
 import InputDatePickerForm from '@/views/common/form/InputDate';
-
-
+import { crearPrimeraConsulta } from '@/customService/services/ingresoService';
+import { useToken } from '@/store/authStore';
+import { usePatient } from '@/context/PatientContext';
+import { useSessionUser } from '@/store/authStore';
+import { useState } from 'react';
 
 function FormIngreso({ nextTab }) {
-    const {
-        control,
-        handleSubmit,
-        formState: { errors },
-    } = useForm({
+    const { control, handleSubmit, formState: { errors } } = useForm({
         defaultValues: {
-            fechaPrimeraConsulta: '',
-            edadConsulta: '',
-            fechaInicioSintomas: '',
-            observacion: '',
-            sintomas: [],
-
-            
+            fecha_hematologica: '',
+            edad_consulta: '',
+            fecha_inicio_sintoma: '',
+            parentescos_multiples: [],
         },
     });
 
-    const onSubmit = (data) => {
-        console.log('Datos enviados:', data);
+    const { paciente } = usePatient();
+    const { token } = useToken();
+    const { user } = useSessionUser();
+
+    const [loading, setLoading] = useState(false);
+
+    const onSubmit = async (data) => {
+        setLoading(true);
+
+        if (!paciente.id) {
+            console.error('Seleccione un paciente');
+            setLoading(false);
+            return;
+        }
+
+        try {
+            const response = await crearPrimeraConsulta(token, user.id, paciente.id, data);
+
+            if (response.status === 'success') {
+                console.log('Primera consulta creada con éxito');
+                setTimeout(() => {
+                    nextTab();
+                }, 1000);
+            } else {
+                console.error(response.message);
+            }
+        } catch (error) {
+            console.error('Error al guardar la primera consulta');
+        } finally {
+            setLoading(false);
+        }
     };
 
-
-
     const sintomasOptions = [
-        // Síntomas 
         { value: 'anemia', label: 'Anemia' },
         { value: 'palidez', label: 'Palidez' },
         { value: 'ictericia', label: 'Ictericia' },
-    
-        // Síntomas Relacionados con el Dolor
         { value: 'dolor_oseo', label: 'Dolor Óseo' },
         { value: 'dactilitis', label: 'Dactilitis' },
-    
-        // Síntomas Relacionados con Infecciones
         { value: 'infecciones', label: 'Infecciones' },
-    ]
+    ];
 
     return (
         <form
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full"
             onSubmit={handleSubmit(onSubmit)}
         >
-            {/* Sección Información Básica */}
             <SectionTitle text="Datos de ingreso" className="col-span-4" />
 
             <InputDatePickerForm
                 control={control}
-                name="fecha_consulta"
-                rules={validationIngreso.fechaPrimeraConsulta}
+                name="fecha_hematologica"
+                rules={validationIngreso.fecha_hematologica}
                 errors={errors}
-                label="Fecha 1ra consulta hematologia"
+                label="Fecha 1ra consulta hematología"
                 placeholder="Fecha"
                 className="col-span-1"
-                
             />
 
             <InputForm
                 control={control}
-                name="edad"
-                rules={validationIngreso.edadConsulta}
+                name="edad_consulta"
+                rules={validationIngreso.edad_consulta}
                 errors={errors}
                 label="Edad de esa consulta"
                 inputPlaceholder="Edad"
@@ -77,45 +93,33 @@ function FormIngreso({ nextTab }) {
 
             <InputDatePickerForm
                 control={control}
-                name="fecha_sintomas"
-                rules={validationIngreso.fechaInicioSintomas}
+                name="fecha_inicio_sintoma"
+                rules={validationIngreso.fecha_inicio_sintoma}
                 errors={errors}
-                label="Fecha inicio sintomas"
+                label="Fecha inicio síntomas"
                 placeholder="Fecha"
                 className="col-span-1"
-                
             />
 
-            <InputForm
-                control={control}
-                name="observaciones"
-                rules={validationIngreso.observacion}
-                errors={errors}
-                label="Observaciones"
-                inputPlaceholder="Observaciones"
-                className="col-span-1"
-                value=""
-            />
             <SelectMultiple
-                            control={control}
-                            className="col-span-3"
-                            name="parentescosMultiples"
-                            options={sintomasOptions}
-                            placeholder="Seleccione los sintomas"
-                            defaultValue={[]}
-                            errors={errors}
-                            validation={{
-                                required:validationIngreso.sintomas.required,
-                                validate:validationIngreso.sintomas.validate,
-                            }}
-                            
-                            label="Sintomas"
-                        />
-         
+                control={control}
+                className="col-span-3"
+                name="parentescos_multiples"
+                options={sintomasOptions}
+                placeholder="Seleccione los síntomas"
+                defaultValue={[]}
+                errors={errors}
+                validation={{
+                    required: validationIngreso.parentescos_multiples.required,
+                    validate: validationIngreso.parentescos_multiples.validate,
+                }}
+                label="Síntomas"
+            />
 
-            {/* Botón */}
             <div className="col-span-4 flex justify-end mt-6">
-                <Button type="submit">Guardar</Button>
+                <Button type="submit" disabled={loading}>
+                    {loading ? 'Guardando...' : 'Guardar'}
+                </Button>
             </div>
         </form>
     );

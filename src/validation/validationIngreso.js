@@ -1,5 +1,5 @@
 const validationIngreso = {
-    fechaPrimeraConsulta: {
+    fecha_hematologica: {
         required: 'La fecha de la primera consulta es obligatoria',
         pattern: {
             value: /^\d{4}-\d{2}-\d{2}$/,
@@ -14,7 +14,7 @@ const validationIngreso = {
             );
         },
     },
-    edadConsulta: {
+    edad_consulta: {
         required: 'La edad en la consulta es obligatoria',
         pattern: {
             value: /^[0-9]+$/,
@@ -29,7 +29,7 @@ const validationIngreso = {
             message: 'La edad no puede superar los 120 años',
         },
     },
-    fechaInicioSintomas: {
+    fecha_inicio_sintoma: {
         required: 'La fecha de inicio de síntomas es obligatoria',
         pattern: {
             value: /^\d{4}-\d{2}-\d{2}$/,
@@ -43,7 +43,7 @@ const validationIngreso = {
             );
         },
     },
-    sintomas: {
+    parentescos_multiples: {
         required: 'Debe seleccionar al menos un síntoma',
         validate: (value) => value.length > 0 || 'Debe elegir al menos un síntoma',
     },

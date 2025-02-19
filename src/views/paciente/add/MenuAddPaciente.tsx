@@ -21,7 +21,7 @@ const MenuAddPaciente = () => {
         'vacunas',
         'ingreso',
     ]
-    const { currentTab, nextTab, goToTab } = useTabsFlow(tabs)
+    const { currentTab, goToTab } = useTabsFlow(tabs)
 
     console.log(paciente)
 
@@ -44,7 +44,7 @@ const MenuAddPaciente = () => {
                     {/* Contenido de las pestañas */}
                     <div className="p-4">
                         <TabContent value="paciente">
-                            <FormPaciente nextTab={nextTab}></FormPaciente>
+                            <FormPaciente ></FormPaciente>
                         </TabContent>
                         <TabContent value="redPrimaria">
                             {paciente === null ? (
@@ -73,7 +73,7 @@ const MenuAddPaciente = () => {
                                     sin un paciente registrado.
                                 </p>
                             ) : (
-                                <FormAntFamiliares nextTab={nextTab} />
+                                <FormAntFamiliares />
                             )}
                         </TabContent>
                         <TabContent value="perinatologicos">
@@ -83,7 +83,7 @@ const MenuAddPaciente = () => {
                                     Perinatologicos sin un paciente registrado.
                                 </p>
                             ) : (
-                                <FormAntPerinatologicos nextTab={nextTab} />
+                                <FormAntPerinatologicos  />
                             )}
                         </TabContent>
                         <TabContent value="vacunas">
@@ -93,7 +93,7 @@ const MenuAddPaciente = () => {
                                     paciente registrado.
                                 </p>
                             ) : (
-                                <FormVacunas nextTab={nextTab} />
+                                <FormVacunas />
                             )}
                         </TabContent>
                         <TabContent value="ingreso">
@@ -103,7 +103,7 @@ const MenuAddPaciente = () => {
                                     paciente registrado.
                                 </p>
                             ) : (
-                                <FormIngreso nextTab={nextTab} />
+                                <FormIngreso />
                             )}
                         </TabContent>
                     </div>

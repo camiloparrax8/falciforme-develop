@@ -22,7 +22,7 @@ import {
     optionsIdentidadGenero,
     optionsIdentidadSexual,
 } from './dataSelectPaciente'
-function PatientForm({ nextTab }) {
+function PatientForm() {
     const { setPaciente, paciente } = usePatient()
     const {
         control,
@@ -66,7 +66,6 @@ function PatientForm({ nextTab }) {
                 ])
                 console.log(response.data)
                 setPaciente(response.data)
-                nextTab()
             }
         } catch (error) {
             const errores = error.response?.data?.errors?.map((err) => ({

@@ -8,7 +8,7 @@ import SelectMultiple from '@/views/common/form/SelectMultiple';
 import InputDatePickerForm from '@/views/common/form/InputDate';
 import InputForm from '@/views/common/form/InputForm';
 
-function FormVacunas({ nextTab }) {
+function FormVacunas() {
     const {
         control,
         handleSubmit,

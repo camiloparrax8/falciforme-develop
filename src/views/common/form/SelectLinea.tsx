@@ -14,7 +14,7 @@ function SelectLinea({ control, errors, validation, selectedParentesco, classNam
         <div className={className}>
             <Label htmlFor="linea" text="Línea" />
             <Controller
-                name="linea"
+                name="linea_parentesco"
                 control={control}
                 rules={validation}
                 render={({ field }) => (

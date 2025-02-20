@@ -71,7 +71,7 @@ function FormVacunas() {
                 reset({
                     tipo_vacuna: [],
                     dosis: '',
-                    fecha: '',
+                    fecha: null,
                 })
 
                 // ✅ Forzar la actualización de la tabla

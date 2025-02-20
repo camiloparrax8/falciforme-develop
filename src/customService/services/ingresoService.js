@@ -1,5 +1,18 @@
 import axiosInstance from "../adapters/axiosInstance";
 
+
+export const BuscarIngreso= async (token, id) => {
+    try {
+        const result = await axiosInstance.get(`/ingreso/${id}`, {
+            headers: { Authorization: token }
+        });
+        return result.data;
+    } catch (error) {
+        console.log("Error al ingreso del paciente:", error.response?.data || error.message);
+        throw error; 
+    }
+};
+
 export const crearPrimeraConsulta = async (token, idUsuario, idPaciente, formData) => {
     try {
         const data = {
@@ -11,7 +24,7 @@ export const crearPrimeraConsulta = async (token, idUsuario, idPaciente, formDat
             id_user_create: idUsuario,
         };
 
-        const result = await axiosInstance.post(`/primera-consulta`, data, {
+        const result = await axiosInstance.post(`/ingreso`, data, {
             headers: { Authorization: token }
         });
 

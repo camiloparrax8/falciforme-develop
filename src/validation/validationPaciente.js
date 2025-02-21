@@ -123,8 +123,8 @@ const validationPaciente = {
     estrato: {
         required: 'El estrato es obligatorio',
         pattern: {
-            value: /^[1-6]$/,
-            message: 'El estrato debe ser un número entre 1 y 6',
+            value: /^[0-6]$/,
+            message: 'El estrato debe ser un número entre 0 y 6',
         },
     },
 

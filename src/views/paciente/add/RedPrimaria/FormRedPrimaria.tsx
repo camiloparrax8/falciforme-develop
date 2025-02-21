@@ -8,35 +8,53 @@ import SectionTitle from '@/views/common/form/SectionTitle'
 import InputForm from '@/views/common/form/InputForm'
 import InputDatePickerForm from '@/views/common/form/InputDate'
 import { Dialog } from '@/components/ui'
+import {crearRedPrimaria} from '@/customService/services/redPrimariaService'
+import { useToken, useSessionUser } from '@/store/authStore'
+
 
 function FormRedPrimaria({ isOpen, onClose, onRequestClose }) {
     const {
         control,
         handleSubmit,
         formState: { errors },
+        reset
     } = useForm({
         defaultValues: {
-            fullName: '',
-            documentType: '',
-            identification: '',
-            birthdate: '',
-            gender: '',
-            sexualIdentity: '',
+            fecha: '',
+            hospital: '',
+            correo: '',
+            telefono: '',
+            telefono_urgencias: '',
             departamento: '',
-            city: '',
-            resident: '',
-            source: '',
-            phone: '',
-            email: '',
-            socialStratum: '',
-            occupation: '',
-            regime: '',
+            municipio: ''
         },
     })
     const [selectedDepartment, setSelectedDepartment] = useState(null)
+    const [loading, setLoading] = useState(false)
+    const { token } = useToken()
+    const { user } = useSessionUser()
+    const [mensajes, setMensajes] = useState([])
 
-    const onSubmit = (data) => {
-        console.log('Datos enviados:', data)
+    const onSubmit = async (data) => {
+        try {
+            setLoading(true)
+            setMensajes([])
+
+            const response = await crearRedPrimaria(token, user.id, data)
+
+            if (response) {
+                setMensajes([{ status: "success", message: "Red Primaria creada con éxito" }])
+                reset()
+                onClose()
+            } else {
+                setMensajes([{ status: "error", message: "Error al crear la Red Primaria" }])
+            }
+        } catch (error) {
+            console.error("Error al crear la Red Primaria:", error)
+            setMensajes([{ status: "error", message: "Error al crear la Red Primaria" }])
+        } finally {
+            setLoading(false)
+        }
     }
 
     return (
@@ -58,7 +76,7 @@ function FormRedPrimaria({ isOpen, onClose, onRequestClose }) {
                 />
                 <InputDatePickerForm
                     control={control}
-                    name="date"
+                    name="fecha"
                     rules={validationRedPrimaria.date}
                     errors={errors}
                     label="Fecha"
@@ -98,7 +116,7 @@ function FormRedPrimaria({ isOpen, onClose, onRequestClose }) {
                 />
                 <InputForm
                     control={control}
-                    name="phone"
+                    name="telefono"
                     rules={validationRedPrimaria.phone}
                     errors={errors}
                     label="Celular"
@@ -108,7 +126,7 @@ function FormRedPrimaria({ isOpen, onClose, onRequestClose }) {
                 />
                 <InputForm
                     control={control}
-                    name="phoneUrgency"
+                    name="telefono_urgencias"
                     rules={validationRedPrimaria.emergencyPhone}
                     errors={errors}
                     label="Número de Urgencia"
@@ -118,7 +136,7 @@ function FormRedPrimaria({ isOpen, onClose, onRequestClose }) {
                 />
                 <InputForm
                     control={control}
-                    name="email"
+                    name="correo"
                     rules={validationRedPrimaria.email}
                     errors={errors}
                     label="Correo Electrónico"

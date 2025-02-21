@@ -38,3 +38,34 @@ export const actualizarAcompañante = async (token, formData) => {
     }
 }
 
+export const crearAcompanante = async (token, idUsuario, formData) => {
+    try {
+        const data = {
+            nombre: formData.nombre,
+            apellido: formData.apellido,
+            celular: formData.celular,
+            correo: formData.correo,
+            ocupacion: formData.ocupacion,
+            municipio: formData.municipio,
+            departamento: formData.departamento,
+            direccion: formData.direccion,
+            tipo_identificacion: formData.tipo_identificacion,
+            identificacion: formData.identificacion,
+            tipo_vivienda: formData.tipo_vivienda,
+            nivel_ingreso: formData.nivel_ingreso,
+            nivel_academico: formData.nivel_academico,
+            tipo_vehiculo: formData.tipo_vehiculo,
+            id_user_create: idUsuario
+        };
+
+        const result = await axiosInstance.post(`/acompanante`, data, {
+            headers: { Authorization: token }
+        });
+
+        return result.data;
+    } catch (error) {
+        console.error("Error al crear acompañante:", error.response?.data || error.message);
+        throw error;
+    }
+};
+

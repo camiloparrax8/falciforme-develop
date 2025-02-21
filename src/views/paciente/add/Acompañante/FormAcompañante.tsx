@@ -4,31 +4,78 @@ import validationAcompañante from '../../../../validation/validationAcompañant
 import SelectDocumentType from '@/views/common/form/SelectDocumentType';
 import SectionTitle from '@/views/common/form/SectionTitle';
 import InputForm from '@/views/common/form/InputForm';
+import InputSelect from '@/views/common/form/InputSelect';
 import { Dialog } from '@/components/ui'
+import {crearAcompanante} from '@/customService/services/acompañanteService'
+import { useToken, useSessionUser } from '@/store/authStore'
+import { useState } from 'react'
+import SelectDepartment from '@/views/common/form/SelectDepartment'
+import SelectCity from '@/views/common/form/SelectCity'
+import {
+    optionsOcupacion,
+    optionsTipoVivienda,
+    optionsNivelIngreso,
+    optionsNivelAcademico,
+    optionsTipoVehiculo,
+} from './dataSelectAcompañante'
 function FormAcompañante({ isOpen, onClose, onRequestClose }) {
     const {
         control,
         handleSubmit,
         formState: { errors },
+        reset,
     } = useForm({
         defaultValues: {
-            fullName: '',
-            documentType: '',
-            identification: '',
-            relationship: '',
-            phone: '',
-            email: '',
+            nombre: "",
+            apellido: "",
+            tipo_identificacion: "",
+            identificacion: "",
+            celular: "",
+            correo: "",
+            ocupacion: "",
+            municipio: "",
+            departamento: "",
+            direccion: "",
+            tipo_vivienda: "",
+            nivel_ingreso: "",
+            nivel_academico: "",
+            tipo_vehiculo: "",
         },
     });
-    
-    const onSubmit = (data) => {
-        console.log('Datos enviados:', data);
+
+    const { token } = useToken();
+    const { user } = useSessionUser();
+    const [loading, setLoading] = useState(false);
+    const [mensaje, setMensaje] = useState([]);
+    const [selectedDepartment, setSelectedDepartment] = useState(null)
+
+    const onSubmit = async (data) => {
+        try {
+            setLoading(true);
+            setMensaje([]);
+
+            const response = await crearAcompanante(token, user.id, data);
+
+            if (response) {
+                setMensaje([{ status: "success", message: "Acompañante creado con éxito" }]);
+                reset();
+                onClose(); 
+            } else {
+                setMensaje([{ status: "error", message: "Error al crear acompañante" }]);
+            }
+        } catch (error) {
+            console.error("Error al crear el acompañante:", error);
+            setMensaje([{ status: "error", message: "Error al crear la Red Primaria" }]);
+        } finally {
+            setLoading(false);
+        }
     };
+
 
     return (
         <Dialog
         width={1200}
-        height={510}
+        height={800}
         isOpen={isOpen}
         onClose={onClose}
         onRequestClose={onRequestClose}
@@ -41,24 +88,35 @@ function FormAcompañante({ isOpen, onClose, onRequestClose }) {
             <SectionTitle text="Información Básica del Acompañante" className="col-span-1 md:col-span-2 lg:col-span-4" />
             <InputForm
                 control={control}
-                name="fullName"
+                name="nombre"
                 rules={validationAcompañante.fullName}
                 errors={errors}
-                label="Nombre completo"
+                label="Nombre"
+                inputPlaceholder="Nombre del acompañante"
+                className="col-span-1"
+                value=""
+            />
+
+            <InputForm
+                control={control}
+                name="apellido"
+                rules={validationAcompañante.fullName}
+                errors={errors}
+                label="Apellido"
                 inputPlaceholder="Nombre del acompañante"
                 className="col-span-1"
                 value=""
             />
             <SelectDocumentType
                 control={control}
-                name="documentType"
+                name="tipo_identificacion"
                 rules={validationAcompañante.documentType}
                 errors={errors}
                 className="col-span-1"
             />
             <InputForm
                 control={control}
-                name="identification"
+                name="identificacion"
                 rules={validationAcompañante.identification}
                 errors={errors}
                 label="Identificación"
@@ -66,22 +124,13 @@ function FormAcompañante({ isOpen, onClose, onRequestClose }) {
                 className="col-span-1"
                 value=""
             />
-            <InputForm
-                control={control}
-                name="relationship"
-                rules={validationAcompañante.relationship}
-                errors={errors}
-                label="Relación con el paciente"
-                inputPlaceholder="Ejemplo: Hermano"
-                className="col-span-1"
-                value=""
-            />
+            
 
             {/* Sección Contacto */}
             <SectionTitle text="Contacto del Acompañante" className="col-span-1 md:col-span-2 lg:col-span-4" />
             <InputForm
                 control={control}
-                name="phone"
+                name="celular"
                 rules={validationAcompañante.phone}
                 errors={errors}
                 label="Celular"
@@ -89,9 +138,10 @@ function FormAcompañante({ isOpen, onClose, onRequestClose }) {
                 className="col-span-1"
                 value=""
             />
+
             <InputForm
                 control={control}
-                name="email"
+                name="correo"
                 rules={validationAcompañante.email}
                 errors={errors}
                 label="Correo Electrónico"
@@ -100,8 +150,84 @@ function FormAcompañante({ isOpen, onClose, onRequestClose }) {
                 value=""
             />
 
+            <SelectDepartment
+                control={control}
+                errors={errors}
+                validation={validationAcompañante.departamento}
+                onDepartmentChange={setSelectedDepartment}
+                className="col-span-1"
+                />
+            <SelectCity
+                control={control}
+                selectedDepartment={selectedDepartment}
+                errors={errors}
+                validation={validationAcompañante.municipio}
+                className="col-span-1"
+                />
+            <InputForm
+                    control={control}
+                    name="direccion"
+                    rules={validationAcompañante.direccion}
+                    errors={errors}
+                    label="Dirección"
+                    inputPlaceholder="Dirección completa"
+                    className="col-span-2"
+                    value=""
+                />
+            <InputSelect
+                    control={control}
+                    name="ocupacion"
+                    validation={validationAcompañante.ocupacion}
+                    errors={errors}
+                    label="Ocupación"
+                    placeholder="Ejemplo: Estudiante"
+                    className="col-span-1"
+                    options={optionsOcupacion}
+                />
+            
+            <InputSelect
+                    control={control}
+                    name="tipo_vivienda"
+                    validation={validationAcompañante.tipo_vivienda}
+                    errors={errors}
+                    label="Tipo de vivienda"
+                    placeholder="Ejemplo: Apartamento"
+                    className="col-span-1"
+                    options={optionsTipoVivienda}
+                />
+            <InputSelect
+                    control={control}
+                    name="nivel_ingreso"
+                    validation={validationAcompañante.nivel_ingreso}
+                    errors={errors}
+                    label="Nivel de ingreso"
+                    placeholder="Nivel de ingreso"
+                    className="col-span-1"
+                    options={optionsNivelIngreso}
+                />
+            <InputSelect
+                    control={control}
+                    name="nivel_academico"
+                    validation={validationAcompañante.nivel_academico}
+                    errors={errors}
+                    label="Nivel Academico"
+                    placeholder="Nivel academico"
+                    className="col-span-1"
+                    options={optionsNivelAcademico}
+                />
+            <InputSelect
+                    control={control}
+                    name="tipo_vehiculo"
+                    validation={validationAcompañante.tipo_vehiculo}
+                    errors={errors}
+                    label="Tipo de vehiculo"
+                    placeholder="Tipo de vehiculo"
+                    className="col-span-1"
+                    options={optionsTipoVehiculo}
+                />
+
             {/* Botón */}
-            <div className="col-span-4 flex justify-end mt-6">
+            <div className="col-span-4 flex justify-start mt-2">
                 <Button type="submit">Guardar</Button>
             </div>
         </form>

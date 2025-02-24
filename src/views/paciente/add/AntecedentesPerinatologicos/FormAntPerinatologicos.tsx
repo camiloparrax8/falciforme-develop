@@ -11,7 +11,7 @@ import { useSessionUser } from '@/store/authStore';
 import { useEffect, useState } from 'react';
 import Alert from '@/components/ui/Alert'; // Importa el componente de alertas
 
-function FormAntPerinatologicos({ nextTab }) {
+function FormAntPerinatologicos({  }) {
     const {
         control,
         handleSubmit,

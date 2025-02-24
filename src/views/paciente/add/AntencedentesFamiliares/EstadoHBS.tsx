@@ -18,7 +18,7 @@ import { BuscarEstadosHBS, crearEstadoHBS } from '@/customService/services/estad
 
 const { Tr, Th, Td, THead, TBody } = Table
 
-function EstadoHBS() {
+function EstadoHBS({setMensaje}) {
     const hc = <TbLayoutGridAdd />
 
     const {
@@ -40,7 +40,7 @@ function EstadoHBS() {
     const selectedParentesco = watch('parentesco')
     const [actualizar, setActualizar] = useState(false);
     const [loading, setLoading] = useState(false)
-    const [mensajes, setMensajes] = useState([])
+   
 
     useEffect(() => {
         const obtenerHBS = async () => {
@@ -80,10 +80,10 @@ function EstadoHBS() {
         const onSubmit = async (data) => {
             try {
                 setLoading(true);
-                setMensajes([]);
+                setMensaje([]);
         
                 if (!paciente.id) {
-                    setMensajes([{ status: 'error', message: 'Seleccione un paciente' }]);
+                    setMensaje([{ status: 'error', message: 'Seleccione un paciente' }]);
                     setLoading(false);
                     return;
                 }
@@ -100,22 +100,19 @@ function EstadoHBS() {
                 console.log("Datos antes de enviar:", datos);
                 const response = await crearEstadoHBS(token, user.id, paciente.id, datos);
                 
-                if (response.status === 'success') {
-                    setMensajes([{ status: 'success', message: 'Estado HBS agregado con éxito' }]);
-                    setActualizar(prev => !prev);
-                    setTimeout(() => setIsOpen(false), 500);
-                } else {
-                    setMensajes([{ status: 'error', message: response.message }]);
+                setMensaje({ status: 'success', message: response.message || 'Estado HBS creado con éxito.' })
+                setTimeout(() => setIsOpen(false), 500);
+                setActualizar(prev => !prev);
+                } catch (error) {
+                    setMensaje({
+                        status: 'error',
+                        message: error.response?.data?.message || 'Error al asignar el acompañante.',
+                    })
+                } finally {
+                    setLoading(false)
                 }
-            } catch (error) {
-                setMensajes([{ status: 'error', message: 'Error al guardar el estado HBS' }]);
-            } finally {
-                setLoading(false);
-            }
-        };
+                };
         
-        
-
         
         
         
@@ -132,7 +129,6 @@ function EstadoHBS() {
 
     const options = [
         { value: 'portador', label: 'Portador' },
-        { value: 'no_portador', label: 'No Portador' },
         { value: 'desconocido', label: 'Desconocido' },
     ]
     return (

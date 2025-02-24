@@ -12,7 +12,7 @@ import {crearRedPrimaria} from '@/customService/services/redPrimariaService'
 import { useToken, useSessionUser } from '@/store/authStore'
 
 
-function FormRedPrimaria({ isOpen, onClose, onRequestClose }) {
+function FormRedPrimaria({ isOpen, onClose, onRequestClose, setMensajes }) {
     const {
         control,
         handleSubmit,
@@ -33,7 +33,7 @@ function FormRedPrimaria({ isOpen, onClose, onRequestClose }) {
     const [loading, setLoading] = useState(false)
     const { token } = useToken()
     const { user } = useSessionUser()
-    const [mensajes, setMensajes] = useState([])
+    
 
     const onSubmit = async (data) => {
         try {
@@ -42,16 +42,13 @@ function FormRedPrimaria({ isOpen, onClose, onRequestClose }) {
 
             const response = await crearRedPrimaria(token, user.id, data)
 
-            if (response) {
-                setMensajes([{ status: "success", message: "Red Primaria creada con éxito" }])
-                reset()
-                onClose()
-            } else {
-                setMensajes([{ status: "error", message: "Error al crear la Red Primaria" }])
-            }
+            setMensajes({ status: 'success', message: response.message || 'Red primaria creada con éxito.' })
+            onClose() 
         } catch (error) {
-            console.error("Error al crear la Red Primaria:", error)
-            setMensajes([{ status: "error", message: "Error al crear la Red Primaria" }])
+            setMensajes({
+                status: 'error',
+                message: error.response?.data?.message || 'Error al asignar el acompañante.',
+            })
         } finally {
             setLoading(false)
         }

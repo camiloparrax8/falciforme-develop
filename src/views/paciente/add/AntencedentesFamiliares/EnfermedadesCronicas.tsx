@@ -19,7 +19,7 @@ import { usePatient } from '@/context/PatientContext'
 
 const { Tr, Th, Td, THead, TBody } = Table
 
-function EnfermedadesCronicas() {
+function EnfermedadesCronicas({setMensaje}) {
     const hc = <TbLayoutGridAdd />
 
     const {
@@ -39,7 +39,6 @@ function EnfermedadesCronicas() {
 
     const [selectedDisease, setSelectedDisease] = useState(null)
     const [loading, setLoading] = useState(false)
-    const [mensajes, setMensajes] = useState<{ status: string; message: string }[]>([])
     const [enfermedades, setEnfermedades] = useState([])
     const { token } = useToken()
     const { user } = useSessionUser()
@@ -62,10 +61,10 @@ function EnfermedadesCronicas() {
                     }));
                     setEnfermedades(datos);
                 } else {
-                    setMensajes([{ status: 'error', message: 'Error al obtener las enfermedades' }]);
+                    setMensaje([{ status: 'error', message: 'Error al obtener las enfermedades' }]);
                 }
             } catch (error) {
-                setMensajes([{ status: 'error', message: 'Error al obtener las enfermedades' }]);
+                setMensaje([{ status: 'error', message: 'Error al obtener las enfermedades' }]);
             }
         };
     
@@ -76,10 +75,10 @@ function EnfermedadesCronicas() {
     const onSubmit = async (data) => {
         try {
             setLoading(true);
-            setMensajes([]);
+            setMensaje([]);
     
             if (!paciente.id) {
-                setMensajes([{ status: 'error', message: 'Seleccione un paciente' }]);
+                setMensaje([{ status: 'error', message: 'Seleccione un paciente' }]);
                 setLoading(false);
                 return;
             }
@@ -91,19 +90,18 @@ function EnfermedadesCronicas() {
                 parentescos: data.parentescos,
             });
     
-            if (response.status === 'success') {
-                setMensajes([{ status: 'success', message: 'Enfermedad agregada con éxito' }]);
-                setActualizar(prev => !prev); 
-                setTimeout(() => setIsOpen(false), 500); // 🔹 Cierra el modal después de actualizar
-            } else {
-                setMensajes([{ status: 'error', message: response.message }]);
-            }
-        } catch (error) {
-            setMensajes([{ status: 'error', message: 'Error al guardar la enfermedad' }]);
-        } finally {
-            setLoading(false);
-        }
-    };
+                setMensaje({ status: 'success', message: response.message || 'Enfermedad Cronica creada con éxito.' })
+                setTimeout(() => setIsOpen(false), 500);
+                setActualizar(prev => !prev);
+                } catch (error) {
+                    setMensaje({
+                        status: 'error',
+                        message: error.response?.data?.message || 'Error al asignar el acompañante.',
+                    })
+                } finally {
+                    setLoading(false)
+                }
+                };
     
 
     const openDialog = () => {

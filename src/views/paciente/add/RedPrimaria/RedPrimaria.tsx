@@ -164,6 +164,7 @@ const RedPrimaria = () => {
                 isOpen={dialogIsOpenRP}
                 onClose={closeDialog}
                 onRequestClose={closeDialog}
+                setMensajes={setMensaje}
             />
 
             {/* Modal de asignación */}

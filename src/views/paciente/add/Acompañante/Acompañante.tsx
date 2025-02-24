@@ -186,6 +186,8 @@ const Acompañante = () => {
                 isOpen={isOpen}
                 onClose={closeDialog}
                 onRequestClose={closeDialog}
+                setMensaje={setMensaje}
+                
             />
 
             {/* Modal de asignación */}

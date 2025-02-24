@@ -11,6 +11,7 @@ import { usePatient } from "@/context/PatientContext";
 import { useSessionUser } from "@/store/authStore";
 import { useState } from "react";
 import TablaIngreso from './TablaIngreso'
+import Alert from '@/components/ui/Alert'; 
 
 
 
@@ -50,7 +51,7 @@ function FormIngreso() {
             const response = await crearPrimeraConsulta(token, user.id, paciente.id, data);
 
             if (response) {
-                setMensajes([{ status: "success", message: "Consulta creada con éxito" }]);
+                setMensajes([{ status: "success", message: "Ingreso creado con éxito" }]);
                 reset({
                     fecha_hematologica: null,
                     edad_consulta: "",
@@ -60,7 +61,7 @@ function FormIngreso() {
 
                 setRefresh((prev) => !prev)
             } else {
-                setMensajes([{ status: "error", message: "Error al crear la consulta" }]);
+                setMensajes([{ status: "error", message: "Error al crear ingreso" }]);
             }
         } catch (error) {
             console.error("Error al crear la consulta:", error);
@@ -87,6 +88,23 @@ function FormIngreso() {
            
             {/* Sección Información Básica */}
             <SectionTitle text="Datos de ingreso" className="col-span-4" />
+                {/* Alertas */}
+                {mensajes.length > 0 && (
+                <div className="col-span-4 mb-4">
+                    {mensajes.map((msg, index) => (
+                        <Alert
+                            key={index}
+                            title={msg.status === 'error' ? 'Atención' : 'Correcto'}
+                            showIcon
+                            type={msg.status === 'error' ? 'danger' : 'success'}
+                            closable
+                            duration={60000}
+                        >
+                            {msg.message}
+                        </Alert>
+                    ))}
+                </div>
+            )}
 
             <InputDatePickerForm
                 control={control}

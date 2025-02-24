@@ -5,7 +5,7 @@ import SelectDocumentType from '@/views/common/form/SelectDocumentType';
 import SectionTitle from '@/views/common/form/SectionTitle';
 import InputForm from '@/views/common/form/InputForm';
 import InputSelect from '@/views/common/form/InputSelect';
-import { Dialog } from '@/components/ui'
+import {Dialog } from '@/components/ui'
 import {crearAcompanante} from '@/customService/services/acompañanteService'
 import { useToken, useSessionUser } from '@/store/authStore'
 import { useState } from 'react'
@@ -19,7 +19,8 @@ import {
     optionsNivelAcademico,
     optionsTipoVehiculo,
 } from './dataSelectAcompañante'
-function FormAcompañante({ isOpen, onClose, onRequestClose }) {
+
+function FormAcompañante({ isOpen, onClose, onRequestClose, setMensaje }) {
     const {
         control,
         handleSubmit,
@@ -47,7 +48,7 @@ function FormAcompañante({ isOpen, onClose, onRequestClose }) {
     const { token } = useToken();
     const { user } = useSessionUser();
     const [loading, setLoading] = useState(false);
-    const [mensaje, setMensaje] = useState([]);
+   
     const [selectedDepartment, setSelectedDepartment] = useState(null)
 
     const onSubmit = async (data) => {
@@ -57,18 +58,15 @@ function FormAcompañante({ isOpen, onClose, onRequestClose }) {
 
             const response = await crearAcompanante(token, user.id, data);
 
-            if (response) {
-                setMensaje([{ status: "success", message: "Acompañante creado con éxito" }]);
-                reset();
-                onClose(); 
-            } else {
-                setMensaje([{ status: "error", message: "Error al crear acompañante" }]);
-            }
+            setMensaje({ status: 'success', message: response.message || 'Acompañante creado con éxito.' })
+            onClose() 
         } catch (error) {
-            console.error("Error al crear el acompañante:", error);
-            setMensaje([{ status: "error", message: "Error al crear la Red Primaria" }]);
+            setMensaje({
+                status: 'error',
+                message: error.response?.data?.message || 'Error al asignar el acompañante.',
+            })
         } finally {
-            setLoading(false);
+            setLoading(false)
         }
     };
 

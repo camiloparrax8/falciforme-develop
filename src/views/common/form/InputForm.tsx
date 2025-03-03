@@ -2,6 +2,18 @@ import Input from '@/components/ui/Input'
 import { Controller } from 'react-hook-form'
 import Label from './Label'
 
+interface InputFormProps {
+    control: any;
+    name: string;
+    rules: any;
+    errors: any;
+    label: string;
+    inputPlaceholder: string;
+    className: string;
+    value?: string;
+    disabled?: boolean;
+}
+
 const InputForm = ({
     control,
     name,
@@ -10,8 +22,9 @@ const InputForm = ({
     label,
     inputPlaceholder,
     className,
-    value, // Prop adicional para manejar el valor inicial
-}) => {
+    value,
+    disabled
+}: InputFormProps) => {
     return (
         <div className={className}>
             <div className="col-span-1">
@@ -29,7 +42,8 @@ const InputForm = ({
                             id={name}
                             placeholder={inputPlaceholder}
                             className={errors[name] ? 'border-red-500' : ''}
-                            value={value || field.value} // Usar el `value` solo si no está vacío
+                            value={value || field.value}
+                            disabled={disabled}
                         />
                     )}
                 />

@@ -9,7 +9,7 @@ import { useToken } from '@/store/authStore';
 import { usePatient } from '@/context/PatientContext';
 import { useSessionUser } from '@/store/authStore';
 import { useEffect, useState } from 'react';
-import Alert from '@/components/ui/Alert'; // Importa el componente de alertas
+import Alert from '@/components/ui/Alert'; 
 
 function FormAntPerinatologicos({  }) {
     const {

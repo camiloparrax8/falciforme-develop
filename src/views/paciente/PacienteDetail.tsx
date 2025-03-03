@@ -16,7 +16,8 @@ import Section from '../common/Section'
 import { FaFileMedical } from 'react-icons/fa'
 import { useFormattedDate } from '@/hooks/useFormattedDate';
 import { useCalculateAge } from '@/hooks/useCalculateAge';
-
+import { FaClinicMedical } from "react-icons/fa";
+import { Table } from '@/components/ui/Table'
 
 
 const { TabNav, TabList, TabContent } = Tabs
@@ -25,12 +26,21 @@ export const PacienteDetail = ({ item }) => {
 
     const { formatDate } = useFormattedDate();
     const { calculateAge } = useCalculateAge();
+    const historiasClinicas = [
+        { id: 1, fecha: '2024-02-01', tipo: 'Seguimiento', diagnostico: 'Hipertensión' },
+        { id: 2, fecha: '2024-01-15', tipo: 'Inicial', diagnostico: 'Diabetes Tipo 2' },
+        { id: 3, fecha: '2023-12-20', tipo: 'Seguimiento', diagnostico: 'Control general' },
+    ]
+   
 
 
     console.log(item);
     
     const [dialogIsOpenPaciente, setIsOpenPaciente] = useState(false)
     const [dialogIsOpenHC, setIsOpenHC] = useState(false)
+    const [dialogIsOpenHistoriaClinica, setIsOpenHistoriaClinica] = useState(false);
+    const openDialogHistoriaClinica = () => setIsOpenHistoriaClinica(true);
+    const closeDialogHistoriaClinica = () => setIsOpenHistoriaClinica(false);
 
     const openDialogPaciente = () => {
         setIsOpenPaciente(true)
@@ -121,7 +131,12 @@ export const PacienteDetail = ({ item }) => {
                                     icon={hc}
                                     onClick={() => openDialogPaciente()}
                                 ></Button>
-                              
+                              <Button
+                                    variant="solid"
+                                    icon={<FaClinicMedical />}
+                                    onClick={() => openDialogHistoriaClinica()}
+                                ></Button>
+
                                 <Button
                                     icon={<FaFileMedical />}
                                     variant="solid"
@@ -193,6 +208,19 @@ export const PacienteDetail = ({ item }) => {
                                             span={2}
                                         />
                                     </Section>
+                                </div>
+                            </Dialog>
+
+                            <Dialog
+                                isOpen={dialogIsOpenHistoriaClinica}
+                                width={800}
+                                height={500}
+                                onClose={closeDialogHistoriaClinica}
+                                onRequestClose={closeDialogHistoriaClinica}
+                            >
+                                <div className="flex flex-col h-full space-y-4">
+                                    <h5>Historia Clínica del Paciente</h5>
+                                    <p>Aquí puedes agregar la información relevante de la historia clínica.</p>
                                 </div>
                             </Dialog>
                             {/* Dialog tipo consulta */}

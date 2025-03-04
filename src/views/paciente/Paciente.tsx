@@ -8,6 +8,8 @@ import PacienteSkeleton from "./PacienteSkeleton";
 import Alert from "@/components/ui/Alert";
 import { useToken } from "@/store/authStore";
 import { buscarPaciente } from "../../customService/services/pacienteService.js";
+import { historiaClinicaData } from '@/data/historiaClinicaData'
+import { useGeneratePDF } from '@/hooks/useGeneratePDF'
 
 const Paciente = () => {
     const { token } = useToken();
@@ -15,6 +17,7 @@ const Paciente = () => {
     const [isSearching, setIsSearching] = useState(false);
     const [showMessage, setShowMessage] = useState(false);
     const [error, setError] = useState(null);
+    const { generatePDF } = useGeneratePDF(historiaClinicaData);
 
     const handleSearch = async (cedula: string) => {
         if (!cedula.trim()) {
@@ -53,6 +56,7 @@ const Paciente = () => {
 
     return (
         <Container>
+         <button onClick={generatePDF}>Generar Historia Clínica</button>
             <AdaptiveCard className="mt-4">
                 <div className="flex flex-col gap-4">
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">

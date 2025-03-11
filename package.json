@@ -13,7 +13,6 @@
     "lint:fix": "npm run lint -- --fix",
     "format": "npm run prettier:fix && npm run lint:fix",
     "start": "npm run dev"
-
   },
   "dependencies": {
     "@floating-ui/react": "^0.26.23",
@@ -47,6 +46,7 @@
     "js-cookie": "^3.0.5",
     "lodash": "^4.17.21",
     "marked": "^14.1.2",
+    "pdfmake": "0.2.18",
     "react": "^18.3.1",
     "react-apexcharts": "^1.4.1",
     "react-content-loader": "^7.0.2",

@@ -14,6 +14,17 @@ export const buscarPaciente = async (token, identificacion) => {
         throw error; // Lanza el error para manejarlo desde el componente que consume este servicio
     }
 };
+export const buscarPacienteById = async (token, id) => {
+    try {
+        const result = await axiosInstance.get(`/paciente/buscar/${id}`, {
+            headers: { Authorization: token }
+        });
+        return result.data;
+    } catch (error) {
+        console.error("Error al buscar el paciente:", error.response?.data || error.message);
+        throw error; // Lanza el error para manejarlo desde el componente que consume este servicio
+    }
+};
 
 export const crearPaciente = async (token, idUsuario, formData) => {
     try {

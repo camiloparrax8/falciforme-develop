@@ -3,28 +3,60 @@ import { useParams, useLocation } from 'react-router-dom'
 import { AdaptiveCard, Container } from '@/components/shared'
 import CardHC from '../common/historia/CardHc'
 import { modulos } from './modulos'
-import pacientes from '../paciente/pacientes.json'
+import { usePatient, PatientProvider } from '@/context/PatientContext'
+import { buscarPacienteById } from '@/customService/services/pacienteService'
+import { useToken } from '@/store/authStore'
 import SectionTitle from '../common/form/SectionTitle'
+import { useEffect } from 'react'
 
+const HistoriaClinicaWrapper = () => {
+    return (
+        <PatientProvider>
+            <HistoriaClinica />
+        </PatientProvider>
+    )
+}
 const HistoriaClinica = () => {
     const { id } = useParams()
     const location = useLocation()
     const queryParams = new URLSearchParams(location.search)
     const tipo = queryParams.get('tipo')
-    console.log('tipo de HC=', tipo, ' / el id es =', id)
-    const paciente = (id: number): string | null => {
-        const paciente = pacientes.find(p => p.id === id);
-        return paciente ? paciente.nombre : null; // Retorna el nombre si existe, o null si no se encuentra
-    };
+    const { paciente, setPaciente } = usePatient()
+    const { token } = useToken() // Añade esta línea para obtener el token
+
+    useEffect(() => {
+        const fetchPaciente = async () => {
+            try {
+                const response = await buscarPacienteById(token, id) // Ahora token está disponible
+                if (response?.data) {
+                    setPaciente(response.data)
+                }
+            } catch (error) {
+                console.error('Error al obtener el paciente:', error)
+            }
+        }
+
+        if (id) {
+            fetchPaciente()
+        }
+    }, [id, setPaciente, token])
+
+    console.log(
+        'tipo de HC=',
+        tipo,
+        ' / el id es =',
+        id,
+        ' / El nombre es =',
+        paciente,
+    )
 
     return (
         <Container>
-            
             <AdaptiveCard>
-            <SectionTitle
-            text={`Historia clínica de: ${paciente(Number(id))}`} 
-            className="col-span-1 md:col-span-2 lg:col-span-4"
-            />
+                <SectionTitle
+                    text={`Historia clínica de: ${paciente?.nombre || 'Cargando...'}`}
+                    className="col-span-1 md:col-span-2 lg:col-span-4"
+                />
                 <div className="mt-4 grid grid-cols-6 gap-4">
                     {modulos.map((item) => (
                         <CardHC
@@ -43,4 +75,4 @@ const HistoriaClinica = () => {
     )
 }
 
-export default HistoriaClinica
+export default HistoriaClinicaWrapper

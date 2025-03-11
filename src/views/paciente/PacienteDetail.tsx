@@ -14,33 +14,45 @@ import InfoDatosIngreso from './add/Ingreso/InfoDatosIngreso'
 import Field from '../common/Field'
 import Section from '../common/Section'
 import { FaFileMedical } from 'react-icons/fa'
-import { useFormattedDate } from '@/hooks/useFormattedDate';
-import { useCalculateAge } from '@/hooks/useCalculateAge';
-import { FaClinicMedical } from "react-icons/fa";
+import { useFormattedDate } from '@/hooks/useFormattedDate'
+import { useCalculateAge } from '@/hooks/useCalculateAge'
+import { FaClinicMedical } from 'react-icons/fa'
 import { Table } from '@/components/ui/Table'
-
 
 const { TabNav, TabList, TabContent } = Tabs
 
 export const PacienteDetail = ({ item }) => {
-
-    const { formatDate } = useFormattedDate();
-    const { calculateAge } = useCalculateAge();
+    const { formatDate } = useFormattedDate()
+    const { calculateAge } = useCalculateAge()
     const historiasClinicas = [
-        { id: 1, fecha: '2024-02-01', tipo: 'Seguimiento', diagnostico: 'Hipertensión' },
-        { id: 2, fecha: '2024-01-15', tipo: 'Inicial', diagnostico: 'Diabetes Tipo 2' },
-        { id: 3, fecha: '2023-12-20', tipo: 'Seguimiento', diagnostico: 'Control general' },
+        {
+            id: 1,
+            fecha: '2024-02-01',
+            tipo: 'Seguimiento',
+            diagnostico: 'Hipertensión',
+        },
+        {
+            id: 2,
+            fecha: '2024-01-15',
+            tipo: 'Inicial',
+            diagnostico: 'Diabetes Tipo 2',
+        },
+        {
+            id: 3,
+            fecha: '2023-12-20',
+            tipo: 'Seguimiento',
+            diagnostico: 'Control general',
+        },
     ]
-   
 
+    console.log(item)
 
-    console.log(item);
-    
     const [dialogIsOpenPaciente, setIsOpenPaciente] = useState(false)
     const [dialogIsOpenHC, setIsOpenHC] = useState(false)
-    const [dialogIsOpenHistoriaClinica, setIsOpenHistoriaClinica] = useState(false);
-    const openDialogHistoriaClinica = () => setIsOpenHistoriaClinica(true);
-    const closeDialogHistoriaClinica = () => setIsOpenHistoriaClinica(false);
+    const [dialogIsOpenHistoriaClinica, setIsOpenHistoriaClinica] =
+        useState(false)
+    const openDialogHistoriaClinica = () => setIsOpenHistoriaClinica(true)
+    const closeDialogHistoriaClinica = () => setIsOpenHistoriaClinica(false)
 
     const openDialogPaciente = () => {
         setIsOpenPaciente(true)
@@ -109,7 +121,9 @@ export const PacienteDetail = ({ item }) => {
                                     <Input
                                         disabled
                                         size="sm"
-                                        value={formatDate(item.data.fecha_nacimiento)}
+                                        value={formatDate(
+                                            item.data.fecha_nacimiento,
+                                        )}
                                     />
                                 </div>
                                 <div>
@@ -131,7 +145,7 @@ export const PacienteDetail = ({ item }) => {
                                     icon={hc}
                                     onClick={() => openDialogPaciente()}
                                 ></Button>
-                              <Button
+                                <Button
                                     variant="solid"
                                     icon={<FaClinicMedical />}
                                     onClick={() => openDialogHistoriaClinica()}
@@ -220,7 +234,10 @@ export const PacienteDetail = ({ item }) => {
                             >
                                 <div className="flex flex-col h-full space-y-4">
                                     <h5>Historia Clínica del Paciente</h5>
-                                    <p>Aquí puedes agregar la información relevante de la historia clínica.</p>
+                                    <p>
+                                        Aquí puedes agregar la información
+                                        relevante de la historia clínica.
+                                    </p>
                                 </div>
                             </Dialog>
                             {/* Dialog tipo consulta */}
@@ -292,22 +309,34 @@ export const PacienteDetail = ({ item }) => {
                                 </TabList>
                                 <div className="p-4">
                                     <TabContent value="redPrimaria">
-                                        <InfoRedPrimaria data={item.data.redPrimaria}></InfoRedPrimaria>
+                                        <InfoRedPrimaria
+                                            data={item.data.redPrimaria}
+                                        ></InfoRedPrimaria>
                                     </TabContent>
                                     <TabContent value="acompañante">
-                                        <InfoAcompañante data={item.data.acompaniante}></InfoAcompañante>
+                                        <InfoAcompañante
+                                            data={item.data.acompaniante}
+                                        ></InfoAcompañante>
                                     </TabContent>
                                     <TabContent value="antFamiliar">
-                                        <InfoAntecedentes idPaciente ={item.data.id}></InfoAntecedentes>
+                                        <InfoAntecedentes
+                                            idPaciente={item.data.id}
+                                        ></InfoAntecedentes>
                                     </TabContent>
                                     <TabContent value="antPerinatologicos">
-                                        <InfoAntecedentesPerinatologicos idPaciente ={item.data.id} ></InfoAntecedentesPerinatologicos>
+                                        <InfoAntecedentesPerinatologicos
+                                            idPaciente={item.data.id}
+                                        ></InfoAntecedentesPerinatologicos>
                                     </TabContent>
                                     <TabContent value="vacunas">
-                                        <InfoVacunas idPaciente ={item.data.id} ></InfoVacunas>
+                                        <InfoVacunas
+                                            idPaciente={item.data.id}
+                                        ></InfoVacunas>
                                     </TabContent>
                                     <TabContent value="primeraConsulta">
-                                        <InfoDatosIngreso idPaciente ={item.data.id}></InfoDatosIngreso>
+                                        <InfoDatosIngreso
+                                            idPaciente={item.data.id}
+                                        ></InfoDatosIngreso>
                                     </TabContent>
                                 </div>
                             </Tabs>

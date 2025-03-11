@@ -9,6 +9,7 @@ import RedPrimaria from './RedPrimaria/RedPrimaria'
 import { usePatient } from '@/context/PatientContext'
 import { useTabsFlow } from '@/hooks/useTabsFlow'
 
+
 const MenuAddPaciente = () => {
     const { paciente } = usePatient()
     const { TabNav, TabList, TabContent } = Tabs

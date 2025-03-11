@@ -1,37 +1,23 @@
-
-import { Button } from '@/components/ui';
+import { Control } from 'react-hook-form';
 import InputForm from '@/views/common/form/InputForm';
 import InputSelect from '@/views/common/form/InputSelect';
 import SectionTitle from '@/views/common/form/SectionTitle';
-import { useForm } from 'react-hook-form';
 import validationExamenes from '../../.././../validation/validationExamenesFisicos';
-import defaultValues from './defaultValues';
 
-function FormExamenesFisicos() {
-    const {
-        control,
-        handleSubmit,
-        formState: { errors },
-    } = useForm({
-        defaultValues: defaultValues,
-    });
+interface FormExamenesFisicosProps {
+    control: Control<any>;
+    errors: any;
+}
 
-    const onSubmit = (data) => {
-        console.log('Datos enviados:', data);
-    };
-
+function FormExamenesFisicos({ control, errors }: FormExamenesFisicosProps) {
     const options = [
-      { value: 'si', label: 'Sí' },
-      { value: 'no', label: 'No' },
-     
-  ]
-  return (
-   
-    <form
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full"
-        onSubmit={handleSubmit(onSubmit)}
-    >
-        {/* Sección Signos Vitales */}
+        { value: 'si', label: 'Sí' },
+        { value: 'no', label: 'No' },
+    ];
+
+    return (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+            {/* Sección Signos Vitales */}
         <SectionTitle
             text="Signos Vitales"
             className="col-span-1 md:col-span-2 lg:col-span-4"
@@ -175,13 +161,9 @@ function FormExamenesFisicos() {
             options={options}
             className="col-span-1"
       />
-        {/* Botón */}
-        <div className="col-span-4 flex justify-end mt-6">
-            <Button type="submit">Guardar</Button>
+            
         </div>
-    </form>
-
-  )
+    );
 }
 
-export default FormExamenesFisicos
+export default FormExamenesFisicos;

@@ -57,16 +57,6 @@ const TableUsuario = ({ data, header, className}) => {
         setIsOpenEdit(false)
     }
 
-    const handleAdd = (row) => {
-        // Implementar lógica para agregar
-        console.log('Agregar', row)
-    }
-
-            const handleEdit = (row) => {
-        // Implementar lógica para editar
-        console.log('Editar', row)
-    }
-
     return (
         <div className={className}>
             <Table compact>

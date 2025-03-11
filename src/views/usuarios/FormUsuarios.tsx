@@ -8,7 +8,9 @@ import InputForm from "../common/form/InputForm";
 import validationUsuario from "@/validation/validationUsuario";
 import SelectRoles from "../common/form/SelectRoles";
 import Button from "@/components/ui/Button";
-function FormUsuarios({ isOpen, onClose, onRequestClose }) {
+import { crearUsuario } from "@/customService/services/usuariosService";
+
+function FormUsuarios({ isOpen, onClose, onRequestClose, setMensaje }) {
     const {
         control,
         handleSubmit,
@@ -17,7 +19,7 @@ function FormUsuarios({ isOpen, onClose, onRequestClose }) {
     } = useForm({
         defaultValues: {
             nombre: "",
-            apellido: "",
+            apellidos: "",
             cedula: "",
             correo: "",
             celular: "",
@@ -34,7 +36,20 @@ function FormUsuarios({ isOpen, onClose, onRequestClose }) {
         { value: 'medico', label: 'Medico' },
     ];
     const onSubmit = async (data) => {
-        console.log(data);
+        try {
+            setLoading(true);
+            setMensaje([]);
+            const response = await crearUsuario(token, data);
+            setMensaje({ status: 'success', message: response.message || 'Usuario creado con éxito.' })
+            onClose() 
+        } catch (error) {
+            setMensaje({
+                status: 'error',
+                message: error.response?.data?.message || 'Error al crear el usuario.',
+            })
+        } finally {
+            setLoading(false)
+        }
     }
 
 
@@ -57,6 +72,16 @@ function FormUsuarios({ isOpen, onClose, onRequestClose }) {
                     errors={errors}
                     label="Nombre"
                     inputPlaceholder="Nombre del acompañante"
+                    className="col-span-2"
+                    value=""
+                />
+                <InputForm
+                    control={control}
+                    name="apellidos"
+                    rules={validationUsuario.apellidos}
+                    errors={errors}
+                    label="Apellidos"
+                    inputPlaceholder="Apellidos del usuario"
                     className="col-span-2"
                     value=""
                 />

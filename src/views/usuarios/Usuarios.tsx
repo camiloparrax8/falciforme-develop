@@ -10,6 +10,7 @@ import FormUsuarios from './FormUsuarios';
 function Usuarios() {
     const { token } = useToken();
     const [usuarios, setUsuarios] = useState([]);
+    const [mensaje, setMensaje] = useState(null);
 
     useEffect(() => {
         const cargarUsuarios = async () => {
@@ -48,11 +49,10 @@ function Usuarios() {
 
     const [isOpen, setIsOpen] = useState(false);
     const openDialog = () => setIsOpen(true)
-    const closeDialog = () => setIsOpen(false)
 
     return (
         <div>
-            <FormUsuarios isOpen={isOpen} onClose={() => setIsOpen(false)} onRequestClose={() => setIsOpen(false)} />
+            <FormUsuarios isOpen={isOpen} onClose={() => setIsOpen(false)} onRequestClose={() => setIsOpen(false)} setMensaje={setMensaje} />
             <Card>
                 <div className="flex justify-between items-center mb-4">
                     <h4 className="text-lg font-semibold">Usuarios</h4>

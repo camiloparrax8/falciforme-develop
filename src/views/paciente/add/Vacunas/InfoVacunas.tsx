@@ -3,7 +3,7 @@ import Table from '@/components/ui/Table'
 
 const { Tr, Th, Td, THead, TBody } = Table
 
-function InfoVacunas() {
+function InfoVacunas({ idPaciente }: { idPaciente: string }) {
     // JSON quemado
     const vacunas = [
         { nombre: 'Meningococo', dosis: 2, fecha: '2022-05-22' },

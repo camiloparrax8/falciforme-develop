@@ -4,7 +4,7 @@ import Tag from '@/components/ui/Tag'
 
 const { Tr, Th, Td, THead, TBody } = Table
 
-function InfoAntecedentes() {
+function InfoAntecedentes({ idPaciente }: { idPaciente: string }) {
     // JSON quemado
     const antecedentesFamiliares = [
         {

@@ -3,7 +3,9 @@ import Input from '@/components/ui/Input'
 import Button from '@/components/ui/Button'
 import Dialog from '@/components/ui/Dialog'
 import { useState, type MouseEvent } from 'react'
-import ButtonNavigation from '../common/ButtonNavigation'
+import { buscarHcOpenById } from '@/customService/services/historiaClinicaService'
+import { useToken } from '@/store/authStore'
+import { useNavigate } from 'react-router-dom'
 import { TbInfoSquareRoundedFilled } from 'react-icons/tb'
 import InfoRedPrimaria from './add/RedPrimaria/InfoRedPrimaria'
 import InfoAcompañante from './add/Acompañante/InfoAcompañante'
@@ -13,15 +15,16 @@ import InfoVacunas from './add/Vacunas/InfoVacunas'
 import InfoDatosIngreso from './add/Ingreso/InfoDatosIngreso'
 import Field from '../common/Field'
 import Section from '../common/Section'
-import { FaFileMedical } from 'react-icons/fa'
+import { FaFileMedical, FaClinicMedical } from 'react-icons/fa'
 import { useFormattedDate } from '@/hooks/useFormattedDate'
 import { useCalculateAge } from '@/hooks/useCalculateAge'
-import { FaClinicMedical } from 'react-icons/fa'
 import { Table } from '@/components/ui/Table'
 
 const { TabNav, TabList, TabContent } = Tabs
 
 export const PacienteDetail = ({ item }) => {
+    const { token } = useToken()
+    const navigate = useNavigate()
     const { formatDate } = useFormattedDate()
     const { calculateAge } = useCalculateAge()
     const historiasClinicas = [
@@ -62,13 +65,32 @@ export const PacienteDetail = ({ item }) => {
         console.log('onDialogClosePaciente', e)
         setIsOpenPaciente(false)
     }
-    const openDialogHC = () => {
-        setIsOpenHC(true)
-    }
 
     const onDialogCloseHC = (e: MouseEvent) => {
         console.log('onDialogCloseHC', e)
         setIsOpenHC(false)
+    }
+
+    const [dialogMessage, setDialogMessage] = useState('')
+    const [dialogAction, setDialogAction] = useState(() => () => {})
+
+    const handleClickSeguimiento = async (idPaciente: number) => {
+        try {
+            const historiaAbierta = await buscarHcOpenById(token, idPaciente)
+
+            if (historiaAbierta) {
+                navigate(`/historia-clinica/${idPaciente}?tipo=seguimiento`)
+            }
+        } catch (error) {
+            console.error('Error al buscar historia clínica abierta:', error)
+            setDialogMessage(
+                'El paciente no tiene historia clínica abierta\n¿desea continuar?',
+            )
+            setDialogAction(() => () => {
+                navigate(`/historia-clinica/${idPaciente}?tipo=inicial`)
+            })
+            setIsOpenHC(true)
+        }
     }
     const hc = <TbInfoSquareRoundedFilled />
 
@@ -155,7 +177,9 @@ export const PacienteDetail = ({ item }) => {
                                     icon={<FaFileMedical />}
                                     variant="solid"
                                     title=""
-                                    onClick={() => openDialogHC()}
+                                    onClick={() =>
+                                        handleClickSeguimiento(item.data.id)
+                                    }
                                 />
                             </div>
 
@@ -246,20 +270,31 @@ export const PacienteDetail = ({ item }) => {
                                 onClose={onDialogCloseHC}
                                 onRequestClose={onDialogCloseHC}
                             >
-                                <div className="flex flex-col h-full space-y-4">
-                                    <h5>Tipo de consulta</h5>
-                                    <ButtonNavigation
-                                        variant="solid"
-                                        title="Seguimiento"
-                                        uri={`/historia-clinica/${item.data.id}?tipo=seguimiento`}
-                                        iconName="edit"
-                                    />
-                                    <ButtonNavigation
-                                        variant="solid"
-                                        title="Inicial"
-                                        uri={`/historia-clinica/${item.data.id}?tipo=inicial`}
-                                        iconName="edit"
-                                    />
+                                <div className="text-center p-6">
+                                    <h5 className="text-lg font-semibold text-gray-900">
+                                        {dialogMessage}
+                                    </h5>
+                                    <div className="flex justify-center space-x-4 mt-6">
+                                        <Button
+                                            variant="solid"
+                                            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+                                            onClick={() => {
+                                                dialogAction()
+                                                onDialogCloseHC(
+                                                    {} as MouseEvent,
+                                                )
+                                            }}
+                                        >
+                                            Continuar
+                                        </Button>
+                                        <Button
+                                            variant="outline"
+                                            className="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-100"
+                                            onClick={onDialogCloseHC}
+                                        >
+                                            Cancelar
+                                        </Button>
+                                    </div>
                                 </div>
                             </Dialog>
                         </Card>

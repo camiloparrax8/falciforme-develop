@@ -1,17 +1,25 @@
-import { useForm } from 'react-hook-form';
-import { Dialog } from '@/components/ui';
-import InputForm from '@/views/common/form/InputForm';
-import Button from '@/components/ui/Button';
-import {defaultValuesPC} from '../../one/modals/defaultValuesSeccionOne';
-import validationSeccionOne from '../../../../../../../validation/validationSeccionOne';
+import { useForm } from 'react-hook-form'
+import { Dialog } from '@/components/ui'
+import InputForm from '@/views/common/form/InputForm'
+import Button from '@/components/ui/Button'
+import { defaultValuesPC } from '../../one/modals/defaultValuesSeccionOne'
+import validationSeccionOne from '../../../../../../../validation/validationSeccionOne'
 
-export default function ModalPerimetroCefalico({ isOpen, onClose, onRequestClose }) {
-    const { control, handleSubmit, formState: { errors } } = useForm({defaultValues: defaultValuesPC});
+export default function ModalPerimetroCefalico({
+    isOpen,
+    onClose,
+    onRequestClose,
+}) {
+    const {
+        control,
+        handleSubmit,
+        formState: { errors },
+    } = useForm({ defaultValues: defaultValuesPC })
 
     const onSubmit = (data: any) => {
-        console.log("Datos enviados:", data);
-        onClose();
-    };
+        console.log('Datos enviados:', data)
+        onClose()
+    }
 
     return (
         <Dialog
@@ -38,7 +46,6 @@ export default function ModalPerimetroCefalico({ isOpen, onClose, onRequestClose
                     />
 
                     <div className="flex justify-end">
-                        
                         <Button type="submit" className="ml-2">
                             Guardar
                         </Button>
@@ -46,5 +53,5 @@ export default function ModalPerimetroCefalico({ isOpen, onClose, onRequestClose
                 </form>
             </div>
         </Dialog>
-    );
+    )
 }

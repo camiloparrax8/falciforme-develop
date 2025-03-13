@@ -11,6 +11,7 @@ import SectionTitle from '@/views/common/form/SectionTitle';
 function SeccionOne() {
     const icon = <FaUpload />;
 
+
     // Estados para cada modal
     const [dialogIsOpenPerimetroCefalico, setDialogIsOpenPerimetroCefalico] = useState(false);
     const [dialogIsOpenAgudezaVisual, setDialogIsOpenAgudezaVisual] = useState(false);

@@ -28,13 +28,20 @@ export const historiaClinicaData = {
         desnutricion: "No",
         obesidad: "No",
       },
-      region_cefalica: {
-        perimetro_cefalico: "55 cm",
-        agudeza_visual: "20/20",
-        examen_orl: "Normal",
-        caries: "No",
-        cuello: "Sin alteraciones",
-      },
+      
+        region_cefalica: {
+          perimetro_cefalico: "55 cm",
+          agudeza_visual: "20/20",
+          examen_orl: {
+          examen_boca: "Sin lesiones",
+          examen_nariz: "Sin obstrucción",
+          examen_oidos: "Tímpanos íntegros",
+          },
+          caries: "No",
+          cuello: "Sin alteraciones"
+        },
+      
+      
       region_toracoabdominal: {
         cardio_pulmonar: "Normal",
         abdominal: "Sin anomalías",
@@ -66,19 +73,67 @@ export const historiaClinicaData = {
   },
   complicacionesCronicas: {
     region_cefalica: {
-      cerebrales: "Infartos cerebrales previos",
-      oculares: "Retinopatía en ojo derecho",
+      cerebrales: {
+        Vasculopatía_cerebral: "si",
+        Infartos_cerebrales_silentes: "si",
+        Epilepsia_convulsiones: "si",
+        Cefaleas_recurrentes: "si",
+        Déficit_cognitivo: "si"
+      },
+      oculares: {
+        Retinopatía_drepanocítica: "si",
+        Hemorragias_vítreas: "si",
+        Neovascularización_retiniana: "si",
+        Iritis_o_uveítis: "si",
+        Oclusión_vasos_retinianos: "si"
+      }
     },
     region_toracoabdominal: {
-      cardiacas: "Hipertrofia ventricular izquierda",
-      pulmonares: "Enfermedad pulmonar obstructiva leve",
-      hepaticas: "Hepatomegalia leve",
+      cardiacas: {
+        Disfunción_Diastólica_VI:"si",
+        Sobrecarga_Férrica:"si",
+        Trombosis:"si" 
+      },
+      pulmonares: {
+        hipertension_pulmonar: "Si",
+        VRT: "N/A",
+        asma_sibilancias: {
+          numero_crisis_anual: 2,
+          tratamientos: "Ninguno"
+        },
+        EPFC: {
+          hipomexia: "Si",
+          SAOS: "no",
+          tratamiento: "Ninguno"
+        }
+      },
+      hepatico: {
+        hepatitis_viral_cronica: "no",
+        esplenomegalia: "no",
+        hiperesplenismo: "no"
+      }
     },
     region_genitourinaria: {
-      genitourinario: "Nefropatía leve",
-      oseas: "Osteonecrosis de cadera",
+      genitourinario: {
+        nefropatia:"si",
+        hipostenia:"si",
+        acidosis_tubular:"si",
+        hematuria_necrosis_renal: "si",
+        priapismo_recurrente: "si",
+        enfermedad_renal_cronica: "si",
+        proteinuria: "si"
+      },
+      oseas: {
+        hueso_comprometido: "Ninguno",
+        grado_discapacidad: "Bajo",
+        osteonecrosis: "si",
+        deformidades_oseas: "si",
+        osteopenia: "si"
+      }
+    }
+  
     },
-  },
+  
   trasplanteProgenitores: {
     estudios_hla: {
       paciente: "Pendiente",

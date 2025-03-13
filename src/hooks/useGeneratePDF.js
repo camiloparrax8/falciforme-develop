@@ -33,234 +33,468 @@ export const useGeneratePDF = () => {
           };
 
           const docDefinition = {
-              content: [
-                  { text: 'HISTORIA CLÍNICA', style: 'header', alignment: 'center', margin: [0, 0, 0, 10] },
-                  {
-                      text: 'Paciente', style: 'subheader', margin: [0, 10, 0, 5]
-                  },
-                  {
-                      table: {
-                          widths: ['auto', '*'],
-                          body: [
-                              ['Nombre', hc.paciente.nombre],
-                              ['Edad', `${hc.paciente.edad} años`],
-                              ['Género', hc.paciente.genero],
-                          ],
-                      },
-                      layout: standardTableLayout,
-                  },
-                  { text: '', margin: [0, 10] },
-                  { text: 'Exámenes Físicos', style: 'header', margin: [0, 10, 0, 5] },
-                  { text: 'Signos Vitales', style: 'subheader', margin: [0, 5] },
-                  {
-                      table: {
-                          widths: ['auto', '*'],
-                          body: [
-                              ['Frecuencia Cardiaca (lpm)', hc.examenesFisicos.signos_vitales.frecuencia_cardiaca],
-                              ['Frecuencia Respiratoria (rpm)', hc.examenesFisicos.signos_vitales.frecuencia_respiratoria],
-                              ['Saturación de Oxígeno (%)', hc.examenesFisicos.signos_vitales.saturacion_oxigeno],
-                              ['Tensión Arterial (mmHg)', hc.examenesFisicos.signos_vitales.tension_arterial],
-                          ],
-                      },
-                      layout: standardTableLayout,
-                  },
-                  { text: 'Peso y Talla', style: 'subheader', margin: [0, 10] },
-                  {
-                      table: {
-                          widths: ['auto', '*'],
-                          body: [
-                              ['Peso (kg)', hc.examenesFisicos.peso_talla.peso],
-                              ['Talla (cm)', hc.examenesFisicos.peso_talla.talla],
-                              ['Índice de Masa Corporal (IMC)', hc.examenesFisicos.peso_talla.imc],
-                          ],
-                      },
-                      layout: standardTableLayout,
-                  },
-                  { text: 'Estado Nutricional', style: 'subheader', margin: [0, 10] },
-                  {
-                      table: {
-                          widths: ['auto', '*'],
-                          body: [
-                              ['Déficit de Zinc', hc.examenesFisicos.estado_nutricional.deficit_zinc],
-                              ['Déficit de Ácido Fólico', hc.examenesFisicos.estado_nutricional.deficit_acido_folico],
-                              ['Déficit de Vitamina D', hc.examenesFisicos.estado_nutricional.deficit_vitamina_d],
-                              ['Desnutrición', hc.examenesFisicos.estado_nutricional.desnutricion],
-                              ['Obesidad', hc.examenesFisicos.estado_nutricional.obesidad],
-                          ],
-                      },
-                      layout: standardTableLayout,
-                  },
-                  { text: 'Región Cefálica o Superior (Cabeza y Cuello)', style: 'subheader', margin: [0, 10] },
-                  {
-                      table: {
-                          widths: ['auto', '*'],
-                          body: [
-                              ['Perímetro Cefálico', hc.examenesFisicos.region_cefalica.perimetro_cefalico],
-                              ['Agudeza Visual', hc.examenesFisicos.region_cefalica.agudeza_visual],
-                              ['Examen ORL', hc.examenesFisicos.region_cefalica.examen_orl],
-                              ['Caries', hc.examenesFisicos.region_cefalica.caries],
-                              ['Cuello', hc.examenesFisicos.region_cefalica.cuello],
-                          ],
-                      },
-                      layout: standardTableLayout,
-                  },
+            content: [
+                { text: 'HISTORIA CLÍNICA', style: 'header', alignment: 'center', margin: [0, 0, 0, 10] },
+                
+                { text: 'Paciente', style: 'subheader', margin: [0, 10, 0, 5] },
+                {
+                    columns: [
+                        {
+                            table: {
+                                widths: ['auto', '*'],
+                                body: [
+                                    ['Nombre', hc.paciente.nombre],
+                                    ['Edad', `${hc.paciente.edad} años`],
+                                    ['Género', hc.paciente.genero],
+                                ],
+                            },
+                            layout: standardTableLayout,
+                        },
+                    ],
+                    columnGap: 10,
+                },
+        
+                { text: 'Exámenes Físicos', style: 'header', margin: [0, 10, 0, 5] },
+        
+                {
+                    columns: [
+                        {
+                            text: 'Signos Vitales', style: 'subheader', margin: [0, 5]
+                        },
+                        {
+                            text: 'Peso y Talla', style: 'subheader', margin: [0, 5]
+                        }
+                    ],
+                },
+        
+                {
+                    columns: [
+                        {
+                            table: {
+                                widths: ['auto', '*'],
+                                body: [
+                                    ['Frecuencia Cardiaca (lpm)', hc.examenesFisicos.signos_vitales.frecuencia_cardiaca],
+                                    ['Frecuencia Respiratoria (rpm)', hc.examenesFisicos.signos_vitales.frecuencia_respiratoria],
+                                    ['Saturación de Oxígeno (%)', hc.examenesFisicos.signos_vitales.saturacion_oxigeno],
+                                    ['Tensión Arterial (mmHg)', hc.examenesFisicos.signos_vitales.tension_arterial],
+                                ],
+                            },
+                            layout: standardTableLayout,
+                        },
+                        {
+                            table: {
+                                widths: ['auto', '*'],
+                                body: [
+                                    ['Peso (kg)', hc.examenesFisicos.peso_talla.peso],
+                                    ['Percentil', hc.examenesFisicos.peso_talla.percentil],
+                                    ['Talla (cm)', hc.examenesFisicos.peso_talla.talla],
+                                    ['Índice de Masa Corporal (IMC)', hc.examenesFisicos.peso_talla.imc],
+                                ],
+                            },
+                            layout: standardTableLayout,
+                        }
+                    ],
+                    columnGap: 10,
+                    margin: [0, 10],
+                },
+        
+                { text: 'Estado Nutricional', style: 'subheader', margin: [0, 10] },
+
+                {
+                    columns: [
+                        {
+                            table: {
+                                widths: ['auto', '*'],
+                                body: [
+                                    ['Déficit de Zinc', hc.examenesFisicos.estado_nutricional.deficit_zinc],
+                                    ['Déficit de Ácido Fólico', hc.examenesFisicos.estado_nutricional.deficit_acido_folico],
+                                    ['Déficit de Vitamina D', hc.examenesFisicos.estado_nutricional.deficit_vitamina_d]
+                                ]
+                            },
+                            layout: standardTableLayout,
+                            margin: [0, 10]
+                        },
+                        {
+                            table: {
+                                widths: ['auto', '*'],
+                                body: [
+                                    ['Desnutrición', hc.examenesFisicos.estado_nutricional.desnutricion],
+                                    ['Obesidad', hc.examenesFisicos.estado_nutricional.obesidad]
+                                ]
+                            },
+                            layout: standardTableLayout,
+                            margin: [0, 10]
+                        }
+                    ]
+                },
+                
+        
+                { text: 'Región Cefálica o Superior (Cabeza y Cuello)', style: 'subheader', margin: [0, 10] },
+
+                    {
+                        columns: [
+                            {
+                                table: {
+                                    widths: ['auto', '*'],
+                                    body: [
+                                        ['Perímetro Cefálico', hc.examenesFisicos.region_cefalica.perimetro_cefalico],
+                                        ['Examen de la Boca', hc.examenesFisicos.region_cefalica.examen_orl.examen_boca],
+                                        ['Examen de la Nariz', hc.examenesFisicos.region_cefalica.examen_orl.examen_nariz],
+                                        ['Examen de los Oídos', hc.examenesFisicos.region_cefalica.examen_orl.examen_oidos],
+                                        ['Cuello', hc.examenesFisicos.region_cefalica.cuello]
+                                    ]
+                                },
+                                layout: standardTableLayout,
+                                margin: [0, 10]
+                            },
+                            {
+                                table: {
+                                    widths: ['auto', '*'],
+                                    body: [
+                                        ['Agudeza Visual', hc.examenesFisicos.region_cefalica.agudeza_visual],
+                                        ['Caries', hc.examenesFisicos.region_cefalica.caries],
+                                    ]
+                                },
+                                layout: standardTableLayout,
+                                margin: [0, 10]
+                            }
+                        ]
+                    },
 
                   { text: 'Región Toracoabdominal o Media (Tórax y Abdomen)', style: 'subheader', margin: [0, 10] },
                   {
                       table: {
                           widths: ['auto', '*'],
                           body: [
-                              ['Cardio Pulmonar', hc.examenesFisicos.region_toracoabdominal.cardio_pulmonar],
-                              ['Abdominal', hc.examenesFisicos.region_toracoabdominal.abdominal],
+                              ['Cardiopulmonar', hc.examenesFisicos.region_toracoabdominal.cardio_pulmonar],
+                              ['Examen Abdominal', hc.examenesFisicos.region_toracoabdominal.abdominal],
                           ],
                       },
                       layout: standardTableLayout,
+                      margin: [0, 10],
                   },
-
                   { text: 'Región Pélvica o Inferior (Pelvis y Extremidades Inferiores)', style: 'subheader', margin: [0, 10] },
                   {
                       table: {
                           widths: ['auto', '*'],
                           body: [
-                              ['Tanner (Desarrollo)', hc.examenesFisicos.region_pelvica.tanner],
+                              ['Tanner', hc.examenesFisicos.region_pelvica.tanner],
                               ['Extremidades', hc.examenesFisicos.region_pelvica.extremidades],
                           ],
                       },
                       layout: standardTableLayout,
+                      margin: [0, 10],
                   },
-                  { text: '', margin: [0, 10] },
-                  { text: 'Complicaciones Agudas', style: 'header', margin: [0, 10, 0, 5] },
+        
+                { text: 'Complicaciones Agudas', style: 'header', margin: [0, 10, 0, 5] },
+        
+                {
+                    columns: [
+                        {
+                            text: 'Crisis de Dolor', style: 'subheader', margin: [0, 5]
+                        },
+                        {
+                            text: 'Infecciones', style: 'subheader', margin: [0, 5]
+                        }
+                    ],
+                },
+        
+                {
+                    columns: [
+                        {
+                            table: {
+                                widths: ['auto', '*'],
+                                body: [
+                                    ['Fecha', hc.complicacionesAgudas.crisis_dolor.fecha],
+                                    ['Días', hc.complicacionesAgudas.crisis_dolor.dias],
+                                    ['Intensidad (1-10)', hc.complicacionesAgudas.crisis_dolor.intensidad],
+                                    ['Manejo', hc.complicacionesAgudas.crisis_dolor.manejo],
+                                    ['Tratamiento', hc.complicacionesAgudas.crisis_dolor.tratamiento],
+                                    ['Huesos Afectados', hc.complicacionesAgudas.crisis_dolor.huesos_afectados],
+                                ],
+                            },
+                            layout: standardTableLayout,
+                        },
+                        {
+                            table: {
+                                widths: ['auto', '*'],
+                                body: [
+                                    ['Germen', hc.complicacionesAgudas.infecciones.germen],
+                                    ['Tratamiento', hc.complicacionesAgudas.infecciones.tratamiento],
+                                    ['Días', hc.complicacionesAgudas.infecciones.dias],
+                                ],
+                            },
+                            layout: standardTableLayout,
+                        }
+                    ],
+                    columnGap: 10,
+                    margin: [0, 10],
+                },
+        
+                { text: 'Complicaciones Crónicas', style: 'header', margin: [0, 10] },
+                { text: 'Región Cefálica', style: 'subheader', margin: [0, 10] },
+                { text: 'Cerebrales', style: 'subheader', margin: [0, 5] },
+                
+                {
+                    columns: [
+                        {
+                            table: {
+                                widths: ['auto', '*'],
+                                body: [
+                                    ['Vasculopatía Cerebral', hc.complicacionesCronicas.region_cefalica.cerebrales.Vasculopatía_cerebral],
+                                    ['Infartos Cerebrales Silentes', hc.complicacionesCronicas.region_cefalica.cerebrales.Infartos_cerebrales_silentes],
+                                    ['Epilepsia Convulsiones', hc.complicacionesCronicas.region_cefalica.cerebrales.Epilepsia_convulsiones]
+                                ]
+                            },
+                            layout: standardTableLayout
+                        },
+                        {
+                            table: {
+                                widths: ['auto', '*'],
+                                body: [
+                                    ['Cefaleas Recurrentes', hc.complicacionesCronicas.region_cefalica.cerebrales.Cefaleas_recurrentes],
+                                    ['Déficit Cognitivo', hc.complicacionesCronicas.region_cefalica.cerebrales.Déficit_cognitivo]
+                                ]
+                            },
+                            layout: standardTableLayout
+                            
+                        }
+                    ]
+                },
+                
+                { text: 'Oculares', style: 'subheader', margin: [0, 20] },
 
-                  { text: 'Crisis de Dolor', style: 'subheader', margin: [0, 5] },
+                {
+                    columns: [
+                        {
+                            table: {
+                                widths: ['auto', '*'],
+                                body: [
+                                    ['Retinopatía Drepanocítica', hc.complicacionesCronicas.region_cefalica.oculares.Retinopatía_drepanocítica],
+                                    ['Hemorragias Vítreas', hc.complicacionesCronicas.region_cefalica.oculares.Hemorragias_vítreas],
+                                    ['Neovascularización Retiniana', hc.complicacionesCronicas.region_cefalica.oculares.Neovascularización_retiniana]
+                                ]
+                            },
+                            layout: standardTableLayout
+                        },
+                        {
+                            table: {
+                                widths: ['auto', '*'],
+                                body: [
+                                    ['Iritis o Uveítis', hc.complicacionesCronicas.region_cefalica.oculares.Iritis_o_uveítis],
+                                    ['Oclusión de Vasos Retinianos', hc.complicacionesCronicas.region_cefalica.oculares.Oclusión_vasos_retinianos]
+                                ]
+                            },
+                            layout: standardTableLayout
+                        }
+                    ]
+                },
+                
+        { text: 'Región Toracoabdominal', style: 'subheader', margin: [0, 10] },
+        { text: 'Cardiacas', style: 'subheader' },
+        {
+            table: {
+                widths: ['auto', '*'],
+                body: [
+                    ['Disfunción Diastólica VI', hc.complicacionesCronicas.region_toracoabdominal.cardiacas.Disfunción_Diastólica_VI],
+                    ['Sobrecarga Férrica', hc.complicacionesCronicas.region_toracoabdominal.cardiacas.Sobrecarga_Férrica],
+                    ['Trombosis', hc.complicacionesCronicas.region_toracoabdominal.cardiacas.Trombosis],
+                ],
+            },
+            layout: standardTableLayout,
+        },
+        { text: 'Pulmonares', style: 'subheader', margin: [0, 10] },
+
+{
+    columns: [
+        {
+            table: {
+                widths: ['auto', '*'],
+                body: [
+                    ['Hipertensión Pulmonar', hc.complicacionesCronicas.region_toracoabdominal.pulmonares.hipertension_pulmonar],
+                    ['VRT', hc.complicacionesCronicas.region_toracoabdominal.pulmonares.VRT],
+                    ['Número de Crisis Anual (Asma)', hc.complicacionesCronicas.region_toracoabdominal.pulmonares.asma_sibilancias.numero_crisis_anual],
+                    ['Tratamientos (Asma)', hc.complicacionesCronicas.region_toracoabdominal.pulmonares.asma_sibilancias.tratamientos]
+                ]
+            },
+            layout: standardTableLayout
+        },
+        {
+            table: {
+                widths: ['auto', '*'],
+                body: [
+                    ['Hipomexia (EPFC)', hc.complicacionesCronicas.region_toracoabdominal.pulmonares.EPFC.hipomexia],
+                    ['SAOS (EPFC)', hc.complicacionesCronicas.region_toracoabdominal.pulmonares.EPFC.SAOS],
+                    ['Tratamiento (EPFC)', hc.complicacionesCronicas.region_toracoabdominal.pulmonares.EPFC.tratamiento]
+                ]
+            },
+            layout: standardTableLayout
+                    }
+                ]
+                  },
+                  { text: 'Hepatico', style: 'subheader', margin: [0, 10] },
                   {
                       table: {
                           widths: ['auto', '*'],
                           body: [
-                              ['Fecha', hc.complicacionesAgudas.crisis_dolor.fecha],
-                              ['Días', hc.complicacionesAgudas.crisis_dolor.dias],
-                              ['Intensidad (1-10)', hc.complicacionesAgudas.crisis_dolor.intensidad],
-                              ['Manejo', hc.complicacionesAgudas.crisis_dolor.manejo],
-                              ['Tratamiento', hc.complicacionesAgudas.crisis_dolor.tratamiento],
-                              ['Huesos Afectados', hc.complicacionesAgudas.crisis_dolor.huesos_afectados],
-                          ],
-                      },
-                      layout: standardTableLayout,
+                              ['Hepatitis Viral Crónica', hc.complicacionesCronicas.region_toracoabdominal.hepatico.hepatitis_viral_cronica],
+                            ['Esplenomegalia', hc.complicacionesCronicas.region_toracoabdominal.hepatico.esplenomegalia],
+                            ['Hiperesplenismo', hc.complicacionesCronicas.region_toracoabdominal.hepatico.hiperesplenismo]
+                        ]
+                    },
+                    layout: standardTableLayout,
+                    margin: [0, 10]
+                },                
+            
+            { text: 'Región Genitourinaria', style: 'subheader', margin: [0, 10] },
+            { text: 'Genitourinario', style: 'subheader' },
+            
+            {
+                columns: [
+                    {
+                        table: {
+                            widths: ['auto', '*'],
+                            body: [
+                                ['Nefropatía', hc.complicacionesCronicas.region_genitourinaria.genitourinario.nefropatia],
+                                ['Hipostenia', hc.complicacionesCronicas.region_genitourinaria.genitourinario.hipostenia],
+                                ['Acidosis Tubular', hc.complicacionesCronicas.region_genitourinaria.genitourinario.acidosis_tubular],
+                                ['Hematuria y Necrosis Renal', hc.complicacionesCronicas.region_genitourinaria.genitourinario.hematuria_necrosis_renal]
+                            ]
+                        },
+                        layout: standardTableLayout
+                    },
+                    {
+                        table: {
+                            widths: ['auto', '*'],
+                            body: [
+                                ['Priapismo Recurrente', hc.complicacionesCronicas.region_genitourinaria.genitourinario.priapismo_recurrente],
+                                ['Enfermedad Renal Crónica', hc.complicacionesCronicas.region_genitourinaria.genitourinario.enfermedad_renal_cronica],
+                                ['Proteinuria', hc.complicacionesCronicas.region_genitourinaria.genitourinario.proteinuria]
+                            ]
+                        },
+                        layout: standardTableLayout
+                    }
+                ]
+            },
+            
+            { text: 'Óseas', style: 'subheader', margin: [0, 10] },
+
+            {
+                columns: [
+                    {
+                        table: {
+                            widths: ['auto', '*'],
+                            body: [
+                                ['Hueso Comprometido', hc.complicacionesCronicas.region_genitourinaria.oseas.hueso_comprometido],
+                                ['Grado de Discapacidad', hc.complicacionesCronicas.region_genitourinaria.oseas.grado_discapacidad],
+                                ['Osteonecrosis', hc.complicacionesCronicas.region_genitourinaria.oseas.osteonecrosis]
+                            ]
+                        },
+                        layout: standardTableLayout
+                    },
+                    {
+                        table: {
+                            widths: ['auto', '*'],
+                            body: [
+                                ['Deformidades Óseas', hc.complicacionesCronicas.region_genitourinaria.oseas.deformidades_oseas],
+                                ['Osteopenia', hc.complicacionesCronicas.region_genitourinaria.oseas.osteopenia]
+                            ]
+                        },
+                        layout: standardTableLayout
+                    }
+                ]
                   },
 
-                  { text: 'Infecciones', style: 'subheader', margin: [0, 10] },
-                  {
-                      table: {
-                          widths: ['auto', '*'],
-                          body: [
-                              ['Germen', hc.complicacionesAgudas.infecciones.germen],
-                              ['Tratamiento', hc.complicacionesAgudas.infecciones.tratamiento],
-                              ['Días', hc.complicacionesAgudas.infecciones.dias],
-                          ],
-                      },
-                      layout: standardTableLayout,
-                  },
+            { text: 'Trasplantes de Progenitores', style: 'header', margin: [0, 10, 0, 5] },
+            {
+                columns: [
+                    {
+                        table: {
+                            widths: ['auto', '*'],
+                            body: [
+                                ['Paciente', hc.trasplanteProgenitores.estudios_hla.paciente],
+                                ['Padres', hc.trasplanteProgenitores.estudios_hla.padres]
+                            ]
+                        },
+                        layout: standardTableLayout,
+                        margin: [0, 10]
+                    },
+                    {
+                        table: {
+                            widths: ['auto', '*'],
+                            body: [
+                                ['Hermanos', hc.trasplanteProgenitores.estudios_hla.hermanos],
+                                ['Tipo de Trasplante', hc.trasplanteProgenitores.indicaciones_trasplante.tipo]
+                            ]
+                        },
+                        layout: standardTableLayout,
+                        margin: [0, 10]
+                    }
+                ]
+            },
+            
+        
+            { text: 'Laboratorios', style: 'header', margin: [0, 10, 0, 5] },
 
-                  { text: 'Anemia Aguda', style: 'subheader', margin: [0, 10] },
-                  {
-                    table: {
-                        widths: ['auto', '*'],
-                        body: [
-                          ['Crisis Aplástica Infecciosa',hc.complicacionesAgudas.anemia_aguda.crisis_aplastica_infecciosa], 
-                          ['Manejo',hc.complicacionesAgudas.anemia_aguda.manejo],
-                        ],
+            {
+                columns: [
+                    {
+                        table: {
+                            widths: ['auto', '*'],
+                            body: [
+                                ['Hematíes', hc.laboratorios.hematies],
+                                ['Hemoglobina', hc.laboratorios.hemoglobina],
+                                ['Hematocrito', hc.laboratorios.hematocrito]
+                            ]
+                        },
+                        layout: standardTableLayout,
+                        margin: [0, 10]
                     },
-                    layout: standardTableLayout,
-                },
-                { text: '', margin: [0, 10] },
-                { text: 'Complicaciones Crónicas', style: 'header', margin: [0, 10, 0, 5] },
-                { text: 'Región Cefálica o Superior (Cabeza y Cuello)', style: 'subheader', margin: [0, 5] },
-                {
-                    table: {
-                        widths: ['auto', '*'],
-                        body: [
-                            ['Cerebrales', hc.complicacionesCronicas.region_cefalica.cerebrales],
-                            ['Oculares', hc.complicacionesCronicas.region_cefalica.oculares],
-                        ],
-                    },
-                    layout: standardTableLayout,
-                },
-                { text: 'Región Toracoabdominal o Media (Tórax y Abdomen)', style: 'subheader', margin: [0, 10] },
-                {
-                    table: {
-                        widths: ['auto', '*'],
-                        body: [
-                            ['Cardíacas', hc.complicacionesCronicas.region_toracoabdominal.cardiacas],
-                            ['Pulmonares', hc.complicacionesCronicas.region_toracoabdominal.pulmonares],
-                            ['Hepáticas', hc.complicacionesCronicas.region_toracoabdominal.hepaticas],
-                        ],
-                    },
-                    layout: standardTableLayout,
-                },
-                { text: 'Región Genital y Urinaria', style: 'subheader', margin: [0, 10] },
-                {
-                    table: {
-                        widths: ['auto', '*'],
-                        body: [
-                            ['Genitourinario', hc.complicacionesCronicas.region_genitourinaria.genitourinario],
-                            ['Óseas', hc.complicacionesCronicas.region_genitourinaria.oseas],
-                        ],
-                    },
-                    layout: standardTableLayout,
-                },
-                { text: '', margin: [0, 10] },
-                { text: 'Trasplante de Progenitores', style: 'header', margin: [0, 10, 0, 5] },
-                { text: 'Estudios HLA', style: 'subheader', margin: [0, 5] },
-                {
-                    table: {
-                        widths: ['auto', '*'],
-                        body: [
-                          ['Paciente', hc.trasplanteProgenitores.estudios_hla.paciente],
-                          ['Padres', hc.trasplanteProgenitores.estudios_hla.padres],
-                          ['Hermanos', hc.trasplanteProgenitores.estudios_hla.hermanos],
-                        ],
-                    },
-                    layout: standardTableLayout,
-                },
-                { text: 'Indicaciones para Trasplante', style: 'subheader', margin: [0, 10] },
-                {
-                    table: {
-                        widths: ['auto', '*'],
-                        body: [
-                          ['Tipo', hc.trasplanteProgenitores.indicaciones_trasplante.tipo],
-                        ],
-                    },
-                    layout: standardTableLayout,
-                },
+                    {
+                        table: {
+                            widths: ['auto', '*'],
+                            body: [
+                                ['MCV', hc.laboratorios.mcv],
+                                ['MCH', hc.laboratorios.mch],
+                                ['MCHC', hc.laboratorios.mchc],
+                                ['RDW', hc.laboratorios.rdw]
+                            ]
+                        },
+                        layout: standardTableLayout,
+                        margin: [0, 10]
+                    }
+                ]
+            },
+            
+            { text: 'Imágenes Diagnósticas', style: 'header', margin: [0, 10, 0, 5] },
 
-                { text: 'Laboratorios', style: 'header', margin: [0, 10, 0, 5] },
-                {
-                    table: {
-                        widths: ['auto', '*'],
-                        body: [ 
-                          ['Hematíes', hc.laboratorios.hematies],
-                          ['Hemoglobina', hc.laboratorios.hemoglobina],
-                          ['Hematocrito', hc.laboratorios.hematocrito],
-                          ['MCV', hc.laboratorios.mcv],
-                          ['MCH', hc.laboratorios.mch],
-                          ['MCHC', hc.laboratorios.mchc],
-                          ['RDW', hc.laboratorios.rdw],
-                        ],
+            {
+                columns: [
+                    {
+                        table: {
+                            widths: ['auto', '*'],
+                            body: [
+                                ['Tipo', hc.imagenes_diagnosticas.tipo_imagen],
+                                ['Fecha', hc.imagenes_diagnosticas.fecha]
+                            ]
+                        },
+                        layout: standardTableLayout,
+                        margin: [0, 10]
                     },
-                    layout: standardTableLayout,
-                },
-                { text: 'Imágenes Diagnósticas', style: 'header', margin: [0, 10, 0, 5] },
-                {
-                    table: {
-                        widths: ['auto', '*'],
-                        body: [
-                            ['Tipo', hc.imagenes_diagnosticas.tipo_imagen],
-                            ['Fecha', hc.imagenes_diagnosticas.fecha],
-                            ['Tipo de Resultado', hc.imagenes_diagnosticas.tipo_resultado],
-                            ['Resultado', hc.imagenes_diagnosticas.resultado],
-                        ],
-                    },
-                    layout: standardTableLayout,
-                },
+                    {
+                        table: {
+                            widths: ['auto', '*'],
+                            body: [
+                                ['Tipo de Resultado', hc.imagenes_diagnosticas.tipo_resultado],
+                                ['Resultado', hc.imagenes_diagnosticas.resultado]
+                            ]
+                        },
+                        layout: standardTableLayout,
+                        margin: [0, 10]
+                            }
+                        ]
+                  },         
+                    
                 { text: 'Soportes Transfusionales', style: 'header', margin: [0, 10, 0, 5] },
                 { text: 'Inicio de Soporte Transfusional', style: 'subheader', margin: [0, 5] },
                 {
@@ -275,34 +509,56 @@ export const useGeneratePDF = () => {
                         ],
                     },
                     layout: standardTableLayout,
+                    
+                  },
+                
+                  { 
+                    text: 'Sobrecarga de Hierro', 
+                    style: 'subheader', 
+                    margin: [0, 10] 
                 },
-                { text: 'Sobrecarga de Hierro', style: 'subheader', margin: [0, 10] },
                 {
                     table: {
-                        widths: ['auto', '*'],
+                        widths: ['auto', '*', 'auto', '*'], 
                         body: [
-                            ['Fecha', hc.soportes_transfusionales.sobrecarga_hierro.fecha],
-                            ['Quelantes', hc.soportes_transfusionales.sobrecarga_hierro.quelantes],
-                            ['Ferritina', hc.soportes_transfusionales.sobrecarga_hierro.ferritina],
-                            ['Dosis (mg/kg/día)', hc.soportes_transfusionales.sobrecarga_hierro.dosis_mg_kg_dia],
+                            ['Fecha', hc.soportes_transfusionales.sobrecarga_hierro.fecha, 'Quelantes', hc.soportes_transfusionales.sobrecarga_hierro.quelantes],
+                            ['Ferritina', hc.soportes_transfusionales.sobrecarga_hierro.ferritina, 'Dosis (mg/kg/día)', hc.soportes_transfusionales.sobrecarga_hierro.dosis_mg_kg_dia],
                         ],
                     },
                     layout: standardTableLayout,
+                    margin: [0, 10, 0, 5] 
+                },
+                
+
+                { text: 'Sobrecarga por Órgano', style: 'subheader', margin: [0, 10] },
+
+                {
+                    columns: [
+                        {
+                            table: {
+                                widths: ['auto', '*'],
+                                body: [
+                                    ['Fecha', hc.soportes_transfusionales.sobrecarga_por_organo.fecha],
+                                    ['Líc. Hígado', hc.soportes_transfusionales.sobrecarga_por_organo.lic_higado]
+                                ]
+                            },
+                            layout: standardTableLayout,
+                            margin: [0, 10]
+                        },
+                        {
+                            table: {
+                                widths: ['auto', '*'],
+                                body: [
+                                    ['Pancreática R2', hc.soportes_transfusionales.sobrecarga_por_organo.pancreatica_r2],
+                                    ['Evaluación Cardíaca T2', hc.soportes_transfusionales.sobrecarga_por_organo.evaluacion_cardiaca_t2]
+                                ]
+                            },
+                            layout: standardTableLayout,
+                            margin: [0, 10]
+                        }
+                    ]
                 },
 
-                { text: 'Sobrecarga por Organo', style: 'subheader', margin: [0, 10] },
-                {
-                    table: {
-                        widths: ['auto', '*'],
-                        body: [
-                            ['Fecha', hc.soportes_transfusionales.sobrecarga_por_organo.fecha],
-                            ['Líc. Higado', hc.soportes_transfusionales.sobrecarga_por_organo.lic_higado],
-                            ['Pancreática R2', hc.soportes_transfusionales.sobrecarga_por_organo.pancreatica_r2],
-                            ['Evaluación Cardíaca T2', hc.soportes_transfusionales.sobrecarga_por_organo.evaluacion_cardiaca_t2],
-                        ],
-                    },
-                    layout: standardTableLayout,
-                },
                 { text: 'Vacunas', style: 'header', margin: [0, 10, 0, 5] },
                 {
                     table: {

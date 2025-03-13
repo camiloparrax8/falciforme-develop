@@ -25,21 +25,27 @@ const HistoriaClinica = () => {
     const { token } = useToken() // Añade esta línea para obtener el token
 
     useEffect(() => {
+        if (id) {
+            setPaciente({ id }); // Actualiza el contexto con el id
+        }
+    }, [id, setPaciente]);
+
+    useEffect(() => {
         const fetchPaciente = async () => {
             try {
-                const response = await buscarPacienteById(token, id) // Ahora token está disponible
+                const response = await buscarPacienteById(token, id);
                 if (response?.data) {
-                    setPaciente(response.data)
+                    setPaciente(response.data); // Actualiza el contexto con los datos del paciente
                 }
             } catch (error) {
-                console.error('Error al obtener el paciente:', error)
+                console.error('Error al obtener el paciente:', error);
             }
-        }
+        };
 
         if (id) {
-            fetchPaciente()
+            fetchPaciente();
         }
-    }, [id, setPaciente, token])
+    }, [id, setPaciente, token]);
 
     console.log(
         'tipo de HC=',
@@ -49,6 +55,8 @@ const HistoriaClinica = () => {
         ' / El nombre es =',
         paciente,
     )
+
+    console.log('Paciente en contexto:', paciente);
 
     return (
         <Container>
@@ -62,7 +70,7 @@ const HistoriaClinica = () => {
                         <CardHC
                             key={item.id}
                             title={item.title}
-                            uri={item.uri}
+                            uri={`${item.uri}/${id}`}
                             iconName={item.iconName}
                             estado={item.estado}
                             recomendacion={item.recomendacion}

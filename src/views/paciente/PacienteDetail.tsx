@@ -18,7 +18,6 @@ import Section from '../common/Section'
 import { FaFileMedical, FaClinicMedical } from 'react-icons/fa'
 import { useFormattedDate } from '@/hooks/useFormattedDate'
 import { useCalculateAge } from '@/hooks/useCalculateAge'
-import { Table } from '@/components/ui/Table'
 
 const { TabNav, TabList, TabContent } = Tabs
 
@@ -27,26 +26,6 @@ export const PacienteDetail = ({ item }) => {
     const navigate = useNavigate()
     const { formatDate } = useFormattedDate()
     const { calculateAge } = useCalculateAge()
-    const historiasClinicas = [
-        {
-            id: 1,
-            fecha: '2024-02-01',
-            tipo: 'Seguimiento',
-            diagnostico: 'Hipertensión',
-        },
-        {
-            id: 2,
-            fecha: '2024-01-15',
-            tipo: 'Inicial',
-            diagnostico: 'Diabetes Tipo 2',
-        },
-        {
-            id: 3,
-            fecha: '2023-12-20',
-            tipo: 'Seguimiento',
-            diagnostico: 'Control general',
-        },
-    ]
 
     console.log(item)
 

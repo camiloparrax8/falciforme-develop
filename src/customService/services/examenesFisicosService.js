@@ -35,15 +35,35 @@ export const crearExamenFisico = async (token, formData) => {
             extremidades_condicion: formData.extremidades_condicion,
             estado: true,
             id_user_create: formData.id_user_create,
-        }
+        };
 
         const result = await axiosInstance.post(`/historia-clinica/examenes-fisicos/`, data, {
             headers: { Authorization: token },
-        })
+        });
 
         return result.data;
     } catch (error) {
         console.error("Error al crear el examen físico:", error.response?.data || error.message);
+        throw error;
+    }
+};
+
+// Nuevo método para actualizar campos específicos del examen físico
+export const actualizarCamposExamenFisico = async (token, idExamen, camposActualizados) => {
+    try {
+        if (!idExamen) {
+            throw new Error("ID de examen físico no proporcionado");
+        }
+
+        const result = await axiosInstance.put(
+            `/historia-clinica/examenes-fisicos/${idExamen}`,
+            camposActualizados,
+            { headers: { Authorization: token } }
+        );
+
+        return result.data;
+    } catch (error) {
+        console.error("Error al actualizar el examen físico:", error.response?.data || error.message);
         throw error;
     }
 };

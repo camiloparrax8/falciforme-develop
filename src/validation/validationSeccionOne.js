@@ -1,5 +1,5 @@
 const validationSeccionOne = {
-    perimetroCefalico: {
+    perimetro_cefalico: {
         required: 'El valor del perímetro cefálico es obligatorio',
         pattern: {
             value: /^[0-9]+(\.[0-9]{1,2})?$/,
@@ -14,7 +14,7 @@ const validationSeccionOne = {
             message: 'El valor debe ser menor o igual a 60 cm',
         },
     },
-    visualizacion: {
+    vision: {
         required: 'La visión es obligatoria.',
         pattern: {
             value: /^[0-9]+(\.[0-9]{1,2})?$/,

@@ -9,13 +9,14 @@ import { crearExamenFisico } from '@/customService/services/examenesFisicosServi
 import { useToken, useSessionUser } from '@/store/authStore'
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
-
+import { useExamenFisico } from '@/hooks/useExamenFisico'
 
 function FormExamenesFisicos() {
     const { id_paciente } = useParams()
     const { token } = useToken()
     const { user } = useSessionUser() // Obtén el usuario logueado
     const [isLoading, setIsLoading] = useState(false)
+    const { setIdExamenFisico } = useExamenFisico() // Usar el contexto
     const {
         control,
         handleSubmit,
@@ -27,6 +28,10 @@ function FormExamenesFisicos() {
     const onSubmit = async (data) => {
         setIsLoading(true)
         try {
+            if (!id_paciente) {
+                throw new Error('ID del paciente no proporcionado')
+            }
+
             const formData = {
                 ...data,
                 id_paciente: id_paciente,
@@ -34,6 +39,15 @@ function FormExamenesFisicos() {
             }
             const result = await crearExamenFisico(token, formData)
             console.log('Examen físico creado:', result)
+
+            // Guardar el ID del examen físico en el contexto
+            if (result && result.data && result.data.id) {
+                setIdExamenFisico(result.data.id)
+                console.log(
+                    'ID del examen físico guardado en el contexto:',
+                    result.data.id,
+                )
+            }
         } catch (error) {
             console.error('Error al crear el examen físico:', error)
         } finally {

@@ -77,7 +77,7 @@ export default function ModalAbdominal({ isOpen, onClose, onRequestClose }) {
 
                 {idExamenFisico ? (
                     <div className="bg-blue-100 text-blue-800 p-2 rounded">
-                        Examen físico activo ID: {idExamenFisico}
+                        Examen físico activo.
                     </div>
                 ) : (
                     <div className="bg-yellow-100 text-yellow-800 p-2 rounded">

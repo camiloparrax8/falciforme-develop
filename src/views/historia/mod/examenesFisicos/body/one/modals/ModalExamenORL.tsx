@@ -5,7 +5,8 @@ import Button from '@/components/ui/Button'
 import validationSeccionOne from '../../../../../../../validation/validationSeccionOne'
 import { defaultValuesExamenORL } from '../../one/modals/defaultValuesSeccionOne'
 import { useExamenFisicoUpdate } from '@/hooks/useExamenFisicoUpdate'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useExamenFisico } from '@/hooks/useExamenFisico'
 
 interface ExamenORLData {
     boca: string
@@ -23,7 +24,12 @@ export default function ModalExamenORL({ isOpen, onClose, onRequestClose }) {
     })
 
     const { updateExamenORL, isLoading, result } = useExamenFisicoUpdate()
+    const { idExamenFisico } = useExamenFisico()
     const [showMessage, setShowMessage] = useState(false)
+
+    useEffect(() => {
+        console.log('ID del examen físico en ModalExamenORL:', idExamenFisico)
+    }, [idExamenFisico])
 
     const onSubmit = async (data: ExamenORLData) => {
         try {
@@ -57,6 +63,16 @@ export default function ModalExamenORL({ isOpen, onClose, onRequestClose }) {
                         className={`p-2 rounded ${result.success ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
                     >
                         {result.message}
+                    </div>
+                )}
+
+                {idExamenFisico ? (
+                    <div className="bg-blue-100 text-blue-800 p-2 rounded">
+                        Examen físico activo.
+                    </div>
+                ) : (
+                    <div className="bg-yellow-100 text-yellow-800 p-2 rounded">
+                        No hay un examen físico activo. Debe crear uno primero.
                     </div>
                 )}
 

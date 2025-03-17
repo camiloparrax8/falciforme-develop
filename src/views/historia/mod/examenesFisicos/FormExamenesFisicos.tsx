@@ -58,9 +58,34 @@ function FormExamenesFisicos({ examenExistente }: FormExamenesFisicosProps) {
         handleSubmit,
         formState: { errors },
         reset,
+        watch,
+        setValue,
     } = useForm({
         defaultValues: initialValues,
     })
+
+    // Observar los cambios en peso y talla para calcular el IMC
+    const peso = watch('peso')
+    const talla = watch('talla')
+
+    // Calcular IMC cuando cambie el peso o la talla
+    useEffect(() => {
+        if (peso && talla) {
+            // Convertir valores a números
+            const pesoNum = parseFloat(peso)
+            const tallaNum = parseFloat(talla)
+
+            if (!isNaN(pesoNum) && !isNaN(tallaNum) && tallaNum > 0) {
+                // Calcular IMC: peso (kg) / (altura (m))²
+                // La talla está en cm, por lo que dividimos por 100 para convertir a metros
+                const tallaMetros = tallaNum / 100
+                const imcCalculado = pesoNum / (tallaMetros * tallaMetros)
+
+                // Redondear a 2 decimales y establecer el valor
+                setValue('imc', imcCalculado.toFixed(2))
+            }
+        }
+    }, [peso, talla, setValue])
 
     // Cuando cambie el examen existente, actualizar el formulario
     useEffect(() => {
@@ -174,7 +199,8 @@ function FormExamenesFisicos({ examenExistente }: FormExamenesFisicosProps) {
 
             {examenExistente && (
                 <div className="col-span-1 md:col-span-2 lg:col-span-4 p-3 mb-3 rounded bg-blue-100 text-blue-800">
-                    Examen físico existente. Los cambios se aplicarán a las secciones específicas a través de los modales.
+                    Examen físico existente. Los cambios se aplicarán a las
+                    secciones específicas a través de los modales.
                 </div>
             )}
 
@@ -278,10 +304,10 @@ function FormExamenesFisicos({ examenExistente }: FormExamenesFisicosProps) {
                         rules={validationExamenes.imc}
                         errors={errors}
                         label="Índice de Masa Corporal (IMC)"
-                        inputPlaceholder="Ingrese el IMC"
+                        inputPlaceholder="Se calcula automáticamente"
                         className="col-span-1"
                         value=""
-                        disabled={isDisabled}
+                        disabled={true} // Siempre deshabilitado porque se calcula automáticamente
                     />
                 </div>
 

@@ -49,7 +49,6 @@ const validationExamenesFisicos = {
     },
   },
   imc: {
-    required: 'El IMC es obligatorio.',
     pattern: {
       value: /^[0-9.]+$/,
       message: 'El IMC debe ser un número.',

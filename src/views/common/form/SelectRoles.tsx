@@ -21,9 +21,9 @@ const SelectRoles = ({
     value 
 }: SelectRolesProps) => {
     const roles = [
-        { id: 1, value: 'administrador', label: 'Administrador' },
-        { id: 2, value: 'medico', label: 'Medico' },
-        { id: 3, value: 'paciente', label: 'Paciente' },
+        { id: 1, value: 1, label: 'Administrador' },
+        { id: 2, value: 2, label: 'Medico' },
+        { id: 3, value: 3, label: 'Enfermero' },
     ]
 
     return (

@@ -14,6 +14,7 @@ const TableUsuario = ({ data, header, className}) => {
     const [dialogIsOpenDesactivar, setIsOpenDesactivar] = useState(false)
     const [dialogIsOpenEdit, setIsOpenEdit] = useState(false)
     const [selectedRow, setSelectedRow] = useState(null)
+    const [mensaje, setMensaje] = useState(null)
 
     const openDialogDelete = (row) => {
         setSelectedRow(row)
@@ -55,11 +56,6 @@ const TableUsuario = ({ data, header, className}) => {
     const onDialogOkEdit = async (row) => {
         console.log(row);
         setIsOpenEdit(false)
-    }
-
-    const handleAdd = (row) => {
-        // Implementar lógica para agregar
-        console.log('Agregar', row)
     }
 
             const handleEdit = (row) => {
@@ -123,6 +119,7 @@ const TableUsuario = ({ data, header, className}) => {
                 selectedRow={selectedRow}
                 onDialogCloseDelete={onDialogCloseDelete}
                 onDialogOkDelete={onDialogOkDelete}
+                setMensaje={setMensaje}
             />
             <DialogDesactivar
                 isOpen={dialogIsOpenDesactivar}

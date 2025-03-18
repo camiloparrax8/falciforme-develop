@@ -1,9 +1,23 @@
 const validationUsuario = {
-    nombre: {
+    nombres: {
         required: "El nombre es requerido",
         minLength: {
             value: 3,
             message: "El nombre debe tener al menos 3 caracteres",
+        },
+    },
+    apellidos: {
+        required: "El apellido es requerido",
+        minLength: {
+            value: 3,
+            message: "El apellido debe tener al menos 3 caracteres",
+        },
+    },
+    user: {
+        required: "El nick de usuario es requerido",
+        minLength: {
+            value: 3,
+            message: "El nick de usuario debe tener al menos 3 caracteres",
         },
     },
     cedula: {
@@ -31,7 +45,7 @@ const validationUsuario = {
             message: "El celular no puede tener más de 10 caracteres",
         },
     },
-    rol: {
+    id_rol: {
         required: "El rol es requerido",
     },  
 }

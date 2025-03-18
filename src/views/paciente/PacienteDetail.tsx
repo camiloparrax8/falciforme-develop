@@ -2,6 +2,8 @@ import { Card, Tabs } from '@/components/ui'
 import Input from '@/components/ui/Input'
 import Button from '@/components/ui/Button'
 import Dialog from '@/components/ui/Dialog'
+import { useState, type MouseEvent, useCallback } from 'react'
+import ButtonNavigation from '../common/ButtonNavigation'
 import { useState, type MouseEvent } from 'react'
 import { buscarHcOpenById } from '@/customService/services/historiaClinicaService'
 import { useToken } from '@/store/authStore'
@@ -18,6 +20,10 @@ import Section from '../common/Section'
 import { FaFileMedical, FaClinicMedical } from 'react-icons/fa'
 import { useFormattedDate } from '@/hooks/useFormattedDate'
 import { useCalculateAge } from '@/hooks/useCalculateAge'
+import { FaClinicMedical } from 'react-icons/fa'
+import { Table } from '@/components/ui/Table'
+import { useGeneratePDF } from '@/hooks/useGeneratePDF'
+import { FaDownload } from "react-icons/fa";
 
 const { TabNav, TabList, TabContent } = Tabs
 
@@ -26,8 +32,124 @@ export const PacienteDetail = ({ item }) => {
     const navigate = useNavigate()
     const { formatDate } = useFormattedDate()
     const { calculateAge } = useCalculateAge()
+    
+    const generateHistoriaClinicaData = useCallback(() => {
+        return {
+            fecha_creacion: new Date().toISOString().split('T')[0],
+            paciente: {
+                nombre: `${item.data.nombre} ${item.data.apellido}`,
+                edad: calculateAge(item.data.fecha_nacimiento),
+                genero: item.data.genero || 'No especificado'
+            },
+            examenesFisicos: {
+                // Signos Vitales
+                frecuencia_cardiaca: "72",
+                frecuencia_respiratoria: "16",
+                saturacion_oxigeno: "98",
+                tension_arterial: "120/80",
+                // Peso y Talla
+                peso: "65",
+                talla: "170",
+                percentil: "50",
+                imc: "22.5",
+                // Estado Nutricional
+                deficit_zinc: "Normal",
+                deficit_acido_folico: "Normal",
+                deficit_vitamina_d: "Normal",
+                desnutricion: "No",
+                obesidad: "No",
+                // Región Cefálica
+                perimetro_cefalico: "54",
+                agudeza_visual: "20/20",
+                examen_orl: "Normal, sin alteraciones",
+                caries: "No presenta",
+                cuello: "Normal, móvil, sin adenopatías",
+                // Región Toracoabdominal
+                cardio_pulmonar: "Ruidos cardíacos rítmicos, murmullo vesicular conservado",
+                abdominal: "Blando, depresible, no doloroso",
+                // Región Pélvica
+                tanner: "Estadio III",
+                extremidades: "Simétricas, pulsos presentes, sin edemas"
+            },
+            laboratorios: {
+                hematies: "5.0",
+                hemoglobina: "14.5",
+                hematocrito: "43",
+                mcv: "88",
+                mch: "29",
+                mchc: "33",
+                rdw: "13"
+            },
+            complicacionesAgudas: {
+                crisisDolor: {
+                    fecha: "2024-03-20",
+                    dias: "5",
+                    intensidad: "8",
+                    manejo: "Hospitalización y analgesia",
+                    tratamiento: "Morfina + Ketorolaco",
+                    huesosAfectados: "Fémur, tibia y peroné"
+                },
+                infecciones: {
+                    germen: "Streptococcus pneumoniae",
+                    tratamiento: "Ceftriaxona",
+                    dias: "14"
+                },
+                anemiaAguda: {
+                    crisisAplastica: "Presente",
+                    manejo: "Transfusión de glóbulos rojos"
+                }
+            },
+            complicacionesCronicas: {
+                cerebrales: {
+                    vasculopatia_cerebral: "No",
+                    infartos_cerebrales_silentes: "No",
+                    epilepsia_convulsiones: "No",
+                    cefaleas_recurrentes: "No",
+                    deficit_cognitivo: "No"
+                },
+                oculares: {
+                    retinopatia_drepanocitica: "No",
+                    hemorragias_vitreas: "No",
+                    neovascularizacion_retiniana: "No",
+                    iritis_uveitis: "No",
+                    oclusion_vasos_retinianos: "No"
+                },
+                cardiacas: {
+                    disfuncion_diastolica_vi: "No",
+                    sobrecarga_ferrica: "No",
+                    trombosis: "No"
+                },
+                pulmonares: {
+                    hipertension_pulmonar: "No",
+                    vrt: "N/A",
+                    asma_sibilancias: {
+                        crisis_por_anio: "0",
+                        tratamientos: "Ninguno"
+                    },
+                    epfc: {
+                        hipomexia: "No",
+                        saos: "No",
+                        tratamiento: "Ninguno"
+                    }
+                },
+                hepaticas: {
+                    hepatitis_viral_cronica: "No",
+                    esplenomegalia: "No",
+                    hiperesplenismo: "No"
+                }
+            },
+            imagenesDiagnosticas: item.data.imagenesDiagnosticas || [],
+            tratamientos: item.data.tratamientos || [],
+            vacunas: item.data.vacunas || []
+        };
+    }, [item.data, calculateAge]);
 
-    console.log(item)
+    const { generatePDF } = useGeneratePDF();
+
+    const handleGeneratePDF = async () => {
+        const data = generateHistoriaClinicaData();
+        await generatePDF(data);
+    };
 
     const [dialogIsOpenPaciente, setIsOpenPaciente] = useState(false)
     const [dialogIsOpenHC, setIsOpenHC] = useState(false)
@@ -153,7 +275,7 @@ export const PacienteDetail = ({ item }) => {
                                 ></Button>
 
                                 <Button
-                                    icon={<FaFileMedical />}
+                                    icon={<FaFileMedical size={16} />}
                                     variant="solid"
                                     title=""
                                     onClick={() =>
@@ -236,11 +358,44 @@ export const PacienteDetail = ({ item }) => {
                                 onRequestClose={closeDialogHistoriaClinica}
                             >
                                 <div className="flex flex-col h-full space-y-4">
-                                    <h5>Historia Clínica del Paciente</h5>
-                                    <p>
-                                        Aquí puedes agregar la información
-                                        relevante de la historia clínica.
-                                    </p>
+                                    <h5 className="text-xl font-semibold mb-4">Historia Clínica del Paciente</h5>
+                                    <div className="overflow-x-auto">
+                                        <Table>
+                                            <Table.THead>
+                                                <Table.Tr>
+                                                    <Table.Th>Fecha de Historia Clínica</Table.Th>
+                                                
+                                                    <Table.Th>Opciones</Table.Th>
+                                                </Table.Tr>
+                                            </Table.THead>
+                                            <Table.TBody>
+                                                <Table.Tr>
+                                                    <Table.Td>22/10/2024</Table.Td>
+                                                    <Table.Td>
+                                                        <Button 
+                                                            icon={<FaDownload size={16} />} 
+                                                            variant="solid" 
+                                                            onClick={handleGeneratePDF}
+                                                        >
+                                                            Generar Historia Clínica
+                                                        </Button>
+                                                    </Table.Td>
+                                                </Table.Tr>
+                                                <Table.Tr>
+                                                    <Table.Td>20/10/2024</Table.Td>
+                                                    <Table.Td>
+                                                              <Button 
+                                                                  icon={<FaDownload size={16} />} 
+                                                                  variant="solid" 
+                                                                  onClick={handleGeneratePDF}
+                                                              >
+                                                                  Generar Historia Clínica
+                                                              </Button>
+                                                    </Table.Td>
+                                                </Table.Tr>
+                                            </Table.TBody>
+                                        </Table>
+                                    </div>
                                 </div>
                             </Dialog>
                             {/* Dialog tipo consulta */}

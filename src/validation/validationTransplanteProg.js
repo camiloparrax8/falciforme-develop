@@ -1,5 +1,5 @@
-const validationTratamientos = {
-    tipo: {
+const validationTransplanteProgenitores = {
+    tipo_indicaciones: {
         required: '',
         pattern: {
             value: /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
@@ -8,7 +8,7 @@ const validationTratamientos = {
         validate: {
         notEmpty: (value) =>
             value.trim() !== '' || 'El campo no puede estar vacío',
-        },    
+        },
     },
     hermanos: {
         required: 'Selecciona una opción',
@@ -21,4 +21,4 @@ const validationTratamientos = {
     }
 };
 
-export default validationTratamientos;
+export default validationTransplanteProgenitores;

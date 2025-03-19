@@ -4,9 +4,13 @@ import { useState } from 'react'
 import { FaUpload } from 'react-icons/fa'
 import ModalCardiopulmunar from './modals/ModalCardiopulmunar'
 import ModalAbdominal from './modals/ModalAbdominal'
+import { useExamenFisico } from '@/hooks/useExamenFisico'
 
 export default function SeccionTwo() {
     const icon = <FaUpload />
+
+    const { idExamenFisico } = useExamenFisico() // Usar el contexto
+    console.log('ID del examen físico en SeccionTwo:', idExamenFisico)
 
     // Estados para cada modal
     const [Cardiopulmunar, setCardiopulmunar] = useState(false)
@@ -44,8 +48,8 @@ export default function SeccionTwo() {
 
             <ModalCardiopulmunar
                 isOpen={Cardiopulmunar}
-                onClose={() => closeDialog( setCardiopulmunar)}
-                onRequestClose={() => closeDialog( setCardiopulmunar)}
+                onClose={() => closeDialog(setCardiopulmunar)}
+                onRequestClose={() => closeDialog(setCardiopulmunar)}
             ></ModalCardiopulmunar>
             <ModalAbdominal
                 isOpen={Abdomen}

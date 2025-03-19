@@ -4,9 +4,13 @@ import SectionTitle from '@/views/common/form/SectionTitle'
 import { useState } from 'react'
 import ModalExtremidades from './modals/ModalExtremidades'
 import ModalTanner from './modals/ModalTanner'
+import { useExamenFisico } from '@/hooks/useExamenFisico'
 
 function SeccionThree() {
     const icon = <FaUpload />
+
+    const { idExamenFisico } = useExamenFisico() // Usar el contexto
+    console.log('ID del examen físico en SeccionThree:', idExamenFisico)
 
     // Estados para cada modal
     const [tanner, setTanner] = useState(false)

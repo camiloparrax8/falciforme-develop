@@ -1,33 +1,45 @@
-import { Button } from '@/components/ui';
-import { useState } from 'react';
-import { FaUpload } from 'react-icons/fa';
-import ModalPerimetroCefalico from './modals/ModalPerimetroCefalico';
-import ModalAgudezaVisual from './modals/ModalAgudezaVisual';
-import ModalExamenORL from './modals/ModalExamenORL';
-import ModalCaries from './modals/ModalCaries';
-import ModalCuello from './modals/ModalCuello';
-import SectionTitle from '@/views/common/form/SectionTitle';
+import { Button } from '@/components/ui'
+import { useState } from 'react'
+import { FaUpload } from 'react-icons/fa'
+import ModalPerimetroCefalico from './modals/ModalPerimetroCefalico'
+import ModalAgudezaVisual from './modals/ModalAgudezaVisual'
+import ModalExamenORL from './modals/ModalExamenORL'
+import ModalCaries from './modals/ModalCaries'
+import ModalCuello from './modals/ModalCuello'
+import SectionTitle from '@/views/common/form/SectionTitle'
+import { useExamenFisico } from '@/hooks/useExamenFisico'
+import { useParams } from 'react-router-dom'
 
 function SeccionOne() {
-    const icon = <FaUpload />;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { idExamenFisico } = useExamenFisico()
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id_paciente } = useParams()
+
+    const icon = <FaUpload />
 
     // Estados para cada modal
-    const [dialogIsOpenPerimetroCefalico, setDialogIsOpenPerimetroCefalico] = useState(false);
-    const [dialogIsOpenAgudezaVisual, setDialogIsOpenAgudezaVisual] = useState(false);
-    const [dialogIsOpenExamenORL, setDialogIsOpenExamenORL] = useState(false);
-    const [dialogIsOpenCaries, setDialogIsOpenCaries] = useState(false);
-    const [dialogIsOpenCuello, setDialogIsOpenCuello] = useState(false);
+    const [dialogIsOpenPerimetroCefalico, setDialogIsOpenPerimetroCefalico] =
+        useState(false)
+    const [dialogIsOpenAgudezaVisual, setDialogIsOpenAgudezaVisual] =
+        useState(false)
+    const [dialogIsOpenExamenORL, setDialogIsOpenExamenORL] = useState(false)
+    const [dialogIsOpenCaries, setDialogIsOpenCaries] = useState(false)
+    const [dialogIsOpenCuello, setDialogIsOpenCuello] = useState(false)
 
     // Métodos para abrir y cerrar modales
-    const openDialog = (setDialog) => setDialog(true);
+    const openDialog = (setDialog) => setDialog(true)
     const closeDialog = (setDialog) => {
-        console.log('Modal closed');
-        setDialog(false);
-    };
+        console.log('Modal closed')
+        setDialog(false)
+    }
 
     return (
         <>
-            <SectionTitle text={'Región Cefálica o Superior (Cabeza y Cuello)'} className={'mt-3'} />
+            <SectionTitle
+                text={'Región Cefálica o Superior (Cabeza y Cuello)'}
+                className={'mt-3'}
+            />
 
             <Button
                 variant="solid"
@@ -74,7 +86,9 @@ function SeccionOne() {
             <ModalPerimetroCefalico
                 isOpen={dialogIsOpenPerimetroCefalico}
                 onClose={() => closeDialog(setDialogIsOpenPerimetroCefalico)}
-                onRequestClose={() => closeDialog(setDialogIsOpenPerimetroCefalico)}
+                onRequestClose={() =>
+                    closeDialog(setDialogIsOpenPerimetroCefalico)
+                }
             />
 
             <ModalAgudezaVisual
@@ -101,7 +115,7 @@ function SeccionOne() {
                 onRequestClose={() => closeDialog(setDialogIsOpenCuello)}
             />
         </>
-    );
+    )
 }
 
-export default SeccionOne;
+export default SeccionOne

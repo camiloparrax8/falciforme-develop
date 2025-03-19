@@ -7,6 +7,7 @@ import { modulos } from './modulos'
 import { usePatient, PatientProvider } from '@/context/PatientContext'
 import { buscarPacienteById } from '@/customService/services/pacienteService'
 import { consultarExamenFisicoPorPaciente } from '@/customService/services/examenesFisicosService'
+import { consultarTransplantesProgenitoresPorPaciente } from '@/customService/services/transplantesProgenitoresService'
 import { useToken } from '@/store/authStore'
 import SectionTitle from '../common/form/SectionTitle'
 
@@ -49,40 +50,73 @@ const HistoriaClinica = () => {
         }
     }, [id, setPaciente, token])
 
-    // Efecto para verificar el estado del examen físico
+    // Efecto para verificar el estado del examen físico y trasplante de progenitores
     useEffect(() => {
-        const verificarExamenFisico = async () => {
+        const verificarEstadoModulos = async () => {
             if (!id || !token) return
 
             try {
-                console.log('Verificando examen físico para paciente ID:', id)
-
-                // Verificar si existe un examen físico para este paciente
-                const respuesta = await consultarExamenFisicoPorPaciente(
-                    token,
+                console.log(
+                    'Verificando estado de módulos para paciente ID:',
                     id,
                 )
-
-                console.log('Respuesta de examen físico:', respuesta)
-
-                // Verificar correctamente si existe un examen físico válido
-                // Un examen existe solo si la respuesta no tiene status de error y tiene data
-                const examenExiste =
-                    respuesta &&
-                    respuesta.status !== 'error' &&
-                    (respuesta.data !== null || !('data' in respuesta))
-
-                console.log('¿Existe examen físico?', examenExiste)
 
                 // Crear una copia profunda de los módulos originales
                 const nuevosModulos = JSON.parse(JSON.stringify(modulos))
 
-                // Actualizar solo el módulo de Exámenes Físicos (id: 1)
+                // 1. Verificar si existe un examen físico para este paciente
+                const respuestaExamen = await consultarExamenFisicoPorPaciente(
+                    token,
+                    id,
+                )
+
+                console.log('Respuesta de examen físico:', respuestaExamen)
+
+                // Verificar correctamente si existe un examen físico válido
+                const examenExiste =
+                    respuestaExamen &&
+                    respuestaExamen.status !== 'error' &&
+                    (respuestaExamen.data !== null ||
+                        !('data' in respuestaExamen))
+
+                console.log('¿Existe examen físico?', examenExiste)
+
+                // 2. Verificar si existe un trasplante de progenitores para este paciente
+                const respuestaTrasplante =
+                    await consultarTransplantesProgenitoresPorPaciente(
+                        token,
+                        id,
+                    )
+
+                console.log(
+                    'Respuesta de trasplante de progenitores:',
+                    respuestaTrasplante,
+                )
+
+                // Verificar si existe un trasplante válido
+                const trasplanteExiste =
+                    respuestaTrasplante &&
+                    respuestaTrasplante.status === 'success' &&
+                    respuestaTrasplante.data !== null
+
+                console.log(
+                    '¿Existe trasplante de progenitores?',
+                    trasplanteExiste,
+                )
+
+                // Actualizar los módulos con el estado correcto
                 const modulosActualizados = nuevosModulos.map((modulo) => {
                     if (modulo.id === 1) {
+                        // Módulo de Exámenes Físicos (id: 1)
                         return {
                             ...modulo,
                             estado: examenExiste ? 1 : 0, // 1 si existe, 0 si no existe
+                        }
+                    } else if (modulo.id === 4) {
+                        // Módulo de Trasplante de Progenitores (id: 4)
+                        return {
+                            ...modulo,
+                            estado: trasplanteExiste ? 1 : 0, // 1 si existe, 0 si no existe
                         }
                     }
                     return modulo
@@ -92,20 +126,13 @@ const HistoriaClinica = () => {
 
                 setModulosActualizados(modulosActualizados)
             } catch (error) {
-                console.error('Error al verificar examen físico:', error)
-                // En caso de error, asegurar que el módulo de examen físico esté como pendiente
-                const nuevosModulos = JSON.parse(JSON.stringify(modulos))
-                const modulosActualizados = nuevosModulos.map((modulo) => {
-                    if (modulo.id === 1) {
-                        return { ...modulo, estado: 0 }
-                    }
-                    return modulo
-                })
-                setModulosActualizados(modulosActualizados)
+                console.error('Error al verificar estado de módulos:', error)
+                // En caso de error, asegurarse de que los módulos estén como pendientes
+                setModulosActualizados(modulos)
             }
         }
 
-        verificarExamenFisico()
+        verificarEstadoModulos()
     }, [id, token])
 
     console.log(

@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useToken, useSessionUser } from '@/store/authStore'
 import { useParams } from 'react-router-dom'
 import SectionTitle from '@/views/common/form/SectionTitle'
@@ -7,7 +7,10 @@ import InputForm from '@/views/common/form/InputForm'
 import InputSelect from '@/views/common/form/InputSelect'
 import Button from '@/components/ui/Button'
 import validationTransplanteProgenitores from '../../.././../validation/validationTransplanteProg'
-import { crearTransplanteProgenitores } from '@/customService/services/transplantesProgenitoresService'
+import {
+    crearTransplanteProgenitores,
+    consultarTransplantesProgenitoresPorPaciente,
+} from '@/customService/services/transplantesProgenitoresService'
 
 export default function FormTransplanteProg() {
     const { token } = useToken()
@@ -15,6 +18,8 @@ export default function FormTransplanteProg() {
     const { id_paciente } = useParams()
     const [loading, setLoading] = useState(false)
     const [mensaje, setMensaje] = useState({ tipo: '', texto: '' })
+    const [trasplanteExistente, setTrasplanteExistente] = useState(null)
+    const [cargando, setCargando] = useState(true)
 
     const {
         control,
@@ -30,18 +35,81 @@ export default function FormTransplanteProg() {
         },
     })
 
+    // Verificar si el paciente ya tiene un trasplante al cargar el componente
+    useEffect(() => {
+        const verificarTrasplanteExistente = async () => {
+            if (!id_paciente) {
+                console.log('No hay ID de paciente disponible')
+                setCargando(false)
+                return
+            }
+
+            try {
+                setCargando(true)
+                const resultado =
+                    await consultarTransplantesProgenitoresPorPaciente(
+                        token,
+                        id_paciente,
+                    )
+
+                if (
+                    resultado &&
+                    resultado.status === 'success' &&
+                    resultado.data
+                ) {
+                    // Determinar si los datos son un array o un objeto
+                    const datosTransplante = Array.isArray(resultado.data)
+                        ? resultado.data[0] // Tomar el primer elemento si es un array
+                        : resultado.data // Usar directamente si es un objeto
+
+                    setTrasplanteExistente(datosTransplante)
+
+                    // Actualizar el formulario con los datos existentes
+                    reset({
+                        paciente: datosTransplante.paciente || '',
+                        padres: datosTransplante.padres || '',
+                        hermanos: datosTransplante.hermanos || '',
+                        tipo: datosTransplante.tipo_indicaciones || '',
+                    })
+                } else {
+                    console.log(
+                        'No se encontraron trasplantes para este paciente',
+                    )
+                }
+            } catch (error) {
+                console.error('Error al verificar trasplante existente:', error)
+                setMensaje({
+                    tipo: 'error',
+                    texto: 'Error al verificar si existe un trasplante previo',
+                })
+            } finally {
+                setCargando(false)
+            }
+        }
+
+        verificarTrasplanteExistente()
+    }, [id_paciente, token, reset])
+
     const onSubmit = async (data) => {
         try {
             setLoading(true)
             setMensaje({ tipo: '', texto: '' })
+
+            // Si ya existe un trasplante, mostrar mensaje y no continuar
+            if (trasplanteExistente) {
+                setMensaje({
+                    tipo: 'error',
+                    texto: 'Ya existe un trasplante de progenitores para este paciente',
+                })
+                setLoading(false)
+                return
+            }
 
             const formDataComplete = {
                 ...data,
                 id_paciente,
                 id_user_create: user.id,
             }
-
-            console.log('Datos del transplante:', formDataComplete)
 
             const response = await crearTransplanteProgenitores(
                 token,
@@ -53,6 +121,12 @@ export default function FormTransplanteProg() {
                     tipo: 'exito',
                     texto: 'Transplante de progenitores guardado correctamente',
                 })
+
+                // Actualizar el estado para reflejar que ahora existe un trasplante
+                if (response.data) {
+                    setTrasplanteExistente(response.data)
+                }
+
                 reset()
             } else {
                 setMensaje({
@@ -76,91 +150,178 @@ export default function FormTransplanteProg() {
         { value: 'No Realizado', label: 'No realizado' },
     ]
 
+    // Determinar si los campos deben estar deshabilitados
+    const isDisabled = trasplanteExistente !== null
+
+    if (cargando) {
+        return (
+            <div className="p-4 text-center">
+                Cargando información de trasplante...
+            </div>
+        )
+    }
+
     return (
-        <form
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full"
-            onSubmit={handleSubmit(onSubmit)}
-        >
-            {/* Mensaje de estado */}
-            {mensaje.texto && (
-                <div
-                    className={`col-span-1 md:col-span-2 lg:col-span-4 p-3 rounded-md ${
-                        mensaje.tipo === 'exito'
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-red-100 text-red-800'
-                    }`}
-                >
-                    {mensaje.texto}
+        <div>
+            {trasplanteExistente && (
+                <div className="mb-6 p-3 rounded-md bg-blue-100 text-blue-800">
+                    Ya existe un registro de trasplante de progenitores para
+                    este paciente. Se muestran los datos actuales.
                 </div>
             )}
 
-            {/* Sección Transplane de progenitores */}
-            <SectionTitle
-                text="Transplante de progenitores"
-                className="col-span-1 md:col-span-2 lg:col-span-4"
-            />
+            <form
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full"
+                onSubmit={handleSubmit(onSubmit)}
+            >
+                {/* Mensaje de estado */}
+                {mensaje.texto && (
+                    <div
+                        className={`col-span-1 md:col-span-2 lg:col-span-4 p-3 rounded-md ${
+                            mensaje.tipo === 'exito'
+                                ? 'bg-green-100 text-green-800'
+                                : 'bg-red-100 text-red-800'
+                        }`}
+                    >
+                        {mensaje.texto}
+                    </div>
+                )}
 
-            <div className="col-span-1 md:col-span-2 lg:col-span-2">
+                {/* Sección Transplane de progenitores */}
                 <SectionTitle
-                    text="Estudios HLA"
+                    text="Trasplante de progenitores"
                     className="col-span-1 md:col-span-2 lg:col-span-4"
                 />
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
-                    <InputSelect
-                        control={control}
-                        name="paciente"
-                        validation={validationTransplanteProgenitores.paciente}
-                        errors={errors}
-                        label="Paciente"
-                        options={options}
-                        placeholder="Seleccione"
-                        className="col-span-1"
+
+                <div
+                    className={`col-span-1 md:col-span-2 lg:col-span-2 ${isDisabled ? 'opacity-70' : ''}`}
+                >
+                    <SectionTitle
+                        text="Estudios HLA"
+                        className="col-span-1 md:col-span-2 lg:col-span-4"
                     />
-                    <InputSelect
-                        control={control}
-                        name="padres"
-                        label="Padres"
-                        validation={validationTransplanteProgenitores.padres}
-                        errors={errors}
-                        options={options}
-                        placeholder="Seleccione"
-                        className="col-span-1"
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+                        <InputSelect
+                            control={control}
+                            name="paciente"
+                            validation={
+                                validationTransplanteProgenitores.paciente
+                            }
+                            errors={errors}
+                            label="Paciente"
+                            options={options}
+                            placeholder="Seleccione"
+                            className="col-span-1"
+                            disabled={isDisabled}
+                        />
+                        <InputSelect
+                            control={control}
+                            name="padres"
+                            label="Padres"
+                            validation={
+                                validationTransplanteProgenitores.padres
+                            }
+                            errors={errors}
+                            options={options}
+                            placeholder="Seleccione"
+                            className="col-span-1"
+                            disabled={isDisabled}
+                        />
+                        <InputSelect
+                            control={control}
+                            name="hermanos"
+                            label="Hermanos"
+                            validation={
+                                validationTransplanteProgenitores.hermanos
+                            }
+                            errors={errors}
+                            options={options}
+                            placeholder="Seleccione"
+                            className="col-span-1"
+                            disabled={isDisabled}
+                        />
+                    </div>
+                </div>
+
+                <div
+                    className={`col-span-1 md:col-span-2 lg:col-span-2 ${isDisabled ? 'opacity-70' : ''}`}
+                >
+                    <SectionTitle
+                        text="Indicaciones para transplante"
+                        className="col-span-1 md:col-span-2 lg:col-span-4"
                     />
-                    <InputSelect
+                    <InputForm
                         control={control}
-                        name="hermanos"
-                        label="Hermanos"
-                        validation={validationTransplanteProgenitores.hermanos}
-                        errors={errors}
-                        options={options}
-                        placeholder="Seleccione"
+                        name="tipo"
+                        label="Tipo"
+                        inputPlaceholder="Escriba el tipo"
                         className="col-span-1"
+                        errors={errors}
+                        rules={
+                            validationTransplanteProgenitores.tipo_indicaciones
+                        }
+                        value=""
+                        disabled={isDisabled}
                     />
                 </div>
-            </div>
+                {/* Botón */}
+                <div className="col-span-4 flex justify-end mt-6">
+                    <Button type="submit" disabled={loading || isDisabled}>
+                        {loading
+                            ? 'Guardando...'
+                            : isDisabled
+                              ? 'Datos existentes'
+                              : 'Guardar'}
+                    </Button>
+                </div>
+            </form>
 
-            <div className="col-span-1 md:col-span-2 lg:col-span-2">
-                <SectionTitle
-                    text="Indicaciones para transplante"
-                    className="col-span-1 md:col-span-2 lg:col-span-4"
-                />
-                <InputForm
-                    control={control}
-                    name="tipo"
-                    label="Tipo"
-                    inputPlaceholder="Escriba el tipo"
-                    className="col-span-1"
-                    errors={errors}
-                    rules={validationTransplanteProgenitores.tipo_indicaciones}
-                    value=""
-                />
-            </div>
-            {/* Botón */}
-            <div className="col-span-4 flex justify-end mt-6">
-                <Button type="submit" disabled={loading}>
-                    {loading ? 'Guardando...' : 'Guardar'}
-                </Button>
-            </div>
-        </form>
+            {/* Tabla con datos existentes */}
+            {trasplanteExistente && (
+                <div className="mt-8">
+                    <SectionTitle
+                        text="Estado de los estudios HLA"
+                        className="mb-4"
+                    />
+                    <div className="bg-white shadow rounded-lg overflow-hidden">
+                        <table className="min-w-full divide-y divide-gray-200">
+                            <thead className="bg-gray-50">
+                                <tr>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Paciente (HLA)
+                                    </th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Padres (HLA)
+                                    </th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Hermanos (HLA)
+                                    </th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Tipo de Indicación
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody className="bg-white divide-y divide-gray-200">
+                                <tr>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                        {trasplanteExistente?.paciente || 'N/A'}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        {trasplanteExistente?.padres || 'N/A'}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        {trasplanteExistente?.hermanos || 'N/A'}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        {trasplanteExistente?.tipo_indicaciones ||
+                                            'N/A'}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            )}
+        </div>
     )
 }

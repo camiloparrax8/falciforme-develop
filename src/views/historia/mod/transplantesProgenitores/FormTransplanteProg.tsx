@@ -6,11 +6,17 @@ import SectionTitle from '@/views/common/form/SectionTitle'
 import InputForm from '@/views/common/form/InputForm'
 import InputSelect from '@/views/common/form/InputSelect'
 import Button from '@/components/ui/Button'
-import validationTransplanteProgenitores from '../../.././../validation/validationTransplanteProg'
+import validationTransplanteProgenitores from '@/validation/validationTransplanteProg'
 import {
     crearTransplanteProgenitores,
     consultarTransplantesProgenitoresPorPaciente,
 } from '@/customService/services/transplantesProgenitoresService'
+import { Table } from '@/components/ui'
+import Tr from '@/components/ui/Table/Tr'
+import TBody from '@/components/ui/Table/TBody'
+import Td from '@/components/ui/Table/Td'
+import Th from '@/components/ui/Table/Th'
+import THead from '@/components/ui/Table/THead'
 
 export default function FormTransplanteProg() {
     const { token } = useToken()
@@ -283,42 +289,34 @@ export default function FormTransplanteProg() {
                         text="Estado de los estudios HLA"
                         className="mb-4"
                     />
-                    <div className="bg-white shadow rounded-lg overflow-hidden">
-                        <table className="min-w-full divide-y divide-gray-200">
-                            <thead className="bg-gray-50">
-                                <tr>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Paciente (HLA)
-                                    </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Padres (HLA)
-                                    </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Hermanos (HLA)
-                                    </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Tipo de Indicación
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody className="bg-white divide-y divide-gray-200">
-                                <tr>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    <div>
+                        <Table>
+                            <THead>
+                                <Tr>
+                                    <Th>Paciente (HLA)</Th>
+                                    <Th>Padres (HLA)</Th>
+                                    <Th>Hermanos (HLA)</Th>
+                                    <Th>Tipo de Indicación</Th>
+                                </Tr>
+                            </THead>
+                            <TBody>
+                                <Tr>
+                                    <Td>
                                         {trasplanteExistente?.paciente || 'N/A'}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    </Td>
+                                    <Td>
                                         {trasplanteExistente?.padres || 'N/A'}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    </Td>
+                                    <Td>
                                         {trasplanteExistente?.hermanos || 'N/A'}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    </Td>
+                                    <Td>
                                         {trasplanteExistente?.tipo_indicaciones ||
                                             'N/A'}
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                                    </Td>
+                                </Tr>
+                            </TBody>
+                        </Table>
                     </div>
                 </div>
             )}

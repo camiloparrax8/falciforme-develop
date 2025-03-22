@@ -1,6 +1,7 @@
 import pdfMake from 'pdfmake/build/pdfmake';
 import { historiaClinicaData } from '../data/historiaClinicaData';
 import { consultarExamenFisicoPorPaciente } from '@/customService/services/examenesFisicosService';
+
 import { useToken } from '@/store/authStore';
 
 pdfMake.fonts = {
@@ -37,11 +38,11 @@ export const useGeneratePDF = () => {
               paddingBottom: () => 8,
           };
 
-          const keyFormatter = (key) => {
-              return key
-                  .replace(/_/g, ' ')
-                  .replace(/\b\w/g, (char) => char.toUpperCase());
-          };
+        //   const keyFormatter = (key) => {
+        //       return key
+        //           .replace(/_/g, ' ')
+        //           .replace(/\b\w/g, (char) => char.toUpperCase());
+        //   };
 
           const docDefinition = {
             content: [
@@ -121,9 +122,9 @@ export const useGeneratePDF = () => {
                             table: {
                                 widths: ['auto', '*'],
                                 body: [
-                                    ['Déficit de Zinc', examenesFisicos?.deficit_zinc === 1 ? 'Sí' : 'No'],
-                                    ['Déficit de Ácido Fólico', examenesFisicos?.deficit_acido_folico === 1 ? 'Sí' : 'No'],
-                                    ['Déficit de Vitamina D', examenesFisicos?.deficit_vitamina_d === 1 ? 'Sí' : 'No']
+                                    ['Déficit de Zinc', examenesFisicos?.deficit_zinc === true ? 'Sí' : 'No'],
+                                    ['Déficit de Ácido Fólico', examenesFisicos?.deficit_acido_folico === true ? 'Sí' : 'No'],
+                                    ['Déficit de Vitamina D', examenesFisicos?.deficit_vitamina_d === true ? 'Sí' : 'No']
                                 ]
                             },
                             layout: standardTableLayout,
@@ -133,8 +134,8 @@ export const useGeneratePDF = () => {
                             table: {
                                 widths: ['auto', '*'],
                                 body: [
-                                    ['Desnutrición', examenesFisicos?.desnutricion === 1 ? 'Sí' : 'No'],
-                                    ['Obesidad', examenesFisicos?.obesidad === 1 ? 'Sí' : 'No']
+                                    ['Desnutrición', examenesFisicos?.desnutricion === true ? 'Sí' : 'No'],
+                                    ['Obesidad', examenesFisicos?.obesidad === true ? 'Sí' : 'No']
                                 ]
                             },
                             layout: standardTableLayout,
@@ -166,7 +167,7 @@ export const useGeneratePDF = () => {
                                 widths: ['auto', '*'],
                                 body: [
                                     ['Agudeza Visual', examenesFisicos?.vision ? `${examenesFisicos.vision}` : "N/A"],
-                                    ['Caries', examenesFisicos?.caries === 1 ? 'Sí' : 'No'],
+                                    ['Caries', examenesFisicos?.caries === true ? 'Sí' : 'No'],
                                 ]
                             },
                             layout: standardTableLayout,

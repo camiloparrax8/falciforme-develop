@@ -91,6 +91,30 @@ export const protectedRoutes: Routes = [
         component: lazy(() => import('@/views/historia/mod/vacunas/Vacunas')),
         authority: [],
     },
+    {
+        key: 'gadgets.anemia',
+        path: '/gadgets/anemia',
+        component: lazy(() => import('@/views/gadgets/anemia/Clasificar')),
+        authority: [],
+    },
+    {
+        key: 'gadgets.anemia.historial',
+        path: '/gadgets/anemia/historial',
+        component: lazy(() => import('@/views/gadgets/anemia/Historial')),
+        authority: [],
+    },
+    {
+        key: 'gadgets.anemia-type',
+        path: '/gadgets/anemia/type',
+        component: lazy(() => import('@/views/gadgets/tipos_anemia/Clasificar')),
+        authority: [],
+    },
+    {
+        key: 'gadgets.anemia.historial',
+        path: '/gadgets/anemia/type/historial',
+        component: lazy(() => import('@/views/gadgets/tipos_anemia/Historial')),
+        authority: [],
+    },
 
     ...othersRoute,
 ]

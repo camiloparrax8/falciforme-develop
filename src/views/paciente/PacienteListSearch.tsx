@@ -23,7 +23,7 @@ const PacienteListSearch = forwardRef<
         <DebouceInput
             ref={ref}
             placeholder="Buscar paciente..."
-            suffix={<TbSearch className="text-lg" />}
+            // suffix={<TbSearch className="text-lg" />}
             onChange={(e) => onInputChange(e.target.value)}
             onKeyPress={handleKeyPress}
         />

@@ -1,7 +1,7 @@
 import {
     NAV_ITEM_TYPE_TITLE,
     NAV_ITEM_TYPE_ITEM,
-    // NAV_ITEM_TYPE_COLLAPSE
+    NAV_ITEM_TYPE_COLLAPSE,
 } from '@/constants/navigation.constant'
 
 import type { NavigationTree } from '@/@types/navigation'
@@ -18,7 +18,6 @@ const navigationConfig: NavigationTree[] = [
         subMenu: [],
     },
 
-  
     /** Example purpose only, please remove */
     {
         key: 'Paciente',
@@ -39,6 +38,37 @@ const navigationConfig: NavigationTree[] = [
         type: NAV_ITEM_TYPE_ITEM,
         authority: [],
         subMenu: [],
+    },
+    {
+        key: 'gadgets',
+        path: '',
+        title: 'Gadgets IA',
+        translateKey: '',
+        icon: 'gadget',
+        type: NAV_ITEM_TYPE_COLLAPSE,
+        authority: [],
+        subMenu: [
+            {
+                key: 'gadgets.anemia',
+                path: `/gadgets/anemia`,
+                title: 'Anemia',
+                translateKey: '',
+                icon: '',
+                type: NAV_ITEM_TYPE_ITEM,
+                authority: [],
+                subMenu: [],
+            },
+            {
+                key: 'gadgets.anemia-type',
+                path: `/gadgets/anemia/type`,
+                title: 'Tipos de Anemia',
+                translateKey: '',
+                icon: '',
+                type: NAV_ITEM_TYPE_ITEM,
+                authority: [],
+                subMenu: [],
+            },
+        ],
     },
 ]
 

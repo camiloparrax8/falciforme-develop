@@ -103,7 +103,7 @@ export const useGeneratePDF = () => {
                                     ['Peso (kg)', examenesFisicos?.peso || "N/A"],
                                     ['Percentil', examenesFisicos?.percentil || "N/A"],
                                     ['Talla (cm)', examenesFisicos?.talla || "N/A"],
-                                    ['Índice de Masa Corporal (IMC)', examenesFisicos?.imc || "N/A"],
+                                    ['Índice de Masa Corporal (IMC)', examenesFisicos?.imc ? `${examenesFisicos.imc.toFixed(2)}` : "N/A"],
                                 ],
                             },
                             layout: standardTableLayout,
@@ -152,9 +152,9 @@ export const useGeneratePDF = () => {
                                 widths: ['auto', '*'],
                                 body: [
                                     ['Perímetro Cefálico', examenesFisicos?.perimetro_cefalico || "N/A"],
-                                    ['Examen de la Boca', examenesFisicos?.examen_orl_boca || "N/A"],
-                                    ['Examen de la Nariz', examenesFisicos?.examen_orl_nariz || "N/A"],
-                                    ['Examen de los Oídos', examenesFisicos?.examen_orl_oidos || "N/A"],
+                                    ['Examen de la Boca', examenesFisicos?.examen_boca || "N/A"],
+                                    ['Examen de la Nariz', examenesFisicos?.examen_nariz || "N/A"],
+                                    ['Examen de los Oídos', examenesFisicos?.examen_oidos || "N/A"],
                                     ['Cuello', examenesFisicos?.cuello || "N/A"]
                                 ]
                             },
@@ -165,7 +165,7 @@ export const useGeneratePDF = () => {
                             table: {
                                 widths: ['auto', '*'],
                                 body: [
-                                    ['Agudeza Visual', examenesFisicos?.agudeza_visual ? `${examenesFisicos.agudeza_visual}` : "N/A"],
+                                    ['Agudeza Visual', examenesFisicos?.vision ? `${examenesFisicos.vision}` : "N/A"],
                                     ['Caries', examenesFisicos?.caries === 1 ? 'Sí' : 'No'],
                                 ]
                             },
@@ -180,8 +180,8 @@ export const useGeneratePDF = () => {
                     table: {
                         widths: ['auto', '*'],
                         body: [
-                            ['Cardiopulmonar', examenesFisicos?.cardio_pulmonar || "N/A"],
-                            ['Examen Abdominal', examenesFisicos?.abdominal || "N/A"],
+                            ['Cardiopulmonar', examenesFisicos?.cardio_pulmunar || "N/A"],
+                            ['Examen Abdominal', examenesFisicos?.condicion_abdominal || "N/A"],
                         ],
                     },
                     layout: standardTableLayout,
@@ -193,7 +193,9 @@ export const useGeneratePDF = () => {
                         widths: ['auto', '*'],
                         body: [
                             ['Tanner', examenesFisicos?.tanner || "N/A"],
-                            ['Extremidades', examenesFisicos?.extremidades || "N/A"],
+                            ['Observacion de extremidades', examenesFisicos?.extremidades_observacion || "N/A"],
+                            ['Estado de la piel', examenesFisicos?.extremidades_estado_piel || "N/A"],
+                            ['Extremidades', examenesFisicos?.extremidades_condicion || "N/A"],
                         ],
                     },
                     layout: standardTableLayout,

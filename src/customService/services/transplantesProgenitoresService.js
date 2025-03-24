@@ -31,6 +31,9 @@ export const consultarTransplantesProgenitoresPorPaciente = async (token, idPaci
             throw new Error("ID de paciente no proporcionado");
         }
 
+        console.log(`Consultando trasplantes para el paciente ID: ${idPaciente}`);
+
+        // Asegurar que el ID sea un número
         const idPacienteNumerico = parseInt(idPaciente);
 
         if (isNaN(idPacienteNumerico)) {
@@ -39,22 +42,50 @@ export const consultarTransplantesProgenitoresPorPaciente = async (token, idPaci
         }
 
         const url = `/historia-clinica/trasplantes-progenitores/${idPacienteNumerico}`;
-        const result = await axiosInstance.get(url, { headers: { Authorization: token } });
+
+        const result = await axiosInstance.get(
+            url,
+            { headers: { Authorization: token } }
+        );
 
         // Estructura consistente para la respuesta
         if (result.data) {
-            // Devuelve directamente el objeto de datos
-            return result.data.data || result.data; // Cambiado para que sea similar a examenesFisicosService
+            if (result.data.data) {
+                return {
+                    status: 'success',
+                    data: result.data.data
+                };
+            } else if (Array.isArray(result.data)) {
+                return {
+                    status: 'success',
+                    data: result.data.length > 0 ? result.data : null
+                };
+            } else {
+                return {
+                    status: 'success',
+                    data: result.data
+                };
+            }
         } else {
-            console.log("No hay datos en la respuesta");
-            return null;
+            return {
+                status: 'success',
+                data: null
+            };
         }
     } catch (error) {
         if (error.response && error.response.status === 404) {
             console.log("No se encontraron trasplantes para este paciente (404)");
-            return null;
+            return {
+                status: 'error',
+                message: "No se encontraron trasplantes",
+                data: null
+            };
         }
         console.error("Error al consultar transplantes de progenitores:", error.response?.data || error.message);
-        return null;
+        return {
+            status: 'error',
+            message: error.response?.data?.message || error.message,
+            data: null
+        };
     }
 };

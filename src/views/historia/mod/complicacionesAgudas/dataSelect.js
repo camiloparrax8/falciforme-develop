@@ -24,8 +24,8 @@ export const tratamienoInfeccionOptions = [
 ];
 
 export const aplasticaOptions = [
-    { value: 'Si', label: 'Sí' },
-    { value: 'No', label: 'No' },
+    { value: 'true', label: 'Sí' },
+    { value: 'false', label: 'No' },
 ];
 
 

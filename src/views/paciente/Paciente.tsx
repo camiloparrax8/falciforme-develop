@@ -8,6 +8,9 @@ import PacienteSkeleton from './PacienteSkeleton'
 import Alert from '@/components/ui/Alert'
 import { useToken } from '@/store/authStore'
 import { buscarPaciente } from '../../customService/services/pacienteService.js'
+import { InputGroup } from '@/components/ui'
+import { HiOutlineSearch } from 'react-icons/hi'
+import { Button } from '@/components/ui'
 
 const Paciente = () => {
     const { token } = useToken()
@@ -64,17 +67,31 @@ const Paciente = () => {
 
                 <div className="flex flex-col md:flex-row md:items-center gap-2 mt-4">
                     <div className="flex-grow">
+                        {/* <div className="flex-grow">
                         <PacienteListSearch
                             onInputChange={handleInputChange}
                             onEnter={handleSearch}
                         />
-                    </div>
-                    <button
+                    </div> */}
+                        {/* <button
                         className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-dark"
                         onClick={() => handleSearch(searchTerm)}
                     >
                         Buscar
-                    </button>
+                    </button> */}
+
+                        <InputGroup className="mb-4">
+                            <PacienteListSearch
+                                onInputChange={handleInputChange}
+                                onEnter={handleSearch}
+                            />
+                            <Button
+                                icon={<HiOutlineSearch className="text-xl" />}
+                                onClick={() => handleSearch(searchTerm)}
+                                variant="solid"
+                            />
+                        </InputGroup>
+                    </div>
                 </div>
             </AdaptiveCard>
 

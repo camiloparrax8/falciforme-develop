@@ -47,4 +47,31 @@ const validationComplicacionesAgudas = {
         required: 'La crisis aplástica infecciosa es requerida.',
     },
 };
-export default validationComplicacionesAgudas;
+
+const validationIngresoComplicacionAguda = {
+    tipo_ingreso: {
+        required: ' El tipo de ingreso es requerido.',
+        validate: value => {
+            if (value !== "UCI" && value !== "Hospitalizado") {
+                return 'El tipo de ingreso debe ser "UCI" u "Hospitalizado".';
+            }
+            return true;
+        },
+    },
+    fecha_ingreso: {
+        required: 'La fecha de ingreso es requerida.',
+        validate: value => {
+            const date = new Date(value);
+            return !isNaN(date.getTime()) || 'La fecha debe ser una fecha válida.';
+        },
+    },
+    duracion_ingreso: {
+        required: 'La duración del ingreso es requerida.',
+        validate: value => value >= 0 || 'La duración del ingreso debe ser un número entero positivo.',
+    },
+    motivo_ingreso: {
+        required: 'El motivo de ingreso es requerido.',
+        validate: value => value.length > 0 || 'El motivo de ingreso no puede estar vacío.',
+    },
+};
+export default { validationComplicacionesAgudas, validationIngresoComplicacionAguda };

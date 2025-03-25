@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useToken, useSessionUser } from '@/store/authStore'
 import { useParams } from 'react-router-dom'
 import SectionTitle from '@/views/common/form/SectionTitle'
@@ -11,17 +11,27 @@ import { BiAddToQueue } from 'react-icons/bi'
 import Dialog from '@/components/ui/Dialog'
 import FormModalIngresos from './FormModalIngresos'
 import { defaultValues } from './defaultValues'
-import validationComplicacionesAgudas from '../../.././../validation/validationComplicacionesAgudas'
-import { manejoOptions, aplasticaOptions, tratamientoOptions, huesoafectadosOptions, tratamienoInfeccionOptions, intensidadOptions } from './dataSelect'
+import validationComplicacionesAgudas from '@/validation/validationComplicacionesAgudas'
+import {
+    manejoOptions,
+    aplasticaOptions,
+    tratamientoOptions,
+    huesoafectadosOptions,
+    tratamienoInfeccionOptions,
+    intensidadOptions,
+} from './dataSelect'
 import InputSelect from '@/views/common/form/InputSelect'
-import { crearComplicacionAguda, obtenerComplicacionAgudaPorPaciente } from '@/customService/services/complicacionAgudaService'
+import {
+    crearComplicacionAguda,
+    obtenerComplicacionAgudaPorPaciente,
+} from '@/customService/services/complicacionAgudaService'
+import { obtenerIngresosPorComplicacion } from '@/customService/services/ingresosComplicacionesAgudasService'
 import { Table } from '@/components/ui'
 import Tr from '@/components/ui/Table/Tr'
 import TBody from '@/components/ui/Table/TBody'
 import Td from '@/components/ui/Table/Td'
 import Th from '@/components/ui/Table/Th'
 import THead from '@/components/ui/Table/THead'
-
 
 function FormComplicacionesAgudas() {
     const { token } = useToken()
@@ -30,6 +40,8 @@ function FormComplicacionesAgudas() {
     const [loading, setLoading] = useState(false)
     const [mensaje, setMensaje] = useState({ tipo: '', texto: '' })
     const [complicacionExistente, setComplicacionExistente] = useState(null)
+    const [ingresos, setIngresos] = useState([])
+    const [cargandoIngresos, setCargandoIngresos] = useState(false)
     const [cargando, setCargando] = useState(true)
     const [dialogIsOpenHC, setIsOpenAgudas] = useState(false)
     // Estado para controlar si el formulario está deshabilitado
@@ -44,6 +56,37 @@ function FormComplicacionesAgudas() {
     } = useForm({
         defaultValues: defaultValues,
     })
+
+    // Cargar ingresos si existe una complicación
+    const cargarIngresos = useCallback(
+        async (idComplicacion) => {
+            if (!idComplicacion) return
+
+            try {
+                setCargandoIngresos(true)
+                const resultado = await obtenerIngresosPorComplicacion(
+                    token,
+                    idComplicacion,
+                )
+
+                if (resultado.status === 'success' && resultado.data) {
+                    setIngresos(
+                        Array.isArray(resultado.data)
+                            ? resultado.data
+                            : [resultado.data],
+                    )
+                } else {
+                    setIngresos([])
+                }
+            } catch (error) {
+                console.error('Error al cargar ingresos:', error)
+                setIngresos([])
+            } finally {
+                setCargandoIngresos(false)
+            }
+        },
+        [token],
+    )
 
     // Verificar si el paciente ya tiene una complicación aguda al cargar el componente
     useEffect(() => {
@@ -85,6 +128,9 @@ function FormComplicacionesAgudas() {
                         setComplicacionExistente(datosComplicacion)
                         // Deshabilitar el formulario cuando ya existe una complicación
                         setFormularioDeshabilitado(true)
+
+                        // Cargar los ingresos asociados a esta complicación
+                        await cargarIngresos(datosComplicacion.id)
                     } else {
                         console.log('Datos de complicación vacíos o inválidos')
                         setFormularioDeshabilitado(false)
@@ -112,7 +158,7 @@ function FormComplicacionesAgudas() {
         }
 
         verificarComplicacionExistente()
-    }, [id_paciente, token, reset])
+    }, [id_paciente, token, reset, cargarIngresos])
 
     const onSubmit = async (data) => {
         // Si el formulario está deshabilitado, no permitir el envío
@@ -167,11 +213,15 @@ function FormComplicacionesAgudas() {
                     // Deshabilitar el formulario después de guardar
                     setFormularioDeshabilitado(true)
                 }
+                // Hacer scroll hacia arriba
+                window.scrollTo({ top: 0, behavior: 'smooth' })
             } else {
                 setMensaje({
                     tipo: 'error',
                     texto: response.message || 'Error al guardar los datos',
                 })
+                // Hacer scroll hacia arriba también en caso de error
+                window.scrollTo({ top: 0, behavior: 'smooth' })
             }
         } catch (error) {
             console.error('Error:', error)
@@ -179,12 +229,21 @@ function FormComplicacionesAgudas() {
                 tipo: 'error',
                 texto: 'Error al guardar los datos de la complicación aguda',
             })
+            // Hacer scroll hacia arriba en caso de error
+            window.scrollTo({ top: 0, behavior: 'smooth' })
         } finally {
             setLoading(false)
         }
     }
 
     const openDialogIngresos = () => {
+        if (!complicacionExistente || !complicacionExistente.id) {
+            setMensaje({
+                tipo: 'error',
+                texto: 'Debe guardar la complicación aguda antes de agregar ingresos',
+            })
+            return
+        }
         setIsOpenAgudas(true)
     }
 
@@ -192,9 +251,30 @@ function FormComplicacionesAgudas() {
         setIsOpenAgudas(false)
     }
 
-    const onSubmitModal = (dataModal) => {
-        console.log('Datos enviados:', dataModal)
+    const onSubmitModal = async (dataModal) => {
+        // Si el modal indica éxito, actualizar la lista de ingresos
+        if (
+            dataModal.success &&
+            complicacionExistente &&
+            complicacionExistente.id
+        ) {
+            await cargarIngresos(complicacionExistente.id)
+        }
+
         setIsOpenAgudas(false)
+    }
+
+    // Formatear fecha para mostrar en tablas
+    const formatearFecha = (fechaStr) => {
+        if (!fechaStr) return ''
+
+        try {
+            const fechaString = fechaStr.split('T')[0]
+            const [year, month, day] = fechaString.split('-')
+            return `${day}/${month}/${year}`
+        } catch {
+            return fechaStr
+        }
     }
 
     if (cargando) {
@@ -229,7 +309,7 @@ function FormComplicacionesAgudas() {
                 </div>
             )}
 
-            {/* Aplicar una clase de opacidad a todo el formulario cuando está deshabilitado */}
+            {/* Formulario de complicación aguda */}
             <div
                 className={
                     formularioDeshabilitado
@@ -332,7 +412,9 @@ function FormComplicacionesAgudas() {
                         name="tratamiento_infecciones"
                         label="Tratamiento"
                         options={tratamienoInfeccionOptions}
-                        validation={validationComplicacionesAgudas.tratamiento_infecciones}
+                        validation={
+                            validationComplicacionesAgudas.tratamiento_infecciones
+                        }
                         placeholder="Ingrese el tratamiento"
                         errors={errors}
                         className="col-span-1"
@@ -383,25 +465,11 @@ function FormComplicacionesAgudas() {
                 </form>
             </div>
 
-            <SectionTitle
-                text="Ingresos del paciente"
-                className="col-span-1 md:col-span-6 mt-6"
-            />
-            <Button
-                className="mt-4 mb-4"
-                icon={<BiAddToQueue />}
-                variant="solid"
-                title="Añadir ingresos medicos"
-                onClick={() => openDialogIngresos()}
-            >
-                Añadir ingresos
-            </Button>
-
-            {/* Tabla con datos existentes */}
+            {/* Tabla con datos de complicación */}
             {complicacionExistente && (
-                <div className="mt-8">
+                <div className="mt-8 mb-8 p-4 border border-gray-200 rounded-lg">
                     <SectionTitle
-                        text="Complicacion aguda del paciente"
+                        text="Complicación aguda registrada"
                         className="mb-4"
                     />
                     <div>
@@ -423,29 +491,31 @@ function FormComplicacionesAgudas() {
                             <TBody>
                                 <Tr>
                                     <Td>
-                                        {complicacionExistente.fecha
-                                            ? (() => {
-                                                  // Obtener la fecha como YYYY-MM-DD sin ajuste de zona horaria
-                                                  const fechaString =
-                                                      complicacionExistente.fecha.split(
-                                                          'T',
-                                                      )[0]
-                                                  const [year, month, day] =
-                                                      fechaString.split('-')
-                                                  // Crear la fecha sin ajustes de zona horaria
-                                                  return `${day}/${month}/${year}`
-                                              })()
-                                            : ''}
+                                        {formatearFecha(
+                                            complicacionExistente.fecha,
+                                        )}
                                     </Td>
                                     <Td>{complicacionExistente.dias_crisis}</Td>
                                     <Td>{complicacionExistente.intensidad}</Td>
                                     <Td>{complicacionExistente.manejo}</Td>
                                     <Td>{complicacionExistente.tratamiento}</Td>
-                                    <Td>{complicacionExistente.huesos_afectados}</Td>
+                                    <Td>
+                                        {complicacionExistente.huesos_afectados}
+                                    </Td>
                                     <Td>{complicacionExistente.germen}</Td>
-                                    <Td>{complicacionExistente.tratamiento_infecciones}</Td>
-                                    <Td>{complicacionExistente.dias_infeccion}</Td>
-                                    <Td>{complicacionExistente.crisis_aplastica_infecciosa? 'Si': 'No'}</Td>
+                                    <Td>
+                                        {
+                                            complicacionExistente.tratamiento_infecciones
+                                        }
+                                    </Td>
+                                    <Td>
+                                        {complicacionExistente.dias_infeccion}
+                                    </Td>
+                                    <Td>
+                                        {complicacionExistente.crisis_aplastica_infecciosa
+                                            ? 'Si'
+                                            : 'No'}
+                                    </Td>
                                 </Tr>
                             </TBody>
                         </Table>
@@ -453,6 +523,66 @@ function FormComplicacionesAgudas() {
                 </div>
             )}
 
+            {/* Sección de Ingresos */}
+            {complicacionExistente && (
+                <div className="mt-6 p-4 border border-gray-200 rounded-lg">
+                    <SectionTitle
+                        text="Ingresos del paciente"
+                        className="mb-4"
+                    />
+                    <Button
+                        className="mb-4"
+                        icon={<BiAddToQueue />}
+                        variant="solid"
+                        title="Añadir ingresos medicos"
+                        disabled={!complicacionExistente}
+                        onClick={openDialogIngresos}
+                    >
+                        Añadir ingresos
+                    </Button>
+
+                    {/* Tabla de ingresos */}
+                    {ingresos.length > 0 ? (
+                        <div className="mt-4">
+                            <Table>
+                                <THead>
+                                    <Tr>
+                                        <Th>Tipo</Th>
+                                        <Th>Fecha</Th>
+                                        <Th>Duración (días)</Th>
+                                        <Th>Motivo</Th>
+                                    </Tr>
+                                </THead>
+                                <TBody>
+                                    {ingresos.map((ingreso, index) => (
+                                        <Tr key={ingreso.id || index}>
+                                            <Td>{ingreso.tipo_ingreso}</Td>
+                                            <Td>
+                                                {formatearFecha(
+                                                    ingreso.fecha_ingreso,
+                                                )}
+                                            </Td>
+                                            <Td>{ingreso.duracion_ingreso}</Td>
+                                            <Td>{ingreso.motivo_ingreso}</Td>
+                                        </Tr>
+                                    ))}
+                                </TBody>
+                            </Table>
+                        </div>
+                    ) : !cargandoIngresos ? (
+                        <div className="mt-4 p-3 rounded-md bg-gray-100 text-gray-800">
+                            No hay ingresos registrados para esta complicación
+                            aguda.
+                        </div>
+                    ) : (
+                        <div className="mt-4 p-3 rounded-md bg-gray-100 text-gray-600">
+                            Cargando ingresos...
+                        </div>
+                    )}
+                </div>
+            )}
+
+            {/* Modal para añadir ingresos */}
             <Dialog
                 isOpen={dialogIsOpenHC}
                 onClose={onDialogCloseIngresos}
@@ -461,6 +591,7 @@ function FormComplicacionesAgudas() {
                 <div className="flex flex-col h-full space-y-4">
                     <FormModalIngresos
                         eventoForm={onSubmitModal}
+                        idComplicacion={complicacionExistente?.id}
                     ></FormModalIngresos>
                 </div>
             </Dialog>

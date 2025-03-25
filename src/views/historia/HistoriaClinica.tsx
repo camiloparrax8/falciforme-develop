@@ -1,6 +1,5 @@
 import { useParams } from 'react-router-dom'
 import { useState, useEffect } from 'react'
-
 import { AdaptiveCard, Container } from '@/components/shared'
 import CardHC from '../common/historia/CardHc'
 import { modulos } from './modulos'
@@ -54,7 +53,7 @@ const HistoriaClinica = () => {
             if (!id || !token) return
 
             try {
-                // Crear una copia profunda de los módulos originales
+                // Crear una copia de los módulos originales
                 const nuevosModulos = JSON.parse(JSON.stringify(modulos))
 
                 // 1. Verificar si existe un examen físico para este paciente
@@ -62,7 +61,7 @@ const HistoriaClinica = () => {
                     token,
                     id,
                 )
-                // Verificación más estricta para examen físico
+                // Verificación para examen físico
                 const examenExiste =
                     respuestaExamen &&
                     // La respuesta es success y tiene datos
@@ -74,11 +73,9 @@ const HistoriaClinica = () => {
                                 respuestaExamen.data.data.id) ||
                             (Array.isArray(respuestaExamen.data) &&
                                 respuestaExamen.data.length > 0) ||
-                            // También puede ser que la respuesta indique success pero sin formato específico
                             (typeof respuestaExamen.data === 'object' &&
                                 Object.keys(respuestaExamen.data).length >
                                     0))) ||
-                        // O la respuesta directamente es un objeto o array con datos (algunos servicios no usan el wrapper status/data)
                         respuestaExamen.id ||
                         (Array.isArray(respuestaExamen) &&
                             respuestaExamen.length > 0))
@@ -87,14 +84,12 @@ const HistoriaClinica = () => {
                 const respuestaComplicacion =
                     await obtenerComplicacionAgudaPorPaciente(token, id)
 
-                // Verificación más estricta para complicaciones agudas
+                // Verificación para complicaciones agudas
                 const complicacionExiste =
                     respuestaComplicacion &&
-                    respuestaComplicacion.status === 'success' && // Debe ser exactamente 'success'
-                    respuestaComplicacion.data && // data debe existir
-                    // Verificar que data tiene un id (es una complicación real)
+                    respuestaComplicacion.status === 'success' &&
+                    respuestaComplicacion.data &&
                     (respuestaComplicacion.data.id ||
-                        // Si es un array, verificar que tiene elementos con id
                         (Array.isArray(respuestaComplicacion.data) &&
                             respuestaComplicacion.data.length > 0 &&
                             respuestaComplicacion.data[0].id))
@@ -105,14 +100,12 @@ const HistoriaClinica = () => {
                         token,
                         id,
                     )
-                // Verificación más estricta para trasplante de progenitores
+                // Verificación para trasplante de progenitores
                 const trasplanteExiste =
                     respuestaTrasplante &&
-                    respuestaTrasplante.status === 'success' && // Debe ser exactamente 'success'
-                    respuestaTrasplante.data && // data debe existir
-                    // Verificar que data tiene un id (es un trasplante real)
+                    respuestaTrasplante.status === 'success' &&
+                    respuestaTrasplante.data &&
                     (respuestaTrasplante.data.id ||
-                        // Si es un array, verificar que tiene elementos con id
                         (Array.isArray(respuestaTrasplante.data) &&
                             respuestaTrasplante.data.length > 0 &&
                             respuestaTrasplante.data[0].id))
@@ -123,19 +116,19 @@ const HistoriaClinica = () => {
                         // Módulo de Exámenes Físicos (id: 1)
                         return {
                             ...modulo,
-                            estado: examenExiste ? 1 : 0, // 1 si existe, 0 si no existe
+                            estado: examenExiste ? 1 : 0,
                         }
                     } else if (modulo.id === 2) {
                         // Módulo de Complicaciones Agudas (id: 2)
                         return {
                             ...modulo,
-                            estado: complicacionExiste ? 1 : 0, // 1 si existe, 0 si no existe
+                            estado: complicacionExiste ? 1 : 0,
                         }
                     } else if (modulo.id === 4) {
                         // Módulo de Trasplante de Progenitores (id: 4)
                         return {
                             ...modulo,
-                            estado: trasplanteExiste ? 1 : 0, // 1 si existe, 0 si no existe
+                            estado: trasplanteExiste ? 1 : 0,
                         }
                     }
                     return modulo

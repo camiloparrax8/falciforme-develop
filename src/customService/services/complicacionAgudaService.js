@@ -45,15 +45,6 @@ export const crearComplicacionAguda = async (token, formData) => {
             id_user_create: formData.id_user_create,
         };
 
-        // Debugging: muestra los valores antes de formatear
-        console.log("Datos originales:", {
-            tratamiento: formData.tratamiento,
-            huesos_afectados: formData.huesos_afectados,
-            tratamiento_infecciones: formData.tratamiento_infecciones
-        });
-
-        console.log("Datos enviados al backend:", data);
-
         const result = await axiosInstance.post(`/historia-clinica/complicaciones-agudas`, data, {
             headers: { Authorization: token },
         });
@@ -71,9 +62,6 @@ export const obtenerComplicacionAgudaPorPaciente = async (token, idPaciente) => 
             console.error("ID de paciente no proporcionado en obtenerComplicacionAgudaPorPaciente");
             throw new Error("ID de paciente no proporcionado");
         }
-
-        console.log(`Consultando complicaciones agudas para el paciente ID: ${idPaciente}`);
-
         // Asegurar que el ID sea un número
         const idPacienteNumerico = parseInt(idPaciente);
 
@@ -115,7 +103,6 @@ export const obtenerComplicacionAgudaPorPaciente = async (token, idPaciente) => 
         }
     } catch (error) {
         if (error.response && error.response.status === 404) {
-            console.log("No se encontraron complicaciones agudas para este paciente (404)");
             return {
                 status: 'error',
                 message: "No se encontraron complicaciones agudas",

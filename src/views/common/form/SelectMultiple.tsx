@@ -1,6 +1,7 @@
-import { Controller } from 'react-hook-form';
-import Select from '@/components/ui/Select';
-import Label from './Label';
+import { Controller } from 'react-hook-form'
+import Select from '@/components/ui/Select'
+import Label from './Label'
+import CreatableSelect from 'react-select/creatable'
 
 const SelectMultiple = ({
     control,
@@ -11,34 +12,64 @@ const SelectMultiple = ({
     errors,
     validation,
     className,
-    label
+    label,
+    isCreatable = false,
 }) => {
     return (
-        <div  className={className}>
-             {label && <Label htmlFor={name} text={label} />}
+        <div className={className}>
+            {label && <Label htmlFor={name} text={label} />}
             <Controller
                 name={name}
                 control={control}
                 defaultValue={defaultValue}
-                rules={validation} 
+                rules={validation}
                 render={({ field }) => (
                     <Select
                         {...field}
                         isMulti
                         options={options}
-                        placeholder={placeholder}                       
+                        placeholder={placeholder}
+                        componentAs={isCreatable ? CreatableSelect : undefined}
+                        formatCreateLabel={
+                            isCreatable
+                                ? (inputValue) => `Crear "${inputValue}"`
+                                : undefined
+                        }
                         onChange={(selected) => {
-                            field.onChange(
-                                selected ? selected.map((option) => option.value) : []
-                            ); 
+                            const selectedValues = selected
+                                ? selected.map((option) => {
+                                      if (option.__isNew__) {
+                                          return option.value
+                                      }
+                                      return option.value
+                                  })
+                                : []
+                            field.onChange(selectedValues)
                         }}
                         value={
                             field.value
-                                ? options.filter((option) =>
-                                      field.value.includes(option.value)
-                                  )
+                                ? field.value.map((value) => {
+                                      const existingOption = options.find(
+                                          (opt) => opt.value === value,
+                                      )
+                                      return (
+                                          existingOption || {
+                                              value: value,
+                                              label: value,
+                                          }
+                                      )
+                                  })
                                 : []
-                        } 
+                        }
+                        getNewOptionData={
+                            isCreatable
+                                ? (inputValue) => ({
+                                      value: inputValue,
+                                      label: inputValue,
+                                      __isNew__: true,
+                                  })
+                                : undefined
+                        }
                     />
                 )}
             />
@@ -48,7 +79,7 @@ const SelectMultiple = ({
                 </p>
             )}
         </div>
-    );
-};
+    )
+}
 
-export default SelectMultiple;
+export default SelectMultiple

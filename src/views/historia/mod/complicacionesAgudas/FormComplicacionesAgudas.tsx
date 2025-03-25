@@ -12,24 +12,16 @@ import Dialog from '@/components/ui/Dialog'
 import FormModalIngresos from './FormModalIngresos'
 import { defaultValues } from './defaultValues'
 import validationComplicacionesAgudas from '../../.././../validation/validationComplicacionesAgudas'
-import {
-    manejoOptions,
-    aplasticaOptions,
-    tratamientoOptions,
-    huesoafectadosOptions,
-    tratamienoInfeccionOptions,
-} from './dataSelect'
+import { manejoOptions, aplasticaOptions, tratamientoOptions, huesoafectadosOptions, tratamienoInfeccionOptions, intensidadOptions } from './dataSelect'
 import InputSelect from '@/views/common/form/InputSelect'
-import {
-    crearComplicacionAguda,
-    obtenerComplicacionAgudaPorPaciente,
-} from '@/customService/services/complicacionAgudaService'
+import { crearComplicacionAguda, obtenerComplicacionAgudaPorPaciente } from '@/customService/services/complicacionAgudaService'
 import { Table } from '@/components/ui'
 import Tr from '@/components/ui/Table/Tr'
 import TBody from '@/components/ui/Table/TBody'
 import Td from '@/components/ui/Table/Td'
 import Th from '@/components/ui/Table/Th'
 import THead from '@/components/ui/Table/THead'
+
 
 function FormComplicacionesAgudas() {
     const { token } = useToken()
@@ -158,8 +150,6 @@ function FormComplicacionesAgudas() {
                 id_user_create: user.id,
             }
 
-            console.log('Datos a enviar:', formDataComplete) // Para depuración
-
             const response = await crearComplicacionAguda(
                 token,
                 formDataComplete,
@@ -275,15 +265,15 @@ function FormComplicacionesAgudas() {
                         className="col-span-1"
                         value=""
                     />
-                    <InputForm
+                    <InputSelect
                         control={control}
                         name="intensidad"
-                        label="Intensidad (1-10)"
-                        rules={validationComplicacionesAgudas.intensidad}
-                        inputPlaceholder="Ingrese la intensidad"
-                        className="col-span-4"
+                        validation={validationComplicacionesAgudas.intensidad}
+                        label="Intensidad"
+                        placeholder="Seleccione la intensidad"
+                        options={intensidadOptions}
                         errors={errors}
-                        value=""
+                        className="col-span-4"
                     />
                     <InputSelect
                         control={control}
@@ -297,11 +287,12 @@ function FormComplicacionesAgudas() {
                     />
                     <SelectMultiple
                         control={control}
+                        isCreatable={true}
                         name="tratamiento"
                         label="Tratamiento"
                         options={tratamientoOptions}
                         validation={validationComplicacionesAgudas.tratamiento}
-                        placeholder="Ingrese el tratamiento"
+                        placeholder="Seleccione el tratamiento"
                         errors={errors}
                         className="col-span-1"
                         defaultValue={[]}
@@ -337,12 +328,11 @@ function FormComplicacionesAgudas() {
                     />
                     <SelectMultiple
                         control={control}
+                        isCreatable={true}
                         name="tratamiento_infecciones"
                         label="Tratamiento"
                         options={tratamienoInfeccionOptions}
-                        validation={
-                            validationComplicacionesAgudas.tratamiento_infecciones
-                        }
+                        validation={validationComplicacionesAgudas.tratamiento_infecciones}
                         placeholder="Ingrese el tratamiento"
                         errors={errors}
                         className="col-span-1"
@@ -451,23 +441,11 @@ function FormComplicacionesAgudas() {
                                     <Td>{complicacionExistente.intensidad}</Td>
                                     <Td>{complicacionExistente.manejo}</Td>
                                     <Td>{complicacionExistente.tratamiento}</Td>
-                                    <Td>
-                                        {complicacionExistente.huesos_afectados}
-                                    </Td>
+                                    <Td>{complicacionExistente.huesos_afectados}</Td>
                                     <Td>{complicacionExistente.germen}</Td>
-                                    <Td>
-                                        {
-                                            complicacionExistente.tratamiento_infecciones
-                                        }
-                                    </Td>
-                                    <Td>
-                                        {complicacionExistente.dias_infeccion}
-                                    </Td>
-                                    <Td>
-                                        {complicacionExistente.crisis_aplastica_infecciosa
-                                            ? 'Si'
-                                            : 'No'}
-                                    </Td>
+                                    <Td>{complicacionExistente.tratamiento_infecciones}</Td>
+                                    <Td>{complicacionExistente.dias_infeccion}</Td>
+                                    <Td>{complicacionExistente.crisis_aplastica_infecciosa? 'Si': 'No'}</Td>
                                 </Tr>
                             </TBody>
                         </Table>

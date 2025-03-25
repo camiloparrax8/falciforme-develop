@@ -96,7 +96,7 @@ export const aplasticaOptions = [
 
 export const TipoOptions = [
     { value: 'UCI', label: 'UCI' },
-    { value: 'Hospitalizado ', label: 'Hospitalizado' },
+    { value: 'Hospitalizado', label: 'Hospitalizado' },
 ];
 
 export const MotivoOptions = [

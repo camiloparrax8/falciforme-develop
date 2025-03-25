@@ -1,49 +1,49 @@
 const validationComplicacionesAgudas = {
-    ingresoTipo: {
-        required: 'El tipo de ingreso es requerido.',
+    fecha: {
+        required: 'La fecha es requerida.',
+        validate: value => {
+            const date = new Date(value);
+            return !isNaN(date.getTime()) || 'La fecha debe ser una fecha válida.';
+        },
     },
-    ingresoFecha: {
-        required: 'La fecha de ingreso es requerida.',
+    dias_crisis: {
+        required: 'Los días de crisis son requeridos.',
+        validate: value => value > 0 || 'Los días de crisis deben ser mayor a 0.',
     },
-    ingresoDuracion: {
-        required: 'La duración del ingreso es requerida.',
-        validate: value => value > 0 || 'La duración debe ser mayor a 0 días.',
+    intensidad: {
+        required: 'La intensidad es requerida.',
+        validate: value => value.length > 0 || 'La intensidad no puede estar vacía.',
     },
-    ingresoMotivo: {
-        required: 'El motivo de ingreso es requerido.',
+    manejo: {
+        required: 'El manejo es requerido.',
+        validate: value => {
+            if (value !== "Casa" && value !== "Hospitalario") {
+                return 'El manejo debe ser "Casa" u "Hospitalario".';
+            }
+            return true;
+        },
     },
-    crisisDolorFecha: {
-        required: 'La fecha de la crisis de dolor es requerida.',
+    tratamiento: {
+        required: 'El tratamiento es requerido.',
+        validate: value => value.length > 0 || 'El tratamiento no puede estar vacío.',
     },
-    crisisDolorDias: {
-        required: 'La cantidad de días es requerida.',
-        validate: value => value > 0 || 'La cantidad de días debe ser mayor a 0.',
-    },
-    crisisDolorIntensidad: {
-        required: 'La intensidad de la crisis de dolor es requerida.',
-        validate: value =>
-            value >= 1 && value <= 10 || 'La intensidad debe estar entre 1 y 10.',
-    },
-    crisisDolorManejo: {
-        required: 'El manejo de la crisis de dolor es requerido.',
-    },
-    crisisDolorTratamiento: {
-        required: 'El tratamiento de la crisis de dolor es requerido.',
-    },
-    crisisDolorHuesos: {
+    huesos_afectados: {
         required: 'Los huesos afectados son requeridos.',
+        validate: value => value.length > 0 || 'Los huesos afectados no pueden estar vacíos.',
     },
-    infeccionesGermen: {
-        required: 'El germen de la infección es requerido.',
+    germen: {
+        required: 'El germen es requerido.',
+        validate: value => value.length > 0 || 'El germen no puede estar vacío.',
     },
-    infeccionesTratamiento: {
-        required: 'El tratamiento de la infección es requerido.',
+    tratamiento_infecciones: {
+        required: 'El tratamiento de infección es requerido.',
+        validate: value => value.length > 0 || 'El tratamiento de infección no puede estar vacío.',
     },
-    infeccionesDias: {
-        required: 'La cantidad de días de tratamiento es requerida.',
-        validate: value => value > 0 || 'La cantidad de días debe ser mayor a 0.',
+    dias_infeccion: {
+        required: 'Los días de infección son requeridos.',
+        validate: value => value >= 0 || 'Los días de infección deben ser un número entero positivo.',
     },
-    anemiaCrisisAplastica: {
+    crisis_aplastica_infecciosa: {
         required: 'La crisis aplástica infecciosa es requerida.',
     },
 };

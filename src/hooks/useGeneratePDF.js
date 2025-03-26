@@ -3,6 +3,7 @@ import { historiaClinicaData } from '../data/historiaClinicaData';
 import { consultarExamenFisicoPorPaciente } from '@/customService/services/examenesFisicosService';
 import { consultarTransplantesProgenitoresPorPaciente } from '@/customService/services/transplantesProgenitoresService';
 import { useToken } from '@/store/authStore';
+import { saveAs } from 'file-saver';
 
 pdfMake.fonts = {
     Roboto: {
@@ -39,13 +40,19 @@ export const useGeneratePDF = () => {
                 paddingBottom: () => 8,
             };
 
-            //   const keyFormatter = (key) => {
-            //       return key
-            //           .replace(/_/g, ' ')
-            //           .replace(/\b\w/g, (char) => char.toUpperCase());
-            //   };
+            const fecha = new Date();
+            const fechaFormateada = `${fecha.getDate().toString().padStart(2, '0')}${(fecha.getMonth() + 1).toString().padStart(2, '0')}${fecha.getFullYear()}${fecha.getHours().toString().padStart(2, '0')}${fecha.getMinutes().toString().padStart(2, '0')}${fecha.getSeconds().toString().padStart(2, '0')}`;
+            const fileName = `HC_${data.paciente.identificacion}_${fechaFormateada}.pdf`;
 
             const docDefinition = {
+                info: {
+                    title: fileName,
+                    author: 'Sistema de Historia Clínica',
+                    subject: 'Historia Clínica del Paciente',
+                    keywords: 'historia clínica, paciente, documento médico',
+                    creationDate: new Date(),
+                    modDate: new Date()
+                },
                 content: [
                     { text: 'HISTORIA CLÍNICA', style: 'header', alignment: 'center', margin: [0, 0, 0, 10] },
 
@@ -623,11 +630,11 @@ export const useGeneratePDF = () => {
                 pageMargins: [40, 40, 40, 40],
             };
 
-            const fileName = `historia_clinica_${data.paciente.nombre.replace(/\s+/g, "_")}.pdf`;
             const pdfDoc = pdfMake.createPdf(docDefinition);
 
             if (window) {
                 pdfDoc.open({}, window);
+    
             } else {
                 pdfDoc.download(fileName);
             }

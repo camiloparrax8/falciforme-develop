@@ -1,6 +1,5 @@
-import { useParams, useLocation } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { useState, useEffect } from 'react'
-
 import { AdaptiveCard, Container } from '@/components/shared'
 import CardHC from '../common/historia/CardHc'
 import { modulos } from './modulos'
@@ -8,6 +7,7 @@ import { usePatient, PatientProvider } from '@/context/PatientContext'
 import { buscarPacienteById } from '@/customService/services/pacienteService'
 import { consultarExamenFisicoPorPaciente } from '@/customService/services/examenesFisicosService'
 import { consultarTransplantesProgenitoresPorPaciente } from '@/customService/services/transplantesProgenitoresService'
+import { obtenerComplicacionAgudaPorPaciente } from '@/customService/services/complicacionAgudaService'
 import { useToken } from '@/store/authStore'
 import SectionTitle from '../common/form/SectionTitle'
 
@@ -20,9 +20,6 @@ const HistoriaClinicaWrapper = () => {
 }
 const HistoriaClinica = () => {
     const { id } = useParams()
-    const location = useLocation()
-    const queryParams = new URLSearchParams(location.search)
-    const tipo = queryParams.get('tipo')
     const { paciente, setPaciente } = usePatient()
     const { token } = useToken()
     const [modulosActualizados, setModulosActualizados] = useState([...modulos])
@@ -56,12 +53,7 @@ const HistoriaClinica = () => {
             if (!id || !token) return
 
             try {
-                console.log(
-                    'Verificando estado de módulos para paciente ID:',
-                    id,
-                )
-
-                // Crear una copia profunda de los módulos originales
+                // Crear una copia de los módulos originales
                 const nuevosModulos = JSON.parse(JSON.stringify(modulos))
 
                 // 1. Verificar si existe un examen físico para este paciente
@@ -69,40 +61,54 @@ const HistoriaClinica = () => {
                     token,
                     id,
                 )
-
-                console.log('Respuesta de examen físico:', respuestaExamen)
-
-                // Verificar correctamente si existe un examen físico válido
+                // Verificación para examen físico
                 const examenExiste =
                     respuestaExamen &&
-                    respuestaExamen.status !== 'error' &&
-                    (respuestaExamen.data !== null ||
-                        !('data' in respuestaExamen))
+                    // La respuesta es success y tiene datos
+                    ((respuestaExamen.status === 'success' &&
+                        respuestaExamen.data &&
+                        // Los datos pueden estar estructurados de varias formas:
+                        (respuestaExamen.data.id ||
+                            (respuestaExamen.data.data &&
+                                respuestaExamen.data.data.id) ||
+                            (Array.isArray(respuestaExamen.data) &&
+                                respuestaExamen.data.length > 0) ||
+                            (typeof respuestaExamen.data === 'object' &&
+                                Object.keys(respuestaExamen.data).length >
+                                    0))) ||
+                        respuestaExamen.id ||
+                        (Array.isArray(respuestaExamen) &&
+                            respuestaExamen.length > 0))
 
-                console.log('¿Existe examen físico?', examenExiste)
+                // 3. Verificar si existe una complicación aguda para este paciente
+                const respuestaComplicacion =
+                    await obtenerComplicacionAgudaPorPaciente(token, id)
 
-                // 2. Verificar si existe un trasplante de progenitores para este paciente
+                // Verificación para complicaciones agudas
+                const complicacionExiste =
+                    respuestaComplicacion &&
+                    respuestaComplicacion.status === 'success' &&
+                    respuestaComplicacion.data &&
+                    (respuestaComplicacion.data.id ||
+                        (Array.isArray(respuestaComplicacion.data) &&
+                            respuestaComplicacion.data.length > 0 &&
+                            respuestaComplicacion.data[0].id))
+
+                // 4. Verificar si existe un trasplante de progenitores para este paciente
                 const respuestaTrasplante =
                     await consultarTransplantesProgenitoresPorPaciente(
                         token,
                         id,
                     )
-
-                console.log(
-                    'Respuesta de trasplante de progenitores:',
-                    respuestaTrasplante,
-                )
-
-                // Verificar si existe un trasplante válido
+                // Verificación para trasplante de progenitores
                 const trasplanteExiste =
                     respuestaTrasplante &&
                     respuestaTrasplante.status === 'success' &&
-                    respuestaTrasplante.data !== null
-
-                console.log(
-                    '¿Existe trasplante de progenitores?',
-                    trasplanteExiste,
-                )
+                    respuestaTrasplante.data &&
+                    (respuestaTrasplante.data.id ||
+                        (Array.isArray(respuestaTrasplante.data) &&
+                            respuestaTrasplante.data.length > 0 &&
+                            respuestaTrasplante.data[0].id))
 
                 // Actualizar los módulos con el estado correcto
                 const modulosActualizados = nuevosModulos.map((modulo) => {
@@ -110,19 +116,23 @@ const HistoriaClinica = () => {
                         // Módulo de Exámenes Físicos (id: 1)
                         return {
                             ...modulo,
-                            estado: examenExiste ? 1 : 0, // 1 si existe, 0 si no existe
+                            estado: examenExiste ? 1 : 0,
+                        }
+                    } else if (modulo.id === 2) {
+                        // Módulo de Complicaciones Agudas (id: 2)
+                        return {
+                            ...modulo,
+                            estado: complicacionExiste ? 1 : 0,
                         }
                     } else if (modulo.id === 4) {
                         // Módulo de Trasplante de Progenitores (id: 4)
                         return {
                             ...modulo,
-                            estado: trasplanteExiste ? 1 : 0, // 1 si existe, 0 si no existe
+                            estado: trasplanteExiste ? 1 : 0,
                         }
                     }
                     return modulo
                 })
-
-                console.log('Módulos actualizados:', modulosActualizados)
 
                 setModulosActualizados(modulosActualizados)
             } catch (error) {
@@ -134,17 +144,6 @@ const HistoriaClinica = () => {
 
         verificarEstadoModulos()
     }, [id, token])
-
-    console.log(
-        'tipo de HC=',
-        tipo,
-        ' / el id es =',
-        id,
-        ' / El nombre es =',
-        paciente,
-    )
-
-    console.log('Paciente en contexto:', paciente)
 
     return (
         <Container>

@@ -19,41 +19,70 @@ export default function ModalExamenORL({ isOpen, onClose, onRequestClose }) {
         control,
         handleSubmit,
         formState: { errors },
+        setValue,
     } = useForm<ExamenORLData>({
         defaultValues: defaultValuesExamenORL,
     })
 
     const { updateExamenORL, isLoading, result } = useExamenFisicoUpdate()
-    const { idExamenFisico } = useExamenFisico()
+    const { idExamenFisico, examenData } = useExamenFisico()
     const [showMessage, setShowMessage] = useState(false)
-
-    useEffect(() => {
-        console.log('ID del examen físico en ModalExamenORL:', idExamenFisico)
-    }, [idExamenFisico])
+    const [existeRegistro, setExisteRegistro] = useState(false)
 
     const onSubmit = async (data: ExamenORLData) => {
         try {
             await updateExamenORL(data)
             setShowMessage(true)
+            setExisteRegistro(true)
 
-            // Cerrar automáticamente después de 2 segundos en caso de éxito
-            if (result?.success) {
-                setTimeout(() => {
-                    setShowMessage(false)
+            setTimeout(() => {
+                setShowMessage(false)
+                if (onClose) {
                     onClose()
-                }, 2000)
-            }
+                }
+            }, 2000)
         } catch (error) {
             console.error('Error al actualizar examen ORL:', error)
             setShowMessage(true)
         }
     }
 
+    useEffect(() => {
+        if (isOpen && examenData) {
+            // Verificar si al menos uno de los campos tiene un valor real
+            const tieneBoca =
+                examenData.examen_boca !== undefined &&
+                examenData.examen_boca !== null
+            const tieneNariz =
+                examenData.examen_nariz !== undefined &&
+                examenData.examen_nariz !== null
+            const tieneOidos =
+                examenData.examen_oidos !== undefined &&
+                examenData.examen_oidos !== null
+
+            // Establecer valores solo si existen
+            setValue('boca', tieneBoca ? String(examenData.examen_boca) : '')
+            setValue('nariz', tieneNariz ? String(examenData.examen_nariz) : '')
+            setValue('oidos', tieneOidos ? String(examenData.examen_oidos) : '')
+
+            // Considerar el registro como existente solo si al menos un campo tiene valor
+            setExisteRegistro(tieneBoca || tieneNariz || tieneOidos)
+        } else {
+            setExisteRegistro(false)
+        }
+    }, [isOpen, examenData, setValue])
+
     return (
         <Dialog
             isOpen={isOpen}
-            onRequestClose={onRequestClose}
-            onClose={onClose}
+            onRequestClose={() => {
+                setShowMessage(false)
+                onRequestClose()
+            }}
+            onClose={() => {
+                setShowMessage(false)
+                onClose()
+            }}
         >
             <div className="flex flex-col h-full space-y-4">
                 <h5 className="text-lg font-bold">Examen ORL</h5>
@@ -63,6 +92,12 @@ export default function ModalExamenORL({ isOpen, onClose, onRequestClose }) {
                         className={`p-2 rounded ${result.success ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
                     >
                         {result.message}
+                    </div>
+                )}
+
+                {existeRegistro && (
+                    <div className="bg-yellow-100 text-yellow-800 p-2 rounded">
+                        Este registro ya existe y no puede ser modificado.
                     </div>
                 )}
 
@@ -89,6 +124,7 @@ export default function ModalExamenORL({ isOpen, onClose, onRequestClose }) {
                         errors={errors}
                         className="col-span-3"
                         value=""
+                        disabled={existeRegistro}
                     />
 
                     <InputForm
@@ -100,6 +136,7 @@ export default function ModalExamenORL({ isOpen, onClose, onRequestClose }) {
                         errors={errors}
                         className="col-span-3"
                         value=""
+                        disabled={existeRegistro}
                     />
 
                     <InputForm
@@ -111,13 +148,16 @@ export default function ModalExamenORL({ isOpen, onClose, onRequestClose }) {
                         errors={errors}
                         className="col-span-3"
                         value=""
+                        disabled={existeRegistro}
                     />
 
                     <div className="flex justify-end">
                         <Button
                             type="submit"
                             className="ml-2"
-                            disabled={isLoading}
+                            disabled={
+                                isLoading || !idExamenFisico || existeRegistro
+                            }
                         >
                             {isLoading ? 'Guardando...' : 'Guardar'}
                         </Button>

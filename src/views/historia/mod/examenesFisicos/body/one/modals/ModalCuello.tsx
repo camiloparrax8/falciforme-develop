@@ -17,41 +17,62 @@ export default function ModalCuello({ isOpen, onClose, onRequestClose }) {
         control,
         handleSubmit,
         formState: { errors },
+        setValue,
     } = useForm<CuelloData>({
         defaultValues: defaultValuesCuello,
     })
 
     const { updateCuello, isLoading, result } = useExamenFisicoUpdate()
-    const { idExamenFisico } = useExamenFisico()
+    const { idExamenFisico, examenData } = useExamenFisico()
     const [showMessage, setShowMessage] = useState(false)
-
-    useEffect(() => {
-        console.log('ID del examen físico en ModalCuello:', idExamenFisico)
-    }, [idExamenFisico])
-
+    const [existeRegistro, setExisteRegistro] = useState(false)
     const onSubmit = async (data: CuelloData) => {
         try {
             await updateCuello(data)
             setShowMessage(true)
+            setExisteRegistro(true)
 
-            // Cerrar automáticamente después de 2 segundos en caso de éxito
-            if (result?.success) {
-                setTimeout(() => {
-                    setShowMessage(false)
+            setTimeout(() => {
+                setShowMessage(false)
+                if (onClose) {
                     onClose()
-                }, 2000)
-            }
+                }
+            }, 2000)
         } catch (error) {
             console.error('Error al actualizar información del cuello:', error)
             setShowMessage(true)
         }
     }
 
+    useEffect(() => {
+        if (isOpen && examenData) {
+            // Verificar si al menos uno de los campos tiene un valor real
+            const tieneCuello =
+                examenData.cuello !== undefined && examenData.cuello !== null
+            // Establecer valores solo si existen
+            setValue(
+                'observacion',
+                tieneCuello ? String(examenData.cuello) : '',
+            )
+
+            // Considerar el registro como existente solo si al menos un campo tiene valor
+            setExisteRegistro(tieneCuello)
+        } else {
+            setExisteRegistro(false)
+        }
+    }, [isOpen, examenData, setValue])
+
     return (
         <Dialog
             isOpen={isOpen}
-            onRequestClose={onRequestClose}
-            onClose={onClose}
+            onRequestClose={() => {
+                setShowMessage(false)
+                onRequestClose()
+            }}
+            onClose={() => {
+                setShowMessage(false)
+                onClose()
+            }}
         >
             <div className="flex flex-col h-full space-y-4">
                 <h5 className="text-lg font-bold">Cuello</h5>
@@ -61,6 +82,12 @@ export default function ModalCuello({ isOpen, onClose, onRequestClose }) {
                         className={`p-2 rounded ${result.success ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
                     >
                         {result.message}
+                    </div>
+                )}
+
+                {existeRegistro && (
+                    <div className="bg-yellow-100 text-yellow-800 p-2 rounded">
+                        Este registro ya existe y no puede ser modificado.
                     </div>
                 )}
 
@@ -87,13 +114,16 @@ export default function ModalCuello({ isOpen, onClose, onRequestClose }) {
                         className="col-span-3"
                         errors={errors}
                         value=""
+                        disabled={existeRegistro}
                     />
 
                     <div className="flex justify-end">
                         <Button
                             type="submit"
                             className="ml-2"
-                            disabled={isLoading || !idExamenFisico}
+                            disabled={
+                                isLoading || !idExamenFisico || existeRegistro
+                            }
                         >
                             {isLoading ? 'Guardando...' : 'Guardar'}
                         </Button>

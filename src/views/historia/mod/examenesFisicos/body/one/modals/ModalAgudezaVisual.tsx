@@ -21,47 +21,63 @@ export default function ModalAgudezaVisual({
         control,
         handleSubmit,
         formState: { errors },
+        setValue,
     } = useForm<AgudezaVisualData>({
         defaultValues: defaultValuesVisual,
     })
 
     const { updateAgudezaVisual, isLoading, result } = useExamenFisicoUpdate()
-    const { idExamenFisico } = useExamenFisico()
+    const { idExamenFisico, examenData } = useExamenFisico()
     const [showMessage, setShowMessage] = useState(false)
-
-    useEffect(() => {
-        console.log(
-            'ID del examen físico en ModalAgudezaVisual:',
-            idExamenFisico,
-        )
-    }, [idExamenFisico])
+    const [existeRegistro, setExisteRegistro] = useState(false)
 
     const onSubmit = async (data: AgudezaVisualData) => {
         try {
-            console.log(
-                'Enviando actualización con ID de examen físico:',
-                idExamenFisico,
-            )
-            await updateAgudezaVisual({ visualizacion: data.vision })
-            setShowMessage(true)
+            await updateAgudezaVisual({
+                visualizacion: data.vision,
+            })
 
-            if (result?.success) {
-                setTimeout(() => {
-                    setShowMessage(false)
+            // Mostrar mensaje de éxito
+            setShowMessage(true)
+            setExisteRegistro(true)
+
+            // Forzar cierre después de 1 segundo sin importar la respuesta
+            setTimeout(() => {
+                setShowMessage(false)
+                if (onClose) {
                     onClose()
-                }, 2000)
-            }
+                }
+            }, 2000)
         } catch (error) {
             console.error('Error al actualizar agudeza visual:', error)
             setShowMessage(true)
         }
     }
 
+    // Efecto para verificar si existe un registro cuando el modal se abre
+    useEffect(() => {
+        if (isOpen && examenData) {
+            // Verificar inmediatamente al abrir el modal
+            if (examenData.vision) {
+                setValue('vision', String(examenData.vision))
+                setExisteRegistro(true)
+            } else {
+                setExisteRegistro(false)
+            }
+        }
+    }, [isOpen, examenData, setValue])
+
     return (
         <Dialog
             isOpen={isOpen}
-            onRequestClose={onRequestClose}
-            onClose={onClose}
+            onRequestClose={() => {
+                setShowMessage(false)
+                onRequestClose()
+            }}
+            onClose={() => {
+                setShowMessage(false)
+                onClose()
+            }}
         >
             <form
                 className="flex flex-col space-y-4 h-full"
@@ -74,6 +90,12 @@ export default function ModalAgudezaVisual({
                         className={`p-2 rounded ${result.success ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
                     >
                         {result.message}
+                    </div>
+                )}
+
+                {existeRegistro && (
+                    <div className="bg-yellow-100 text-yellow-800 p-2 rounded">
+                        Este registro ya existe y no puede ser modificado.
                     </div>
                 )}
 
@@ -96,13 +118,16 @@ export default function ModalAgudezaVisual({
                     className="col-span-3"
                     errors={errors}
                     value=""
+                    disabled={existeRegistro}
                 />
 
                 <div className="flex justify-end">
                     <Button
                         type="submit"
                         className="ml-2"
-                        disabled={isLoading || !idExamenFisico}
+                        disabled={
+                            isLoading || !idExamenFisico || existeRegistro
+                        }
                     >
                         {isLoading ? 'Guardando...' : 'Guardar'}
                     </Button>

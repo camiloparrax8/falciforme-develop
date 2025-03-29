@@ -17,30 +17,51 @@ export default function ModalCaries({ isOpen, onClose, onRequestClose }) {
         control,
         handleSubmit,
         formState: { errors },
+        setValue,
     } = useForm<CariesData>({
         defaultValues: defaultValuesCaries,
     })
 
     const { updateCaries, isLoading, result } = useExamenFisicoUpdate()
-    const { idExamenFisico } = useExamenFisico()
+    const { idExamenFisico, examenData } = useExamenFisico()
     const [showMessage, setShowMessage] = useState(false)
+    const [existeRegistro, setExisteRegistro] = useState(false)
+    const [fueEditado, setFueEditado] = useState(false)
 
     useEffect(() => {
-        console.log('ID del examen físico en ModalCaries:', idExamenFisico)
-    }, [idExamenFisico])
+        if (isOpen && examenData) {
+            // Comprobar si ya fue editado previamente
+            if (examenData.caries === 'Si' || examenData.caries === 'No') {
+                setValue('caries', examenData.caries)
+                setExisteRegistro(true)
+            } else {
+                // Si es el valor por defecto (false) o cualquier otro, permitir edición
+                setValue('caries', examenData.caries === true ? 'Si' : 'No')
+                setExisteRegistro(false)
+            }
+        } else {
+            setExisteRegistro(false)
+        }
+    }, [isOpen, examenData, setValue])
 
     const onSubmit = async (data: CariesData) => {
         try {
             await updateCaries(data)
+
+            // Primero mostramos el mensaje de éxito de la operación
             setShowMessage(true)
 
-            // Cerrar automáticamente después de 2 segundos en caso de éxito
-            if (result?.success) {
-                setTimeout(() => {
-                    setShowMessage(false)
+            // Después de guardar, marcamos como editado para no permitir más cambios
+            setExisteRegistro(true)
+            setFueEditado(true)
+
+            // Cerrar automáticamente después de 2 segundos
+            setTimeout(() => {
+                setShowMessage(false)
+                if (onClose) {
                     onClose()
-                }, 2000)
-            }
+                }
+            }, 2000)
         } catch (error) {
             console.error('Error al actualizar información de caries:', error)
             setShowMessage(true)
@@ -55,8 +76,14 @@ export default function ModalCaries({ isOpen, onClose, onRequestClose }) {
     return (
         <Dialog
             isOpen={isOpen}
-            onRequestClose={onRequestClose}
-            onClose={onClose}
+            onRequestClose={() => {
+                setShowMessage(false)
+                onRequestClose()
+            }}
+            onClose={() => {
+                setShowMessage(false)
+                onClose()
+            }}
         >
             <div className="flex flex-col h-full space-y-4">
                 <h5 className="text-lg font-bold">Caries</h5>
@@ -66,6 +93,12 @@ export default function ModalCaries({ isOpen, onClose, onRequestClose }) {
                         className={`p-2 rounded ${result.success ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
                     >
                         {result.message}
+                    </div>
+                )}
+
+                {fueEditado && (
+                    <div className="bg-yellow-100 text-yellow-800 p-2 rounded">
+                        Este registro ya existe y no puede ser modificado.
                     </div>
                 )}
 
@@ -90,13 +123,18 @@ export default function ModalCaries({ isOpen, onClose, onRequestClose }) {
                         options={opcionesCaries}
                         validation={validationSeccionOne.caries}
                         errors={errors}
+                        disabled={fueEditado}
                     />
 
                     <div className="flex justify-end">
                         <Button
                             type="submit"
                             className="ml-2"
-                            disabled={isLoading}
+                            disabled={
+                                isLoading ||
+                                !idExamenFisico ||existeRegistro ||
+                                fueEditado
+                            }
                         >
                             {isLoading ? 'Guardando...' : 'Guardar'}
                         </Button>

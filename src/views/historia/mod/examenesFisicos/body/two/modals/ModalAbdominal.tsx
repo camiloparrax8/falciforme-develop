@@ -17,41 +17,53 @@ export default function ModalAbdominal({ isOpen, onClose, onRequestClose }) {
         control,
         handleSubmit,
         formState: { errors },
+        setValue,
     } = useForm<AbdominalData>({
         defaultValues: defaultValuesAbdominal,
     })
 
     const { updateAbdominal, isLoading, result } = useExamenFisicoUpdate()
-    const { idExamenFisico } = useExamenFisico()
+    const { idExamenFisico, examenData } = useExamenFisico()
     const [showMessage, setShowMessage] = useState(false)
-
-    useEffect(() => {
-        console.log('ID del examen físico en ModalAbdominal:', idExamenFisico)
-    }, [idExamenFisico])
+    const [existeRegistro, setExisteRegistro] = useState(false)
 
     const onSubmit = async (data: AbdominalData) => {
         try {
-            console.log(
-                'Enviando actualización abdominal con ID de examen físico:',
-                idExamenFisico,
-            )
-            console.log('Datos del formulario:', data)
-
             await updateAbdominal(data)
             setShowMessage(true)
+            setExisteRegistro(true)
 
-            // Cerrar automáticamente después de 2 segundos en caso de éxito
-            if (result?.success) {
-                setTimeout(() => {
-                    setShowMessage(false)
+            setTimeout(() => {
+                setShowMessage(false)
+                if (onClose) {
                     onClose()
-                }, 2000)
-            }
+                }
+            }, 2000)
         } catch (error) {
             console.error('Error al actualizar información abdominal:', error)
             setShowMessage(true)
         }
     }
+
+    useEffect(() => {
+        if (isOpen && examenData) {
+            // Verificar si ya existe un valor de condición abdominal
+            const tieneCondicion =
+                examenData.condicion_abdominal !== undefined &&
+                examenData.condicion_abdominal !== null &&
+                examenData.condicion_abdominal !== ''
+
+            // Establecer el valor como string
+            setValue(
+                'condicionesAbdominales',
+                tieneCondicion && typeof examenData.condicion_abdominal === 'string' ? [examenData.condicion_abdominal] : [],
+            )
+
+            setExisteRegistro(tieneCondicion)
+        } else {
+            setExisteRegistro(false)
+        }
+    }, [isOpen, examenData, setValue])
 
     const opcionesAbdominal = [
         { value: 'esplenomegalia', label: 'Esplenomegalia' },
@@ -61,8 +73,14 @@ export default function ModalAbdominal({ isOpen, onClose, onRequestClose }) {
     return (
         <Dialog
             isOpen={isOpen}
-            onRequestClose={onRequestClose}
-            onClose={onClose}
+            onRequestClose={() => {
+                setShowMessage(false)
+                onRequestClose()
+            }}
+            onClose={() => {
+                setShowMessage(false)
+                onClose()
+            }}
         >
             <div className="flex flex-col h-full space-y-4">
                 <h5 className="text-lg font-bold">Examen Abdominal</h5>
@@ -72,6 +90,12 @@ export default function ModalAbdominal({ isOpen, onClose, onRequestClose }) {
                         className={`p-2 rounded ${result.success ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
                     >
                         {result.message}
+                    </div>
+                )}
+
+                {existeRegistro && (
+                    <div className="bg-yellow-100 text-yellow-800 p-2 rounded">
+                        Este registro ya existe y no puede ser modificado.
                     </div>
                 )}
 
@@ -101,13 +125,16 @@ export default function ModalAbdominal({ isOpen, onClose, onRequestClose }) {
                         }
                         defaultValue={[]}
                         errors={errors}
+                        isDisabled={existeRegistro}
                     />
 
                     <div className="flex justify-end">
                         <Button
                             type="submit"
                             className="ml-2"
-                            disabled={isLoading || !idExamenFisico}
+                            disabled={
+                                isLoading || !idExamenFisico || existeRegistro
+                            }
                         >
                             {isLoading ? 'Guardando...' : 'Guardar'}
                         </Button>

@@ -26,12 +26,14 @@ export default function ModalAbdominal({ isOpen, onClose, onRequestClose }) {
     const { idExamenFisico, examenData } = useExamenFisico()
     const [showMessage, setShowMessage] = useState(false)
     const [existeRegistro, setExisteRegistro] = useState(false)
+    const [yaSeGuardo, setYaSeGuardo] = useState(false)
 
     const onSubmit = async (data: AbdominalData) => {
         try {
             await updateAbdominal(data)
             setShowMessage(true)
             setExisteRegistro(true)
+            setYaSeGuardo(true)
 
             setTimeout(() => {
                 setShowMessage(false)
@@ -46,6 +48,11 @@ export default function ModalAbdominal({ isOpen, onClose, onRequestClose }) {
     }
 
     useEffect(() => {
+        if (yaSeGuardo) {
+            setExisteRegistro(true)
+            return
+        }
+
         if (isOpen && examenData) {
             // Verificar si ya existe un valor de condición abdominal
             const tieneCondicion =
@@ -54,16 +61,24 @@ export default function ModalAbdominal({ isOpen, onClose, onRequestClose }) {
                 examenData.condicion_abdominal !== ''
 
             // Establecer el valor como string
-            setValue(
-                'condicionesAbdominales',
-                tieneCondicion && typeof examenData.condicion_abdominal === 'string' ? [examenData.condicion_abdominal] : [],
-            )
+            if (
+                tieneCondicion &&
+                typeof examenData.condicion_abdominal === 'string'
+            ) {
+                // Si viene como string, convertirlo a array
+                const condiciones = examenData.condicion_abdominal
+                    .split(',')
+                    .map((item) => item.trim())
+                setValue('condicionesAbdominales', condiciones)
+            } else {
+                setValue('condicionesAbdominales', [])
+            }
 
             setExisteRegistro(tieneCondicion)
         } else {
             setExisteRegistro(false)
         }
-    }, [isOpen, examenData, setValue])
+    }, [isOpen, examenData, setValue, yaSeGuardo])
 
     const opcionesAbdominal = [
         { value: 'esplenomegalia', label: 'Esplenomegalia' },

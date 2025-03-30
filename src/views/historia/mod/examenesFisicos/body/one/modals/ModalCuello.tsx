@@ -26,11 +26,14 @@ export default function ModalCuello({ isOpen, onClose, onRequestClose }) {
     const { idExamenFisico, examenData } = useExamenFisico()
     const [showMessage, setShowMessage] = useState(false)
     const [existeRegistro, setExisteRegistro] = useState(false)
+    const [yaSeGuardo, setYaSeGuardo] = useState(false)
+
     const onSubmit = async (data: CuelloData) => {
         try {
             await updateCuello(data)
             setShowMessage(true)
             setExisteRegistro(true)
+            setYaSeGuardo(true)
 
             setTimeout(() => {
                 setShowMessage(false)
@@ -45,22 +48,30 @@ export default function ModalCuello({ isOpen, onClose, onRequestClose }) {
     }
 
     useEffect(() => {
+        if (yaSeGuardo) {
+            setExisteRegistro(true)
+            return
+        }
+
         if (isOpen && examenData) {
             // Verificar si al menos uno de los campos tiene un valor real
             const tieneCuello =
-                examenData.cuello !== undefined && examenData.cuello !== null
+                examenData.cuello !== undefined &&
+                examenData.cuello !== null &&
+                examenData.cuello !== ''
+
             // Establecer valores solo si existen
             setValue(
                 'observacion',
                 tieneCuello ? String(examenData.cuello) : '',
             )
 
-            // Considerar el registro como existente solo si al menos un campo tiene valor
+            // Considerar el registro como existente solo si tiene valor
             setExisteRegistro(tieneCuello)
         } else {
             setExisteRegistro(false)
         }
-    }, [isOpen, examenData, setValue])
+    }, [isOpen, examenData, setValue, yaSeGuardo])
 
     return (
         <Dialog

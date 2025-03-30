@@ -28,12 +28,14 @@ export default function ModalExamenORL({ isOpen, onClose, onRequestClose }) {
     const { idExamenFisico, examenData } = useExamenFisico()
     const [showMessage, setShowMessage] = useState(false)
     const [existeRegistro, setExisteRegistro] = useState(false)
+    const [yaSeGuardo, setYaSeGuardo] = useState(false)
 
     const onSubmit = async (data: ExamenORLData) => {
         try {
             await updateExamenORL(data)
             setShowMessage(true)
             setExisteRegistro(true)
+            setYaSeGuardo(true)
 
             setTimeout(() => {
                 setShowMessage(false)
@@ -48,29 +50,51 @@ export default function ModalExamenORL({ isOpen, onClose, onRequestClose }) {
     }
 
     useEffect(() => {
+        if (yaSeGuardo) {
+            setExisteRegistro(true)
+            return
+        }
+
         if (isOpen && examenData) {
             // Verificar si al menos uno de los campos tiene un valor real
             const tieneBoca =
                 examenData.examen_boca !== undefined &&
-                examenData.examen_boca !== null
+                examenData.examen_boca !== null &&
+                examenData.examen_boca !== ''
+
             const tieneNariz =
                 examenData.examen_nariz !== undefined &&
-                examenData.examen_nariz !== null
+                examenData.examen_nariz !== null &&
+                examenData.examen_nariz !== ''
+
             const tieneOidos =
                 examenData.examen_oidos !== undefined &&
-                examenData.examen_oidos !== null
+                examenData.examen_oidos !== null &&
+                examenData.examen_oidos !== ''
 
             // Establecer valores solo si existen
             setValue('boca', tieneBoca ? String(examenData.examen_boca) : '')
             setValue('nariz', tieneNariz ? String(examenData.examen_nariz) : '')
             setValue('oidos', tieneOidos ? String(examenData.examen_oidos) : '')
 
+            // Agregar log para depuración
+            console.log('Valores ORL:', {
+                boca: examenData.examen_boca,
+                nariz: examenData.examen_nariz,
+                oidos: examenData.examen_oidos,
+                tieneBoca,
+                tieneNariz,
+                tieneOidos,
+            })
+
             // Considerar el registro como existente solo si al menos un campo tiene valor
-            setExisteRegistro(tieneBoca || tieneNariz || tieneOidos)
+            const registroExistente = tieneBoca || tieneNariz || tieneOidos
+
+            setExisteRegistro(registroExistente)
         } else {
             setExisteRegistro(false)
         }
-    }, [isOpen, examenData, setValue])
+    }, [isOpen, examenData, setValue, yaSeGuardo])
 
     return (
         <Dialog

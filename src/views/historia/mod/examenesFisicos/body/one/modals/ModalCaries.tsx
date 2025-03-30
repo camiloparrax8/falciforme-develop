@@ -5,8 +5,11 @@ import Button from '@/components/ui/Button'
 import validationSeccionOne from '../../../../../../../validation/validationSeccionOne'
 import { defaultValuesCaries } from '../../one/modals/defaultValuesSeccionOne'
 import { useExamenFisicoUpdate } from '@/hooks/useExamenFisicoUpdate'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useExamenFisico } from '@/hooks/useExamenFisico'
+import { useToken } from '@/store/authStore'
+import { useParams } from 'react-router-dom'
+import { consultarExamenFisicoPorPaciente } from '@/customService/services/examenesFisicosService'
 
 interface CariesData {
     caries: string
@@ -23,39 +26,75 @@ export default function ModalCaries({ isOpen, onClose, onRequestClose }) {
     })
 
     const { updateCaries, isLoading, result } = useExamenFisicoUpdate()
-    const { idExamenFisico, examenData } = useExamenFisico()
+    const { idExamenFisico, examenData, setExamenData } = useExamenFisico()
     const [showMessage, setShowMessage] = useState(false)
     const [existeRegistro, setExisteRegistro] = useState(false)
-    const [fueEditado, setFueEditado] = useState(false)
+    const { token } = useToken()
+    const { id_paciente } = useParams()
+
+    const verificarExistenciaRegistro = useCallback(() => {
+        if (!examenData) return false
+
+        return examenData.caries === 'Si' || examenData.caries === 'No'
+    }, [examenData])
+
+    const actualizarContexto = useCallback(async () => {
+        if (!id_paciente || !token) return
+
+        try {
+            const resultado = await consultarExamenFisicoPorPaciente(
+                token,
+                id_paciente,
+            )
+
+            const examenActualizado = resultado?.data || resultado
+
+            if (examenActualizado && examenActualizado.id) {
+                setExamenData(examenActualizado)
+            }
+        } catch (error) {
+            console.error('Error al actualizar datos del examen:', error)
+        }
+    }, [id_paciente, token, setExamenData])
 
     useEffect(() => {
+        if (isOpen) {
+            actualizarContexto()
+        }
+    }, [isOpen, actualizarContexto])
+
+    useEffect(() => {
+        if (existeRegistro) {
+            return
+        }
+
         if (isOpen && examenData) {
-            // Comprobar si ya fue editado previamente
-            if (examenData.caries === 'Si' || examenData.caries === 'No') {
-                setValue('caries', examenData.caries)
-                setExisteRegistro(true)
-            } else {
-                // Si es el valor por defecto (false) o cualquier otro, permitir edición
+            const tieneCaries = verificarExistenciaRegistro()
+
+            if (tieneCaries) {
                 setValue('caries', examenData.caries === true ? 'Si' : 'No')
-                setExisteRegistro(false)
             }
+
+            setExisteRegistro(tieneCaries)
         } else {
             setExisteRegistro(false)
         }
-    }, [isOpen, examenData, setValue])
+    }, [
+        isOpen,
+        examenData,
+        setValue,
+        existeRegistro,
+        verificarExistenciaRegistro,
+    ])
 
     const onSubmit = async (data: CariesData) => {
         try {
             await updateCaries(data)
-
-            // Primero mostramos el mensaje de éxito de la operación
             setShowMessage(true)
-
-            // Después de guardar, marcamos como editado para no permitir más cambios
             setExisteRegistro(true)
-            setFueEditado(true)
 
-            // Cerrar automáticamente después de 2 segundos
+            await actualizarContexto()
+
             setTimeout(() => {
                 setShowMessage(false)
                 if (onClose) {
@@ -96,7 +135,7 @@ export default function ModalCaries({ isOpen, onClose, onRequestClose }) {
                     </div>
                 )}
 
-                {fueEditado && (
+                {existeRegistro && (
                     <div className="bg-yellow-100 text-yellow-800 p-2 rounded">
                         Este registro ya existe y no puede ser modificado.
                     </div>
@@ -123,7 +162,7 @@ export default function ModalCaries({ isOpen, onClose, onRequestClose }) {
                         options={opcionesCaries}
                         validation={validationSeccionOne.caries}
                         errors={errors}
-                        disabled={fueEditado}
+                        disabled={!idExamenFisico || existeRegistro}
                     />
 
                     <div className="flex justify-end">
@@ -131,9 +170,7 @@ export default function ModalCaries({ isOpen, onClose, onRequestClose }) {
                             type="submit"
                             className="ml-2"
                             disabled={
-                                isLoading ||
-                                !idExamenFisico ||existeRegistro ||
-                                fueEditado
+                                isLoading || !idExamenFisico || existeRegistro
                             }
                         >
                             {isLoading ? 'Guardando...' : 'Guardar'}

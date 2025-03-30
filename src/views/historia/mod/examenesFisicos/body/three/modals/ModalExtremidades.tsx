@@ -6,8 +6,11 @@ import Button from '@/components/ui/Button'
 import validationSeccionThree from '../../../../../../../validation/validationSeccionThree'
 import { defaultValuesExtremidades } from '../../three/modals/defaultValuesSeccionThree'
 import { useExamenFisicoUpdate } from '@/hooks/useExamenFisicoUpdate'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useExamenFisico } from '@/hooks/useExamenFisico'
+import { useToken } from '@/store/authStore'
+import { useParams } from 'react-router-dom'
+import { consultarExamenFisicoPorPaciente } from '@/customService/services/examenesFisicosService'
 
 interface ExtremidadesData {
     observacion: string
@@ -26,19 +29,78 @@ export default function ModalExtremidades({ isOpen, onClose, onRequestClose }) {
     })
 
     const { updateExtremidades, isLoading, result } = useExamenFisicoUpdate()
-    const { idExamenFisico, examenData } = useExamenFisico()
+    const { idExamenFisico, examenData, setExamenData } = useExamenFisico()
     const [showMessage, setShowMessage] = useState(false)
     const [existeRegistro, setExisteRegistro] = useState(false)
+    const { token } = useToken()
+    const { id_paciente } = useParams()
 
+    const verificarExistenciaRegistro = useCallback(() => {
+        if (!examenData) return false
 
+        const tieneObservacion =
+            examenData.extremidades_observacion !== undefined &&
+            examenData.extremidades_observacion !== null &&
+            examenData.extremidades_observacion !== ''
+
+        const tienePiel =
+            examenData.extremidades_estado_piel !== undefined &&
+            examenData.extremidades_estado_piel !== null &&
+            examenData.extremidades_estado_piel !== ''
+
+        const tieneEdemasUlceras =
+            Array.isArray(examenData.extremidades_condicion) &&
+            examenData.extremidades_condicion.length > 0
+
+        return tieneObservacion || tienePiel || tieneEdemasUlceras
+    }, [examenData])
+
+    const actualizarContexto = useCallback(async () => {
+        if (!id_paciente || !token) return
+
+        try {
+            const resultado = await consultarExamenFisicoPorPaciente(
+                token,
+                id_paciente,
+            )
+
+            const examenActualizado = resultado?.data || resultado
+
+            if (examenActualizado && examenActualizado.id) {
+                setExamenData(examenActualizado)
+            }
+        } catch (error) {
+            console.error('Error al actualizar datos del examen:', error)
+        }
+    }, [id_paciente, token, setExamenData])
+
+    useEffect(() => {
+        if (isOpen) {
+            actualizarContexto()
+        }
+    }, [isOpen, actualizarContexto])
+
+    useEffect(() => {
+        if (isOpen && examenData) {
+            const tieneObservacion = verificarExistenciaRegistro()
+            setValue(
+                'observacion',
+                tieneObservacion
+                    ? String(examenData.extremidades_observacion)
+                    : '',
+            )
+            setExisteRegistro(tieneObservacion)
+        }
+    }, [isOpen, examenData, setValue, verificarExistenciaRegistro])
 
     const onSubmit = async (data: ExtremidadesData) => {
         try {
             await updateExtremidades(data)
             setShowMessage(true)
-            setExisteRegistro(true)
 
-            // Cerrar automáticamente después de 2 segundos
+            // Actualizar el contexto inmediatamente
+            await actualizarContexto()
+
             setTimeout(() => {
                 setShowMessage(false)
                 if (onClose) {
@@ -53,55 +115,6 @@ export default function ModalExtremidades({ isOpen, onClose, onRequestClose }) {
             setShowMessage(true)
         }
     }
-
-    useEffect(() => {
-        if (isOpen && examenData) {
-            // Verificar usando los nombres correctos de propiedad
-            const tieneObservacion =
-                examenData.extremidades_observacion !== undefined &&
-                examenData.extremidades_observacion !== null &&
-                examenData.extremidades_observacion !== ''
-
-            const tienePiel =
-                examenData.extremidades_estado_piel !== undefined &&
-                examenData.extremidades_estado_piel !== null &&
-                examenData.extremidades_estado_piel !== ''
-
-            const tieneEdemasUlceras =
-                Array.isArray(examenData.extremidades_condicion) &&
-                examenData.extremidades_condicion.length > 0
-
-            // Si cualquiera de los campos tiene datos, consideramos que el registro existe
-            const tieneRegistro =
-                tieneObservacion || tienePiel || tieneEdemasUlceras
-
-            // Establecer los valores de los campos
-            if (tieneObservacion) {
-                setValue(
-                    'observacion',
-                    String(examenData.extremidades_observacion),
-                )
-            }
-
-            if (tienePiel) {
-                setValue('piel', String(examenData.extremidades_estado_piel))
-            }
-
-            if (tieneEdemasUlceras) {
-                setValue(
-                    'edemasUlceras',
-                    tieneEdemasUlceras &&
-                        typeof examenData.extremidades_condicion === 'string'
-                        ? [examenData.extremidades_condicion]
-                        : [],
-                )
-            }
-
-            setExisteRegistro(tieneRegistro)
-        } else {
-            setExisteRegistro(false)
-        }
-    }, [isOpen, examenData, setValue])
 
     const opcionesExtremidades = [
         { value: 'edemas', label: 'Edemas' },

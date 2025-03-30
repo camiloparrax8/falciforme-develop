@@ -5,8 +5,11 @@ import Button from '@/components/ui/Button'
 import validationSeccionOne from '../../../../../../../validation/validationSeccionOne'
 import { defaultValuesExamenORL } from '../../one/modals/defaultValuesSeccionOne'
 import { useExamenFisicoUpdate } from '@/hooks/useExamenFisicoUpdate'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useExamenFisico } from '@/hooks/useExamenFisico'
+import { useToken } from '@/store/authStore'
+import { useParams } from 'react-router-dom'
+import { consultarExamenFisicoPorPaciente } from '@/customService/services/examenesFisicosService'
 
 interface ExamenORLData {
     boca: string
@@ -25,17 +28,65 @@ export default function ModalExamenORL({ isOpen, onClose, onRequestClose }) {
     })
 
     const { updateExamenORL, isLoading, result } = useExamenFisicoUpdate()
-    const { idExamenFisico, examenData } = useExamenFisico()
+    const { idExamenFisico, examenData, setExamenData } = useExamenFisico()
     const [showMessage, setShowMessage] = useState(false)
     const [existeRegistro, setExisteRegistro] = useState(false)
-    const [yaSeGuardo, setYaSeGuardo] = useState(false)
+    const { token } = useToken()
+    const { id_paciente } = useParams()
+
+    const verificarExistenciaRegistro = useCallback(() => {
+        if (!examenData) return false
+
+        const tieneBoca =
+            examenData.examen_boca !== undefined &&
+            examenData.examen_boca !== null &&
+            examenData.examen_boca !== ''
+
+        const tieneNariz =
+            examenData.examen_nariz !== undefined &&
+            examenData.examen_nariz !== null &&
+            examenData.examen_nariz !== ''
+
+        const tieneOidos =
+            examenData.examen_oidos !== undefined &&
+            examenData.examen_oidos !== null &&
+            examenData.examen_oidos !== ''
+
+        return tieneBoca || tieneNariz || tieneOidos
+    }, [examenData])
+
+    const actualizarContexto = useCallback(async () => {
+        if (!id_paciente || !token) return
+
+        try {
+            const resultado = await consultarExamenFisicoPorPaciente(
+                token,
+                id_paciente,
+            )
+
+            const examenActualizado = resultado?.data || resultado
+
+            if (examenActualizado && examenActualizado.id) {
+                setExamenData(examenActualizado)
+            }
+        } catch (error) {
+            console.error('Error al actualizar datos del examen:', error)
+        }
+    }, [id_paciente, token, setExamenData])
+
+    useEffect(() => {
+        if (isOpen) {
+            actualizarContexto()
+        }
+    }, [isOpen, actualizarContexto])
 
     const onSubmit = async (data: ExamenORLData) => {
         try {
             await updateExamenORL(data)
             setShowMessage(true)
-            setExisteRegistro(true)
-            setYaSeGuardo(true)
+
+            // Actualizar el contexto inmediatamente
+            await actualizarContexto()
 
             setTimeout(() => {
                 setShowMessage(false)
@@ -50,51 +101,27 @@ export default function ModalExamenORL({ isOpen, onClose, onRequestClose }) {
     }
 
     useEffect(() => {
-        if (yaSeGuardo) {
-            setExisteRegistro(true)
-            return
-        }
-
         if (isOpen && examenData) {
-            // Verificar si al menos uno de los campos tiene un valor real
-            const tieneBoca =
-                examenData.examen_boca !== undefined &&
-                examenData.examen_boca !== null &&
-                examenData.examen_boca !== ''
-
-            const tieneNariz =
-                examenData.examen_nariz !== undefined &&
-                examenData.examen_nariz !== null &&
-                examenData.examen_nariz !== ''
-
-            const tieneOidos =
-                examenData.examen_oidos !== undefined &&
-                examenData.examen_oidos !== null &&
-                examenData.examen_oidos !== ''
+            const tieneRegistro = verificarExistenciaRegistro()
 
             // Establecer valores solo si existen
-            setValue('boca', tieneBoca ? String(examenData.examen_boca) : '')
-            setValue('nariz', tieneNariz ? String(examenData.examen_nariz) : '')
-            setValue('oidos', tieneOidos ? String(examenData.examen_oidos) : '')
-
-            // Agregar log para depuración
-            console.log('Valores ORL:', {
-                boca: examenData.examen_boca,
-                nariz: examenData.examen_nariz,
-                oidos: examenData.examen_oidos,
-                tieneBoca,
-                tieneNariz,
-                tieneOidos,
-            })
-
-            // Considerar el registro como existente solo si al menos un campo tiene valor
-            const registroExistente = tieneBoca || tieneNariz || tieneOidos
-
-            setExisteRegistro(registroExistente)
+            setValue(
+                'boca',
+                tieneRegistro ? String(examenData.examen_boca) : '',
+            )
+            setValue(
+                'nariz',
+                tieneRegistro ? String(examenData.examen_nariz) : '',
+            )
+            setValue(
+                'oidos',
+                tieneRegistro ? String(examenData.examen_oidos) : '',
+            )
+            setExisteRegistro(tieneRegistro)
         } else {
             setExisteRegistro(false)
         }
-    }, [isOpen, examenData, setValue, yaSeGuardo])
+    }, [isOpen, examenData, setValue, verificarExistenciaRegistro])
 
     return (
         <Dialog

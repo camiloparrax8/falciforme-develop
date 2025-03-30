@@ -5,8 +5,11 @@ import Button from '@/components/ui/Button'
 import validationValuesSeccionTwo from '../../../../../../../validation/validationSeccionTwo'
 import { defaultValuesCardiopulmonar } from '../../two/modals/defaultValuesSeccionTwo'
 import { useExamenFisicoUpdate } from '@/hooks/useExamenFisicoUpdate'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useExamenFisico } from '@/hooks/useExamenFisico'
+import { useToken } from '@/store/authStore'
+import { useParams } from 'react-router-dom'
+import { consultarExamenFisicoPorPaciente } from '@/customService/services/examenesFisicosService'
 
 interface CardiopulmunarData {
     observacion: string
@@ -27,15 +30,47 @@ export default function ModalCardiopulmonar({
     })
 
     const { updateCardiopulmunar, isLoading, result } = useExamenFisicoUpdate()
-    const { idExamenFisico, examenData } = useExamenFisico()
+    const { idExamenFisico, examenData, setExamenData } = useExamenFisico()
     const [showMessage, setShowMessage] = useState(false)
     const [existeRegistro, setExisteRegistro] = useState(false)
+    const { token } = useToken()
+    const { id_paciente } = useParams()
+
+    const verificarExistenciaRegistro = useCallback(() => {
+        if (!examenData) return false
+
+        return (
+            examenData.cardio_pulmunar !== undefined &&
+            examenData.cardio_pulmunar !== null
+        )
+    }, [examenData])
+
+    const actualizarContexto = useCallback(async () => {
+        if (!id_paciente || !token) return
+
+        try {
+            const resultado = await consultarExamenFisicoPorPaciente(
+                token,
+                id_paciente,
+            )
+
+            const examenActualizado = resultado?.data || resultado
+
+            if (examenActualizado && examenActualizado.id) {
+                setExamenData(examenActualizado)
+            }
+        } catch (error) {
+            console.error('Error al actualizar datos del examen:', error)
+        }
+    }, [id_paciente, token, setExamenData])
 
     const onSubmit = async (data: CardiopulmunarData) => {
         try {
             await updateCardiopulmunar(data)
             setShowMessage(true)
-            setExisteRegistro(true)
+
+            // Actualizar el contexto inmediatamente
+            await actualizarContexto()
 
             setTimeout(() => {
                 setShowMessage(false)
@@ -53,17 +88,21 @@ export default function ModalCardiopulmonar({
     }
 
     useEffect(() => {
+        if (isOpen) {
+            actualizarContexto()
+        }
+    }, [isOpen, actualizarContexto])
+
+    useEffect(() => {
         if (isOpen && examenData) {
-            const tieneObservacion =
-                examenData.cardio_pulmunar !== undefined &&
-                examenData.cardio_pulmunar !== null
+            const tieneObservacion = verificarExistenciaRegistro()
             setValue(
                 'observacion',
                 tieneObservacion ? String(examenData.cardio_pulmunar) : '',
             )
             setExisteRegistro(tieneObservacion)
         }
-    }, [isOpen, examenData, setValue])
+    }, [isOpen, examenData, setValue, verificarExistenciaRegistro])
 
     return (
         <Dialog
@@ -124,7 +163,9 @@ export default function ModalCardiopulmonar({
                         <Button
                             type="submit"
                             className="ml-2"
-                            disabled={isLoading || !idExamenFisico || existeRegistro}
+                            disabled={
+                                isLoading || !idExamenFisico || existeRegistro
+                            }
                         >
                             {isLoading ? 'Guardando...' : 'Guardar'}
                         </Button>

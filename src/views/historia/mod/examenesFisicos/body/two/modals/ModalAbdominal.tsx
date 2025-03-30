@@ -5,8 +5,11 @@ import Button from '@/components/ui/Button'
 import validationValuesSeccionTwo from '../../../../../../../validation/validationSeccionTwo'
 import { defaultValuesAbdominal } from '../../two/modals/defaultValuesSeccionTwo'
 import { useExamenFisicoUpdate } from '@/hooks/useExamenFisicoUpdate'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useExamenFisico } from '@/hooks/useExamenFisico'
+import { useToken } from '@/store/authStore'
+import { useParams } from 'react-router-dom'
+import { consultarExamenFisicoPorPaciente } from '@/customService/services/examenesFisicosService'
 
 interface AbdominalData {
     condicionesAbdominales: string[]
@@ -23,17 +26,47 @@ export default function ModalAbdominal({ isOpen, onClose, onRequestClose }) {
     })
 
     const { updateAbdominal, isLoading, result } = useExamenFisicoUpdate()
-    const { idExamenFisico, examenData } = useExamenFisico()
+    const { idExamenFisico, examenData, setExamenData } = useExamenFisico()
     const [showMessage, setShowMessage] = useState(false)
     const [existeRegistro, setExisteRegistro] = useState(false)
-    const [yaSeGuardo, setYaSeGuardo] = useState(false)
+    const { token } = useToken()
+    const { id_paciente } = useParams()
+
+    const verificarExistenciaRegistro = useCallback(() => {
+        if (!examenData) return false
+
+        return (
+            examenData.condicion_abdominal !== undefined &&
+            examenData.condicion_abdominal !== null &&
+            examenData.condicion_abdominal !== ''
+        )
+    }, [examenData])
+
+    const actualizarContexto = useCallback(async () => {
+        if (!id_paciente || !token) return
+
+        try {
+            const resultado = await consultarExamenFisicoPorPaciente(
+                token,
+                id_paciente,
+            )
+
+            const examenActualizado = resultado?.data || resultado
+
+            if (examenActualizado && examenActualizado.id) {
+                setExamenData(examenActualizado)
+            }
+        } catch (error) {
+            console.error('Error al actualizar datos del examen:', error)
+        }
+    }, [id_paciente, token, setExamenData])
 
     const onSubmit = async (data: AbdominalData) => {
         try {
             await updateAbdominal(data)
             setShowMessage(true)
-            setExisteRegistro(true)
-            setYaSeGuardo(true)
+
+            await actualizarContexto()
 
             setTimeout(() => {
                 setShowMessage(false)
@@ -48,24 +81,19 @@ export default function ModalAbdominal({ isOpen, onClose, onRequestClose }) {
     }
 
     useEffect(() => {
-        if (yaSeGuardo) {
-            setExisteRegistro(true)
-            return
+        if (isOpen) {
+            actualizarContexto()
         }
+    }, [isOpen, actualizarContexto])
 
+    useEffect(() => {
         if (isOpen && examenData) {
-            // Verificar si ya existe un valor de condición abdominal
-            const tieneCondicion =
-                examenData.condicion_abdominal !== undefined &&
-                examenData.condicion_abdominal !== null &&
-                examenData.condicion_abdominal !== ''
+            const tieneCondicion = verificarExistenciaRegistro()
 
-            // Establecer el valor como string
             if (
                 tieneCondicion &&
                 typeof examenData.condicion_abdominal === 'string'
             ) {
-                // Si viene como string, convertirlo a array
                 const condiciones = examenData.condicion_abdominal
                     .split(',')
                     .map((item) => item.trim())
@@ -78,7 +106,7 @@ export default function ModalAbdominal({ isOpen, onClose, onRequestClose }) {
         } else {
             setExisteRegistro(false)
         }
-    }, [isOpen, examenData, setValue, yaSeGuardo])
+    }, [isOpen, examenData, setValue, verificarExistenciaRegistro])
 
     const opcionesAbdominal = [
         { value: 'esplenomegalia', label: 'Esplenomegalia' },

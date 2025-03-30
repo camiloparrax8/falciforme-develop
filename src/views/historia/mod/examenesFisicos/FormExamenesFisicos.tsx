@@ -11,6 +11,7 @@ import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useExamenFisico } from '@/hooks/useExamenFisico'
 import { ExamenFisicoData } from '@/context/ExamenFisicoContext'
+import Alert from '@/components/ui/Alert'
 
 interface FormExamenesFisicosProps {
     examenExistente?: ExamenFisicoData | null
@@ -21,10 +22,15 @@ function FormExamenesFisicos({ examenExistente }: FormExamenesFisicosProps) {
     const { token } = useToken()
     const { user } = useSessionUser() // Obtén el usuario logueado
     const [isLoading, setIsLoading] = useState(false)
+    const [formularioDeshabilitado, setFormularioDeshabilitado] = useState(
+        examenExistente !== null,
+    )
     const [mensaje, setMensaje] = useState<{
         tipo: 'success' | 'error'
         texto: string
     } | null>(null)
+    const [mostrarMensaje, setMostrarMensaje] = useState(true)
+    const [mostrarMensajeInfo, setMostrarMensajeInfo] = useState(true)
     const { setIdExamenFisico } = useExamenFisico() // Usar el contexto
 
     // Preparar valores iniciales basados en el examen existente o los valores por defecto
@@ -68,7 +74,7 @@ function FormExamenesFisicos({ examenExistente }: FormExamenesFisicosProps) {
     const peso = watch('peso')
     const talla = watch('talla')
 
-    // Calcular IMC cuando cambie el peso o la talla
+    // Calcular IMC y percentil cuando cambie el peso o la talla
     useEffect(() => {
         if (peso && talla) {
             // Convertir valores a números
@@ -81,11 +87,37 @@ function FormExamenesFisicos({ examenExistente }: FormExamenesFisicosProps) {
                 const tallaMetros = tallaNum / 100
                 const imcCalculado = pesoNum / (tallaMetros * tallaMetros)
 
-                // Redondear a 2 decimales y establecer el valor
-                setValue('imc', imcCalculado.toFixed(2))
+                // Redondear IMC a 1 decimal
+                const imcRedondeado = Math.round(imcCalculado * 10) / 10
+                setValue('imc', imcRedondeado.toString())
+
+                // Calcular el percentil basado en el IMC
+                // NOTA: Esta es una función simplificada. El cálculo real del percentil
+                // depende de la edad, sexo y tablas de referencia específicas.
+                const percentilCalculado = calcularPercentil(imcRedondeado)
+                setValue('percentil', percentilCalculado.toString())
             }
         }
     }, [peso, talla, setValue])
+
+    // Función para calcular el percentil basado en el IMC
+    // Esta es una implementación de ejemplo - deberás reemplazarla con tu lógica específica
+    function calcularPercentil(imc) {
+        // Aquí deberías implementar la lógica real para calcular el percentil
+        // basado en el IMC, edad del paciente, sexo, y tablas de referencia.
+
+        // Ejemplo simplificado (¡NO ES MÉDICAMENTE PRECISO!):
+        // Esta es solo una aproximación lineal para demostración
+        if (imc < 18.5) {
+            return Math.round(imc * 2) // Bajo peso
+        } else if (imc < 25) {
+            return Math.round(25 + (imc - 18.5) * 5) // Peso normal
+        } else if (imc < 30) {
+            return Math.round(75 + (imc - 25) * 4) // Sobrepeso
+        } else {
+            return 95 // Obesidad
+        }
+    }
 
     // Cuando cambie el examen existente, actualizar el formulario
     useEffect(() => {
@@ -145,20 +177,21 @@ function FormExamenesFisicos({ examenExistente }: FormExamenesFisicosProps) {
                 id_user_create: user.id,
             }
             const result = await crearExamenFisico(token, formData)
-            console.log('Examen físico creado:', result)
 
             // Guardar el ID del examen físico en el contexto
             if (result && result.data && result.data.id) {
                 setIdExamenFisico(result.data.id)
+                // Deshabilitar el formulario y el botón inmediatamente
+                setFormularioDeshabilitado(true)
+                setIsLoading(false)
                 setMensaje({
                     tipo: 'success',
                     texto: 'Examen físico creado correctamente',
                 })
-                console.log(
-                    'ID del examen físico guardado en el contexto:',
-                    result.data.id,
-                )
             }
+
+            // Hacer scroll hacia arriba
+            window.scrollTo({ top: 0, behavior: 'smooth' })
         } catch (error) {
             console.error('Error al crear el examen físico:', error)
             setMensaje({
@@ -167,13 +200,10 @@ function FormExamenesFisicos({ examenExistente }: FormExamenesFisicosProps) {
                     'Error al crear el examen físico: ' +
                     (error.message || 'Error desconocido'),
             })
-        } finally {
-            setIsLoading(false)
+            // Hacer scroll hacia arriba
+            window.scrollTo({ top: 0, behavior: 'smooth' })
         }
     }
-
-    console.log('ID del paciente recibido:', id_paciente)
-    console.log('Examen existente:', examenExistente)
 
     const options = [
         { value: 'true', label: 'Sí' },
@@ -181,32 +211,60 @@ function FormExamenesFisicos({ examenExistente }: FormExamenesFisicosProps) {
     ]
 
     // Determinar si los campos deben estar deshabilitados
-    const isDisabled = examenExistente !== null
+    const isDisabled = examenExistente !== null || formularioDeshabilitado
+
+    const handleCloseAlert = () => {
+        setMostrarMensaje(false)
+        if (mensaje?.tipo === 'success') {
+            setFormularioDeshabilitado(true)
+            setMostrarMensajeInfo(true)
+        }
+    }
+
+    const handleCloseAlertInfo = () => {
+        setMostrarMensajeInfo(false)
+    }
 
     return (
         <form
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full"
             onSubmit={handleSubmit(onSubmit)}
         >
-            {mensaje && (
-                <div
-                    className={`col-span-1 md:col-span-2 lg:col-span-4 p-3 mb-3 rounded
-                    ${mensaje.tipo === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
-                >
-                    {mensaje.texto}
+            {mensaje && mostrarMensaje && (
+                <div className="col-span-1 md:col-span-2 lg:col-span-4 mb-4">
+                    <Alert
+                        showIcon
+                        closable
+                        title={
+                            mensaje.tipo === 'success' ? 'Correcto' : 'Atención'
+                        }
+                        type={mensaje.tipo === 'success' ? 'success' : 'danger'}
+                        duration={10000}
+                        onClose={handleCloseAlert}
+                    >
+                        {mensaje.texto}
+                    </Alert>
                 </div>
             )}
 
-            {examenExistente && (
-                <div className="col-span-1 md:col-span-2 lg:col-span-4 p-3 mb-3 rounded bg-blue-100 text-blue-800">
-                    Examen físico existente. Los cambios se aplicarán a las
-                    secciones específicas a través de los modales.
-                </div>
-            )}
+            {(examenExistente || formularioDeshabilitado) &&
+                mostrarMensajeInfo && (
+                    <div className="col-span-1 md:col-span-2 lg:col-span-4 mb-4">
+                        <Alert
+                            showIcon
+                            closable
+                            title="Información"
+                            type="info"
+                            duration={10000}
+                            onClose={handleCloseAlertInfo}
+                        >
+                            Examen físico existente. Los cambios se aplicarán a
+                            las secciones específicas a través de los modales.
+                        </Alert>
+                    </div>
+                )}
 
-            <div
-                className={`col-span-full ${isDisabled ? 'opacity-70 cursor-not-allowed' : ''}`}
-            >
+            <div className="col-span-full">
                 {/* Sección Signos Vitales */}
                 <SectionTitle
                     text="Signos Vitales"
@@ -293,10 +351,10 @@ function FormExamenesFisicos({ examenExistente }: FormExamenesFisicosProps) {
                         rules={validationExamenes.percentil}
                         errors={errors}
                         label="Percentil"
-                        inputPlaceholder="Ingrese el percentil"
+                        inputPlaceholder="Se calcula automáticamente"
                         className="col-span-1"
                         value=""
-                        disabled={isDisabled}
+                        disabled={true} // Siempre deshabilitado porque se calcula automáticamente
                     />
                     <InputForm
                         control={control}
@@ -373,12 +431,12 @@ function FormExamenesFisicos({ examenExistente }: FormExamenesFisicosProps) {
             <div className="col-span-4 flex justify-end mt-6">
                 <Button
                     type="submit"
-                    disabled={isLoading || examenExistente !== null}
+                    disabled={isLoading || formularioDeshabilitado}
                 >
                     {isLoading
                         ? 'Guardando...'
-                        : examenExistente
-                          ? 'Examen existente'
+                        : formularioDeshabilitado
+                          ? 'Examen guardado'
                           : 'Guardar'}
                 </Button>
             </div>

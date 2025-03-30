@@ -68,7 +68,7 @@ export default function ModalTanner({ isOpen, onClose, onRequestClose }) {
                 if (onClose) {
                     onClose()
                 }
-            }, 2000)
+            }, 1000)
         } catch (error) {
             console.error('Error al actualizar estadio Tanner:', error)
             setShowMessage(true)

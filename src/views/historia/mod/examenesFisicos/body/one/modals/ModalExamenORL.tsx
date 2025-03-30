@@ -42,7 +42,7 @@ export default function ModalExamenORL({ isOpen, onClose, onRequestClose }) {
                 if (onClose) {
                     onClose()
                 }
-            }, 2000)
+            }, 1000)
         } catch (error) {
             console.error('Error al actualizar examen ORL:', error)
             setShowMessage(true)

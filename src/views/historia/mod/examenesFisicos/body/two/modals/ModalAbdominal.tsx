@@ -40,7 +40,7 @@ export default function ModalAbdominal({ isOpen, onClose, onRequestClose }) {
                 if (onClose) {
                     onClose()
                 }
-            }, 2000)
+            }, 1000)
         } catch (error) {
             console.error('Error al actualizar información abdominal:', error)
             setShowMessage(true)

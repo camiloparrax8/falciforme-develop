@@ -9,6 +9,7 @@ import { ExamenFisicoProvider } from '@/context/ExamenFisicoContext'
 import { useEffect, useState } from 'react'
 import { consultarExamenFisicoPorPaciente } from '@/customService/services/examenesFisicosService'
 import { useToken } from '@/store/authStore'
+import RegionesResumenModal from './RegionesResumenModal'
 
 function ExamenesFisicos() {
     const { id_paciente } = useParams() // Obtén el id de la URL
@@ -33,12 +34,8 @@ function ExamenesFisicos() {
                 const examenData = response?.data || response
 
                 if (examenData && examenData.id) {
-                    console.log('Examen físico encontrado:', examenData)
                     setExamenExistente(examenData)
                 } else {
-                    console.log(
-                        'No se encontró examen físico para este paciente',
-                    )
                     setExamenExistente(null)
                 }
             } catch (err) {
@@ -87,6 +84,11 @@ function ExamenesFisicos() {
                                     <SeccionThree />
                                 </div>
                             </div>
+                        </div>
+
+                        {/* Botón "Ver Regiones" alineado a la derecha */}
+                        <div className="mt-6 flex justify-end">
+                            <RegionesResumenModal />
                         </div>
                     </>
                 )}

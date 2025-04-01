@@ -74,7 +74,7 @@ function FormExamenesFisicos({ examenExistente }: FormExamenesFisicosProps) {
     const peso = watch('peso')
     const talla = watch('talla')
 
-    // Calcular IMC y percentil cuando cambie el peso o la talla
+    // Calcular IMC cuando cambie el peso o la talla
     useEffect(() => {
         if (peso && talla) {
             // Convertir valores a números
@@ -87,37 +87,14 @@ function FormExamenesFisicos({ examenExistente }: FormExamenesFisicosProps) {
                 const tallaMetros = tallaNum / 100
                 const imcCalculado = pesoNum / (tallaMetros * tallaMetros)
 
-                // Redondear IMC a 1 decimal
-                const imcRedondeado = Math.round(imcCalculado * 10) / 10
-                setValue('imc', imcRedondeado.toString())
+                // Redondear a 1 decimal (en lugar de 2)
+                setValue('imc', Math.round(imcCalculado * 10) / 10)
 
-                // Calcular el percentil basado en el IMC
-                // NOTA: Esta es una función simplificada. El cálculo real del percentil
-                // depende de la edad, sexo y tablas de referencia específicas.
-                const percentilCalculado = calcularPercentil(imcRedondeado)
-                setValue('percentil', percentilCalculado.toString())
+                // Alternativa: redondear a número entero
+                // setValue('imc', Math.round(imcCalculado).toString())
             }
         }
     }, [peso, talla, setValue])
-
-    // Función para calcular el percentil basado en el IMC
-    // Esta es una implementación de ejemplo - deberás reemplazarla con tu lógica específica
-    function calcularPercentil(imc) {
-        // Aquí deberías implementar la lógica real para calcular el percentil
-        // basado en el IMC, edad del paciente, sexo, y tablas de referencia.
-
-        // Ejemplo simplificado (¡NO ES MÉDICAMENTE PRECISO!):
-        // Esta es solo una aproximación lineal para demostración
-        if (imc < 18.5) {
-            return Math.round(imc * 2) // Bajo peso
-        } else if (imc < 25) {
-            return Math.round(25 + (imc - 18.5) * 5) // Peso normal
-        } else if (imc < 30) {
-            return Math.round(75 + (imc - 25) * 4) // Sobrepeso
-        } else {
-            return 95 // Obesidad
-        }
-    }
 
     // Cuando cambie el examen existente, actualizar el formulario
     useEffect(() => {
@@ -351,10 +328,10 @@ function FormExamenesFisicos({ examenExistente }: FormExamenesFisicosProps) {
                         rules={validationExamenes.percentil}
                         errors={errors}
                         label="Percentil"
-                        inputPlaceholder="Se calcula automáticamente"
+                        inputPlaceholder="Ingrese el percentil"
                         className="col-span-1"
                         value=""
-                        disabled={true} // Siempre deshabilitado porque se calcula automáticamente
+                        disabled={isDisabled}
                     />
                     <InputForm
                         control={control}

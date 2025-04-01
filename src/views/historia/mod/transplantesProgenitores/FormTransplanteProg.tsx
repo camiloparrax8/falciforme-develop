@@ -156,9 +156,6 @@ export default function FormTransplanteProg() {
         { value: 'No Realizado', label: 'No realizado' },
     ]
 
-    // Determinar si los campos deben estar deshabilitados
-    const isDisabled = trasplanteExistente !== null
-
     if (cargando) {
         return (
             <div className="p-4 text-center">
@@ -169,6 +166,7 @@ export default function FormTransplanteProg() {
 
     return (
         <div>
+            {/* Mensaje informativo sobre existencia de trasplante */}
             {trasplanteExistente && (
                 <div className="mb-6 p-3 rounded-md bg-blue-100 text-blue-800">
                     Ya existe un registro de trasplante de progenitores para
@@ -176,113 +174,105 @@ export default function FormTransplanteProg() {
                 </div>
             )}
 
-            <form
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full"
-                onSubmit={handleSubmit(onSubmit)}
-            >
-                {/* Mensaje de estado */}
-                {mensaje.texto && (
-                    <div
-                        className={`col-span-1 md:col-span-2 lg:col-span-4 p-3 rounded-md ${
-                            mensaje.tipo === 'exito'
-                                ? 'bg-green-100 text-green-800'
-                                : 'bg-red-100 text-red-800'
-                        }`}
-                    >
-                        {mensaje.texto}
-                    </div>
-                )}
-
-                {/* Sección Transplane de progenitores */}
-                <SectionTitle
-                    text="Trasplante de progenitores"
-                    className="col-span-1 md:col-span-2 lg:col-span-4"
-                />
-
+            {/* Mensaje de estado */}
+            {mensaje.texto && (
                 <div
-                    className={`col-span-1 md:col-span-2 lg:col-span-2 ${isDisabled ? 'opacity-70' : ''}`}
+                    className={`mb-4 p-3 rounded-md ${
+                        mensaje.tipo === 'exito'
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-red-100 text-red-800'
+                    }`}
                 >
+                    {mensaje.texto}
+                </div>
+            )}
+
+            {/* FORMULARIO - Mostrar solo si NO existe trasplante previo */}
+            {!trasplanteExistente && (
+                <form
+                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full"
+                    onSubmit={handleSubmit(onSubmit)}
+                >
+                    {/* Sección Trasplante de progenitores */}
                     <SectionTitle
-                        text="Estudios HLA"
+                        text="Trasplante de progenitores"
                         className="col-span-1 md:col-span-2 lg:col-span-4"
                     />
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
-                        <InputSelect
-                            control={control}
-                            name="paciente"
-                            validation={
-                                validationTransplanteProgenitores.paciente
-                            }
-                            errors={errors}
-                            label="Paciente"
-                            options={options}
-                            placeholder="Seleccione"
-                            className="col-span-1"
-                            disabled={isDisabled}
+
+                    <div className="col-span-1 md:col-span-2 lg:col-span-2">
+                        <SectionTitle
+                            text="Estudios HLA"
+                            className="col-span-1 md:col-span-2 lg:col-span-4"
                         />
-                        <InputSelect
-                            control={control}
-                            name="padres"
-                            label="Padres"
-                            validation={
-                                validationTransplanteProgenitores.padres
-                            }
-                            errors={errors}
-                            options={options}
-                            placeholder="Seleccione"
-                            className="col-span-1"
-                            disabled={isDisabled}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+                            <InputSelect
+                                control={control}
+                                name="paciente"
+                                validation={
+                                    validationTransplanteProgenitores.paciente
+                                }
+                                errors={errors}
+                                label="Paciente"
+                                options={options}
+                                placeholder="Seleccione"
+                                className="col-span-1"
+                            />
+                            <InputSelect
+                                control={control}
+                                name="padres"
+                                label="Padres"
+                                validation={
+                                    validationTransplanteProgenitores.padres
+                                }
+                                errors={errors}
+                                options={options}
+                                placeholder="Seleccione"
+                                className="col-span-1"
+                            />
+                            <InputSelect
+                                control={control}
+                                name="hermanos"
+                                label="Hermanos"
+                                validation={
+                                    validationTransplanteProgenitores.hermanos
+                                }
+                                errors={errors}
+                                options={options}
+                                placeholder="Seleccione"
+                                className="col-span-1"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="col-span-1 md:col-span-2 lg:col-span-2">
+                        <SectionTitle
+                            text="Indicaciones para transplante"
+                            className="col-span-1 md:col-span-2 lg:col-span-4"
                         />
-                        <InputSelect
+                        <InputForm
                             control={control}
-                            name="hermanos"
-                            label="Hermanos"
-                            validation={
-                                validationTransplanteProgenitores.hermanos
-                            }
-                            errors={errors}
-                            options={options}
-                            placeholder="Seleccione"
+                            name="tipo"
+                            label="Tipo"
+                            inputPlaceholder="Escriba el tipo"
                             className="col-span-1"
-                            disabled={isDisabled}
+                            errors={errors}
+                            rules={
+                                validationTransplanteProgenitores.tipo_indicaciones
+                            }
+                            value=""
                         />
                     </div>
-                </div>
 
-                <div
-                    className={`col-span-1 md:col-span-2 lg:col-span-2 ${isDisabled ? 'opacity-70' : ''}`}
-                >
-                    <SectionTitle
-                        text="Indicaciones para transplante"
-                        className="col-span-1 md:col-span-2 lg:col-span-4"
-                    />
-                    <InputForm
-                        control={control}
-                        name="tipo"
-                        label="Tipo"
-                        inputPlaceholder="Escriba el tipo"
-                        className="col-span-1"
-                        errors={errors}
-                        rules={
-                            validationTransplanteProgenitores.tipo_indicaciones
-                        }
-                        value=""
-                        disabled={isDisabled}
-                    />
-                </div>
-                {/* Botón */}
-                <div className="col-span-4 flex justify-end mt-6">
-                    <Button type="submit" disabled={loading || isDisabled}>
-                        {loading
-                            ? 'Guardando...'
-                            : isDisabled
-                              ? 'Datos existentes'
-                              : 'Guardar'}
-                    </Button>
-                </div>
-            </form>
+                    {/* Botón */}
+                    <div className="col-span-4 flex justify-end mt-6">
+                        <Button type="submit" disabled={loading}>
+                            {loading ? 'Guardando...' : 'Guardar'}
+                        </Button>
+                    </div>
+                </form>
+            )}
 
-            {/* Tabla con datos existentes */}
+            {/* Tabla con datos existentes - Siempre visible cuando hay datos */}
             {trasplanteExistente && (
                 <div className="mt-8">
                     <SectionTitle

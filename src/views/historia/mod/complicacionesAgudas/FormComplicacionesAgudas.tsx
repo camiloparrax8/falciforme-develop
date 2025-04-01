@@ -309,14 +309,8 @@ function FormComplicacionesAgudas() {
                 </div>
             )}
 
-            {/* Formulario de complicación aguda */}
-            <div
-                className={
-                    formularioDeshabilitado
-                        ? 'opacity-60 pointer-events-none'
-                        : ''
-                }
-            >
+            {/* Mostrar el formulario SOLO si no está deshabilitado */}
+            {!formularioDeshabilitado && (
                 <form
                     className="grid grid-cols-1 md:grid-cols-2 gap-4"
                     onSubmit={handleSubmit(onSubmit)}
@@ -451,19 +445,12 @@ function FormComplicacionesAgudas() {
 
                     {/* Botón de Guardar */}
                     <div className="col-span-1 md:col-span-6 flex justify-end">
-                        <Button
-                            type="submit"
-                            disabled={loading || formularioDeshabilitado}
-                        >
-                            {loading
-                                ? 'Guardando...'
-                                : formularioDeshabilitado
-                                  ? 'Ya existe una complicación'
-                                  : 'Guardar'}
+                        <Button type="submit" disabled={loading}>
+                            {loading ? 'Guardando...' : 'Guardar'}
                         </Button>
                     </div>
                 </form>
-            </div>
+            )}
 
             {/* Tabla con datos de complicación */}
             {complicacionExistente && (

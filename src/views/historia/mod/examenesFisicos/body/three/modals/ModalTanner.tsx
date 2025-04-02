@@ -5,8 +5,11 @@ import Button from '@/components/ui/Button'
 import validationSeccionThree from '../../../../../../../validation/validationSeccionThree'
 import { defaultValuesTanner } from '../../three/modals/defaultValuesSeccionThree'
 import { useExamenFisicoUpdate } from '@/hooks/useExamenFisicoUpdate'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useExamenFisico } from '@/hooks/useExamenFisico'
+import { useToken } from '@/store/authStore'
+import { useParams } from 'react-router-dom'
+import { consultarExamenFisicoPorPaciente } from '@/customService/services/examenesFisicosService'
 
 interface TannerData {
     estadioTanner: string
@@ -23,26 +26,51 @@ export default function ModalTanner({ isOpen, onClose, onRequestClose }) {
     })
 
     const { updateTanner, isLoading, result } = useExamenFisicoUpdate()
-    const { idExamenFisico, examenData } = useExamenFisico()
+    const { idExamenFisico, examenData, setExamenData } = useExamenFisico()
     const [showMessage, setShowMessage] = useState(false)
     const [existeRegistro, setExisteRegistro] = useState(false)
-    const [yaSeGuardo, setYaSeGuardo] = useState(false)
+    const { token } = useToken()
+    const { id_paciente } = useParams()
+
+    const verificarExistenciaRegistro = useCallback(() => {
+        if (!examenData) return false
+
+        return (
+            examenData.tanner !== undefined &&
+            examenData.tanner !== null &&
+            examenData.tanner !== ''
+        )
+    }, [examenData])
+
+    const actualizarContexto = useCallback(async () => {
+        if (!id_paciente || !token) return
+
+        try {
+            const resultado = await consultarExamenFisicoPorPaciente(
+                token,
+                id_paciente,
+            )
+
+            const examenActualizado = resultado?.data || resultado
+
+            if (examenActualizado && examenActualizado.id) {
+                setExamenData(examenActualizado)
+            }
+        } catch (error) {
+            console.error('Error al actualizar datos del examen:', error)
+        }
+    }, [id_paciente, token, setExamenData])
 
     useEffect(() => {
-        // Si ya se guardó anteriormente, mantener deshabilitado
-        if (yaSeGuardo) {
-            setExisteRegistro(true)
-            return
+        if (isOpen) {
+            actualizarContexto()
         }
+    }, [isOpen, actualizarContexto])
 
+    useEffect(() => {
         if (isOpen && examenData) {
-            // Verificar si ya existe un valor para estadio Tanner
-            const tieneTanner =
-                examenData.tanner !== undefined &&
-                examenData.tanner !== null &&
-                examenData.tanner !== ''
+            const tieneTanner = verificarExistenciaRegistro()
 
-            // Establecer el valor si existe
             if (tieneTanner) {
                 setValue('estadioTanner', String(examenData.tanner))
                 setExisteRegistro(true)
@@ -53,16 +81,16 @@ export default function ModalTanner({ isOpen, onClose, onRequestClose }) {
         } else {
             setExisteRegistro(false)
         }
-    }, [isOpen, examenData, setValue, yaSeGuardo])
+    }, [isOpen, examenData, setValue, verificarExistenciaRegistro])
 
     const onSubmit = async (data: TannerData) => {
         try {
             await updateTanner(data)
             setShowMessage(true)
-            setExisteRegistro(true)
-            setYaSeGuardo(true) // Marcar que ya se guardó
 
-            // Cerrar automáticamente después de 2 segundos
+            // Actualizar el contexto inmediatamente
+            await actualizarContexto()
+
             setTimeout(() => {
                 setShowMessage(false)
                 if (onClose) {

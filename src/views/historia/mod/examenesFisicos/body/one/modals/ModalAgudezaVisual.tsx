@@ -5,8 +5,11 @@ import validationSeccionOne from '../../../../../../../validation/validationSecc
 import { defaultValuesVisual } from '../../one/modals/defaultValuesSeccionOne'
 import Button from '@/components/ui/Button'
 import { useExamenFisicoUpdate } from '@/hooks/useExamenFisicoUpdate'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useExamenFisico } from '@/hooks/useExamenFisico'
+import { useToken } from '@/store/authStore'
+import { useParams } from 'react-router-dom'
+import { consultarExamenFisicoPorPaciente } from '@/customService/services/examenesFisicosService'
 
 interface AgudezaVisualData {
     vision: string
@@ -27,21 +30,57 @@ export default function ModalAgudezaVisual({
     })
 
     const { updateAgudezaVisual, isLoading, result } = useExamenFisicoUpdate()
-    const { idExamenFisico, examenData } = useExamenFisico()
+    const { idExamenFisico, examenData, setExamenData } = useExamenFisico()
     const [showMessage, setShowMessage] = useState(false)
     const [existeRegistro, setExisteRegistro] = useState(false)
+    const { token } = useToken()
+    const { id_paciente } = useParams()
+
+    const verificarExistenciaRegistro = useCallback(() => {
+        if (!examenData) return false
+
+        return (
+            examenData.vision !== undefined &&
+            examenData.vision !== null &&
+            examenData.vision !== ''
+        )
+    }, [examenData])
+
+    const actualizarContexto = useCallback(async () => {
+        if (!id_paciente || !token) return
+
+        try {
+            const resultado = await consultarExamenFisicoPorPaciente(
+                token,
+                id_paciente,
+            )
+
+            const examenActualizado = resultado?.data || resultado
+
+            if (examenActualizado && examenActualizado.id) {
+                setExamenData(examenActualizado)
+            }
+        } catch (error) {
+            console.error('Error al actualizar datos del examen:', error)
+        }
+    }, [id_paciente, token, setExamenData])
+
+    useEffect(() => {
+        if (isOpen) {
+            actualizarContexto()
+        }
+    }, [isOpen, actualizarContexto])
 
     const onSubmit = async (data: AgudezaVisualData) => {
         try {
             await updateAgudezaVisual({
                 visualizacion: data.vision,
             })
-
-            // Mostrar mensaje de éxito
             setShowMessage(true)
-            setExisteRegistro(true)
 
-            // Forzar cierre después de 1 segundo sin importar la respuesta
+            // Actualizar el contexto inmediatamente
+            await actualizarContexto()
+
             setTimeout(() => {
                 setShowMessage(false)
                 if (onClose) {
@@ -56,16 +95,35 @@ export default function ModalAgudezaVisual({
 
     // Efecto para verificar si existe un registro cuando el modal se abre
     useEffect(() => {
-        if (isOpen && examenData) {
-            // Verificar inmediatamente al abrir el modal
-            if (examenData.vision) {
-                setValue('vision', String(examenData.vision))
-                setExisteRegistro(true)
-            } else {
-                setExisteRegistro(false)
-            }
+        // Si ya se determinó que existe un registro, mantener ese estado
+        if (existeRegistro) {
+            setExisteRegistro(true)
+            return
         }
-    }, [isOpen, examenData, setValue])
+
+        if (isOpen && examenData) {
+            // Usar la función verificarExistenciaRegistro para consistencia
+            const tieneVision = verificarExistenciaRegistro()
+
+            // Establecer valores solo si existen
+            if (tieneVision) {
+                setValue('vision', String(examenData.vision))
+            } else {
+                setValue('vision', '')
+            }
+
+            // Actualizar el estado de existeRegistro basado en la verificación
+            setExisteRegistro(tieneVision)
+        } else {
+            setExisteRegistro(false)
+        }
+    }, [
+        isOpen,
+        examenData,
+        setValue,
+        existeRegistro,
+        verificarExistenciaRegistro,
+    ])
 
     return (
         <Dialog

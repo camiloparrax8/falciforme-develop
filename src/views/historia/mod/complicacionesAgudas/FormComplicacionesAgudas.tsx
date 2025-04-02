@@ -32,21 +32,26 @@ import TBody from '@/components/ui/Table/TBody'
 import Td from '@/components/ui/Table/Td'
 import Th from '@/components/ui/Table/Th'
 import THead from '@/components/ui/Table/THead'
+import Alert from '@/components/ui/Alert'
 
 function FormComplicacionesAgudas() {
     const { token } = useToken()
     const { user } = useSessionUser()
     const { id_paciente } = useParams()
     const [loading, setLoading] = useState(false)
-    const [mensaje, setMensaje] = useState({ tipo: '', texto: '' })
+    const [mensaje, setMensaje] = useState<{
+        tipo: 'success' | 'error'
+        texto: string
+    } | null>(null)
     const [complicacionExistente, setComplicacionExistente] = useState(null)
     const [ingresos, setIngresos] = useState([])
     const [cargandoIngresos, setCargandoIngresos] = useState(false)
     const [cargando, setCargando] = useState(true)
     const [dialogIsOpenHC, setIsOpenAgudas] = useState(false)
-    // Estado para controlar si el formulario está deshabilitado
     const [formularioDeshabilitado, setFormularioDeshabilitado] =
         useState(false)
+    const [mostrarMensaje, setMostrarMensaje] = useState(true)
+    const [mostrarMensajeInfo, setMostrarMensajeInfo] = useState(true)
 
     const {
         control,
@@ -57,7 +62,6 @@ function FormComplicacionesAgudas() {
         defaultValues: defaultValues,
     })
 
-    // Cargar ingresos si existe una complicación
     const cargarIngresos = useCallback(
         async (idComplicacion) => {
             if (!idComplicacion) return
@@ -88,7 +92,6 @@ function FormComplicacionesAgudas() {
         [token],
     )
 
-    // Verificar si el paciente ya tiene una complicación aguda al cargar el componente
     useEffect(() => {
         const verificarComplicacionExistente = async () => {
             if (!id_paciente) {
@@ -104,32 +107,26 @@ function FormComplicacionesAgudas() {
                     id_paciente,
                 )
 
-                // Verificación más estricta para determinar si hay datos reales
                 if (
                     resultado &&
                     resultado.status === 'success' &&
                     resultado.data &&
-                    // Verificar que la data tiene propiedades de una complicación real
                     (resultado.data.id ||
                         (Array.isArray(resultado.data) &&
                             resultado.data.length > 0 &&
                             resultado.data[0].id))
                 ) {
-                    // Determinar si los datos son un array o un objeto
                     const datosComplicacion = Array.isArray(resultado.data)
-                        ? resultado.data[0] // Tomar el primer elemento si es un array
-                        : resultado.data // Usar directamente si es un objeto
+                        ? resultado.data[0]
+                        : resultado.data
 
-                    // Verificación adicional para asegurarse que es un objeto válido
                     if (
                         datosComplicacion &&
                         Object.keys(datosComplicacion).length > 0
                     ) {
                         setComplicacionExistente(datosComplicacion)
-                        // Deshabilitar el formulario cuando ya existe una complicación
                         setFormularioDeshabilitado(true)
 
-                        // Cargar los ingresos asociados a esta complicación
                         await cargarIngresos(datosComplicacion.id)
                     } else {
                         console.log('Datos de complicación vacíos o inválidos')
@@ -161,23 +158,20 @@ function FormComplicacionesAgudas() {
     }, [id_paciente, token, reset, cargarIngresos])
 
     const onSubmit = async (data) => {
-        // Si el formulario está deshabilitado, no permitir el envío
         if (formularioDeshabilitado) {
             return
         }
 
         try {
             setLoading(true)
-            setMensaje({ tipo: '', texto: '' })
+            setMensaje(null)
+            setMostrarMensaje(true)
 
-            // Formatea la fecha antes de enviarla
             let fechaFormateada = data.fecha
             if (data.fecha) {
                 const fecha = new Date(data.fecha)
-                // Formatear como YYYY-MM-DD (formato que espera el backend)
                 fechaFormateada = fecha.toISOString().split('T')[0]
 
-                // Verificar que la fecha no sea futura
                 const hoy = new Date()
                 if (fecha > hoy) {
                     setMensaje({
@@ -191,7 +185,7 @@ function FormComplicacionesAgudas() {
 
             const formDataComplete = {
                 ...data,
-                fecha: fechaFormateada, // Usar la fecha formateada
+                fecha: fechaFormateada,
                 id_paciente,
                 id_user_create: user.id,
             }
@@ -203,24 +197,20 @@ function FormComplicacionesAgudas() {
 
             if (response.status === 'success') {
                 setMensaje({
-                    tipo: 'exito',
+                    tipo: 'success',
                     texto: 'Complicación aguda guardada correctamente',
                 })
 
-                // Actualizar el estado para reflejar que ahora existe una complicación
                 if (response.data) {
                     setComplicacionExistente(response.data)
-                    // Deshabilitar el formulario después de guardar
                     setFormularioDeshabilitado(true)
                 }
-                // Hacer scroll hacia arriba
                 window.scrollTo({ top: 0, behavior: 'smooth' })
             } else {
                 setMensaje({
                     tipo: 'error',
                     texto: response.message || 'Error al guardar los datos',
                 })
-                // Hacer scroll hacia arriba también en caso de error
                 window.scrollTo({ top: 0, behavior: 'smooth' })
             }
         } catch (error) {
@@ -229,7 +219,6 @@ function FormComplicacionesAgudas() {
                 tipo: 'error',
                 texto: 'Error al guardar los datos de la complicación aguda',
             })
-            // Hacer scroll hacia arriba en caso de error
             window.scrollTo({ top: 0, behavior: 'smooth' })
         } finally {
             setLoading(false)
@@ -242,6 +231,7 @@ function FormComplicacionesAgudas() {
                 tipo: 'error',
                 texto: 'Debe guardar la complicación aguda antes de agregar ingresos',
             })
+            setMostrarMensaje(true)
             return
         }
         setIsOpenAgudas(true)
@@ -252,7 +242,6 @@ function FormComplicacionesAgudas() {
     }
 
     const onSubmitModal = async (dataModal) => {
-        // Si el modal indica éxito, actualizar la lista de ingresos
         if (
             dataModal.success &&
             complicacionExistente &&
@@ -264,7 +253,6 @@ function FormComplicacionesAgudas() {
         setIsOpenAgudas(false)
     }
 
-    // Formatear fecha para mostrar en tablas
     const formatearFecha = (fechaStr) => {
         if (!fechaStr) return ''
 
@@ -277,6 +265,17 @@ function FormComplicacionesAgudas() {
         }
     }
 
+    const handleCloseAlert = () => {
+        setMostrarMensaje(false)
+        if (mensaje?.tipo === 'success') {
+            // Cualquier acción adicional necesaria al cerrar una alerta de éxito
+        }
+    }
+
+    const handleCloseAlertInfo = () => {
+        setMostrarMensajeInfo(false)
+    }
+
     if (cargando) {
         return (
             <div className="p-4 text-center">
@@ -287,35 +286,45 @@ function FormComplicacionesAgudas() {
 
     return (
         <>
-            {/* Mensaje de estado */}
-            {mensaje.texto && (
-                <div
-                    className={`mb-4 p-3 rounded-md ${
-                        mensaje.tipo === 'exito'
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-red-100 text-red-800'
-                    }`}
-                >
-                    {mensaje.texto}
+            {mensaje && mensaje.texto && mostrarMensaje && (
+                <div className="mb-4">
+                    <Alert
+                        showIcon
+                        closable
+                        title={
+                            mensaje.tipo === 'success' ? 'Correcto' : 'Atención'
+                        }
+                        type={mensaje.tipo === 'success' ? 'success' : 'danger'}
+                        duration={10000}
+                        onClose={handleCloseAlert}
+                    >
+                        {mensaje.texto}
+                    </Alert>
                 </div>
             )}
 
-            {/* Mensaje informativo sobre complicación existente */}
-            {complicacionExistente && (
-                <div className="mb-6 p-3 rounded-md bg-blue-100 text-blue-800">
-                    Este paciente ya tiene registrada una complicación aguda. No
-                    es posible agregar otra complicación para esta historia
-                    clinica.
+            {complicacionExistente && mostrarMensajeInfo && (
+                <div className="mb-4">
+                    <Alert
+                        showIcon
+                        closable
+                        title="Información"
+                        type="info"
+                        duration={10000}
+                        onClose={handleCloseAlertInfo}
+                    >
+                        Este paciente ya tiene registrada una complicación
+                        aguda. No es posible agregar otra complicación para esta
+                        historia clinica.
+                    </Alert>
                 </div>
             )}
 
-            {/* Mostrar el formulario SOLO si no está deshabilitado */}
             {!formularioDeshabilitado && (
                 <form
                     className="grid grid-cols-1 md:grid-cols-2 gap-4"
                     onSubmit={handleSubmit(onSubmit)}
                 >
-                    {/* Crisis de Dolor */}
                     <SectionTitle
                         text="Crisis de Dolor"
                         className="col-span-1 md:col-span-6"
@@ -385,7 +394,6 @@ function FormComplicacionesAgudas() {
                         defaultValue={[]}
                     />
 
-                    {/* Infecciones */}
                     <SectionTitle
                         text="Infecciones"
                         className="col-span-1 md:col-span-6"
@@ -425,7 +433,6 @@ function FormComplicacionesAgudas() {
                         value=""
                     />
 
-                    {/* Anemia Aguda */}
                     <SectionTitle
                         text="Anemia Aguda"
                         className="col-span-1 md:col-span-6"
@@ -443,7 +450,6 @@ function FormComplicacionesAgudas() {
                         className="col-span-1"
                     />
 
-                    {/* Botón de Guardar */}
                     <div className="col-span-1 md:col-span-6 flex justify-end">
                         <Button type="submit" disabled={loading}>
                             {loading ? 'Guardando...' : 'Guardar'}
@@ -452,7 +458,6 @@ function FormComplicacionesAgudas() {
                 </form>
             )}
 
-            {/* Tabla con datos de complicación */}
             {complicacionExistente && (
                 <div className="mt-8 mb-8 p-4 border border-gray-200 rounded-lg">
                     <SectionTitle
@@ -510,7 +515,6 @@ function FormComplicacionesAgudas() {
                 </div>
             )}
 
-            {/* Sección de Ingresos */}
             {complicacionExistente && (
                 <div className="mt-6 p-4 border border-gray-200 rounded-lg">
                     <SectionTitle
@@ -528,7 +532,6 @@ function FormComplicacionesAgudas() {
                         Añadir ingresos
                     </Button>
 
-                    {/* Tabla de ingresos */}
                     {ingresos.length > 0 ? (
                         <div className="mt-4">
                             <Table>
@@ -569,7 +572,6 @@ function FormComplicacionesAgudas() {
                 </div>
             )}
 
-            {/* Modal para añadir ingresos */}
             <Dialog
                 isOpen={dialogIsOpenHC}
                 onClose={onDialogCloseIngresos}

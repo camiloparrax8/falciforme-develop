@@ -60,12 +60,9 @@ function RegionesResumenModal() {
             if (examenActualizado && examenActualizado.id) {
                 // Actualizar el contexto con los datos más recientes
                 setExamenData(examenActualizado)
-                console.log('Datos de examen actualizados:', examenActualizado)
             }
         } catch (error) {
             console.error('Error al actualizar datos del examen:', error)
-        } finally {
-            /* empty */
         }
     }, [id_paciente, token, setExamenData])
 
@@ -125,26 +122,6 @@ function RegionesResumenModal() {
     useEffect(() => {
         organizarDatosPorRegiones()
     }, [examenData, organizarDatosPorRegiones])
-
-    // Configurar actualización periódica cuando el modal está abierto
-    useEffect(() => {
-        let intervalId: NodeJS.Timeout | null = null
-
-        if (isOpen) {
-            // Actualizar inmediatamente al abrir
-            cargarDatosActualizados()
-
-            // Configurar actualización cada 2 segundos mientras el modal esté abierto
-            intervalId = setInterval(() => {
-                cargarDatosActualizados()
-            }, 2000)
-        }
-
-        // Limpiar el intervalo cuando se cierre el modal o se desmonte el componente
-        return () => {
-            if (intervalId) clearInterval(intervalId)
-        }
-    }, [isOpen, cargarDatosActualizados])
 
     // Renderizar datos de una región
     const renderDatosRegion = (datos: Record<string, unknown>) => {

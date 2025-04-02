@@ -2,8 +2,8 @@ import { useForm } from 'react-hook-form'
 import { Dialog } from '@/components/ui'
 import InputSelect from '@/views/common/form/InputSelect'
 import Button from '@/components/ui/Button'
-import validationSeccionOne from '../../../../../../../validation/validationSeccionOne'
-import { defaultValuesCaries } from '../../one/modals/defaultValuesSeccionOne'
+import validationSeccionOne from '@/validation/validationSeccionOne'
+import { defaultValuesCaries } from '@/views/historia/mod/examenesFisicos/body/one/modals/defaultValuesSeccionOne'
 import { useExamenFisicoUpdate } from '@/hooks/useExamenFisicoUpdate'
 import { useState, useEffect, useCallback } from 'react'
 import { useExamenFisico } from '@/hooks/useExamenFisico'
@@ -28,15 +28,16 @@ export default function ModalCaries({ isOpen, onClose, onRequestClose }) {
     const { updateCaries, isLoading, result } = useExamenFisicoUpdate()
     const { idExamenFisico, examenData, setExamenData } = useExamenFisico()
     const [showMessage, setShowMessage] = useState(false)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [existeRegistro, setExisteRegistro] = useState(false)
     const { token } = useToken()
     const { id_paciente } = useParams()
+    const [yaSeGuardo, setYaSeGuardo] = useState(false)
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const verificarExistenciaRegistro = useCallback(() => {
-        if (!examenData) return false
-
-        return examenData.caries === 'Si' || examenData.caries === 'No'
-    }, [examenData])
+        return yaSeGuardo
+    }, [yaSeGuardo])
 
     const actualizarContexto = useCallback(async () => {
         if (!id_paciente || !token) return
@@ -59,39 +60,41 @@ export default function ModalCaries({ isOpen, onClose, onRequestClose }) {
 
     useEffect(() => {
         if (isOpen) {
-            actualizarContexto()
-        }
-    }, [isOpen, actualizarContexto])
-
-    useEffect(() => {
-        if (existeRegistro) {
-            return
-        }
-
-        if (isOpen && examenData) {
-            const tieneCaries = verificarExistenciaRegistro()
-
-            if (tieneCaries) {
-                setValue('caries', examenData.caries === true ? 'Si' : 'No')
+            // Verificar si ya se guardó anteriormente
+            const guardadoPrevio = localStorage.getItem(
+                `caries_guardado_${id_paciente}`,
+            )
+            if (guardadoPrevio === 'true') {
+                setYaSeGuardo(true)
             }
 
-            setExisteRegistro(tieneCaries)
-        } else {
-            setExisteRegistro(false)
+            // Si hay datos existentes, actualizar el select
+            if (
+                examenData?.caries !== null &&
+                examenData?.caries !== undefined
+            ) {
+                setValue('caries', examenData.caries === true ? 'Si' : 'No')
+                setYaSeGuardo(true)
+                localStorage.setItem(`caries_guardado_${id_paciente}`, 'true')
+            }
         }
-    }, [
-        isOpen,
-        examenData,
-        setValue,
-        existeRegistro,
-        verificarExistenciaRegistro,
-    ])
+    }, [isOpen, examenData, setValue, id_paciente])
+
+    useEffect(() => {
+        if (isOpen && examenData?.caries) {
+            setValue('caries', examenData.caries === true ? 'Si' : 'No')
+        }
+    }, [isOpen, examenData, setValue])
 
     const onSubmit = async (data: CariesData) => {
         try {
             await updateCaries(data)
             setShowMessage(true)
+            setYaSeGuardo(true)
             setExisteRegistro(true)
+
+            // Guardar en localStorage que ya se guardó
+            localStorage.setItem(`caries_guardado_${id_paciente}`, 'true')
 
             await actualizarContexto()
 
@@ -111,6 +114,15 @@ export default function ModalCaries({ isOpen, onClose, onRequestClose }) {
         { value: 'Si', label: 'Si' },
         { value: 'No', label: 'No' },
     ]
+
+    // Limpiar localStorage cuando se desmonte el componente
+    useEffect(() => {
+        return () => {
+            if (!isOpen) {
+                localStorage.removeItem(`caries_guardado_${id_paciente}`)
+            }
+        }
+    }, [isOpen, id_paciente])
 
     return (
         <Dialog
@@ -135,7 +147,7 @@ export default function ModalCaries({ isOpen, onClose, onRequestClose }) {
                     </div>
                 )}
 
-                {existeRegistro && (
+                {yaSeGuardo && (
                     <div className="bg-yellow-100 text-yellow-800 p-2 rounded">
                         Este registro ya existe y no puede ser modificado.
                     </div>
@@ -162,7 +174,7 @@ export default function ModalCaries({ isOpen, onClose, onRequestClose }) {
                         options={opcionesCaries}
                         validation={validationSeccionOne.caries}
                         errors={errors}
-                        disabled={!idExamenFisico || existeRegistro}
+                        disabled={!idExamenFisico || yaSeGuardo}
                     />
 
                     <div className="flex justify-end">
@@ -170,7 +182,7 @@ export default function ModalCaries({ isOpen, onClose, onRequestClose }) {
                             type="submit"
                             className="ml-2"
                             disabled={
-                                isLoading || !idExamenFisico || existeRegistro
+                                isLoading || !idExamenFisico || yaSeGuardo
                             }
                         >
                             {isLoading ? 'Guardando...' : 'Guardar'}

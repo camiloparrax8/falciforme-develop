@@ -35,7 +35,7 @@ export default function ModalCaries({ isOpen, onClose, onRequestClose }) {
     const verificarExistenciaRegistro = useCallback(() => {
         if (!examenData) return false
 
-        return examenData.caries === true || examenData.caries === false
+        return examenData.caries === 'Si' || examenData.caries === 'No'
     }, [examenData])
 
     const actualizarContexto = useCallback(async () => {

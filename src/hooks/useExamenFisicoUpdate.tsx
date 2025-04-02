@@ -31,8 +31,6 @@ export const useExamenFisicoUpdate = () => {
                 perimetro_cefalico: parseFloat(datos.perimetroCefalico),
             }
 
-            console.log('Datos que se envían al backend:', camposActualizados)
-
             const response = await actualizarCamposExamenFisico(
                 token,
                 idExamenFisico,
@@ -238,11 +236,6 @@ export const useExamenFisicoUpdate = () => {
                 cardio_pulmunar: datos.observacion,
             }
 
-            console.log(
-                'Datos cardiopulmunar que se envían al backend:',
-                camposActualizados,
-            )
-
             const response = await actualizarCamposExamenFisico(
                 token,
                 idExamenFisico,
@@ -285,11 +278,6 @@ export const useExamenFisicoUpdate = () => {
             const camposActualizados = {
                 condicion_abdominal: datos.condicionesAbdominales.join(', '),
             }
-
-            console.log(
-                'Datos abdominales que se envían al backend:',
-                camposActualizados,
-            )
 
             const response = await actualizarCamposExamenFisico(
                 token,
@@ -337,11 +325,6 @@ export const useExamenFisicoUpdate = () => {
                 extremidades_condicion: datos.edemasUlceras.join(', '),
             }
 
-            console.log(
-                'Datos de extremidades que se envían al backend:',
-                camposActualizados,
-            )
-
             const response = await actualizarCamposExamenFisico(
                 token,
                 idExamenFisico,
@@ -384,11 +367,6 @@ export const useExamenFisicoUpdate = () => {
                 tanner: datos.estadioTanner,
             }
 
-            console.log(
-                'Datos de Tanner que se envían al backend:',
-                camposActualizados,
-            )
-
             const response = await actualizarCamposExamenFisico(
                 token,
                 idExamenFisico,
@@ -415,89 +393,6 @@ export const useExamenFisicoUpdate = () => {
         }
     }
 
-    const updatePiel = async (data) => {
-        if (!idExamenFisico) {
-            setResult({
-                success: false,
-                message:
-                    'No hay un examen físico activo. Debe crear uno primero.',
-            })
-            return
-        }
-
-        setIsLoading(true)
-
-        try {
-            const updatedData = {
-                id_examen_fisico: idExamenFisico,
-                ...data,
-            }
-
-            console.log('Enviando datos de piel:', updatedData)
-
-            // Aquí iría la llamada al backend
-            // const response = await axios.post('/api/examenes-fisicos/piel', updatedData);
-
-            // Simulación de respuesta exitosa
-            // En producción, this would be replaced with the actual API call
-            await new Promise((resolve) => setTimeout(resolve, 1000))
-
-            setResult({
-                success: true,
-                message: 'Información de piel actualizada con éxito',
-            })
-        } catch (error) {
-            console.error('Error al actualizar información de piel:', error)
-            setResult({
-                success: false,
-                message: 'Error al actualizar información de piel',
-            })
-        } finally {
-            setIsLoading(false)
-        }
-    }
-
-    const updateCabeza = async (data) => {
-        if (!idExamenFisico) {
-            setResult({
-                success: false,
-                message:
-                    'No hay un examen físico activo. Debe crear uno primero.',
-            })
-            return
-        }
-
-        setIsLoading(true)
-
-        try {
-            const updatedData = {
-                id_examen_fisico: idExamenFisico,
-                ...data,
-            }
-
-            console.log('Enviando datos de cabeza:', updatedData)
-
-            // Aquí iría la llamada al backend
-            // const response = await axios.post('/api/examenes-fisicos/cabeza', updatedData);
-
-            // Simulación de respuesta exitosa
-            await new Promise((resolve) => setTimeout(resolve, 1000))
-
-            setResult({
-                success: true,
-                message: 'Información de cabeza actualizada con éxito',
-            })
-        } catch (error) {
-            console.error('Error al actualizar información de cabeza:', error)
-            setResult({
-                success: false,
-                message: 'Error al actualizar información de cabeza',
-            })
-        } finally {
-            setIsLoading(false)
-        }
-    }
-
     return {
         isLoading,
         result,
@@ -510,7 +405,5 @@ export const useExamenFisicoUpdate = () => {
         updateAbdominal,
         updateExtremidades,
         updateTanner,
-        updatePiel,
-        updateCabeza,
     }
 }

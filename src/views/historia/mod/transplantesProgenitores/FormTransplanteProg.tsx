@@ -17,15 +17,21 @@ import TBody from '@/components/ui/Table/TBody'
 import Td from '@/components/ui/Table/Td'
 import Th from '@/components/ui/Table/Th'
 import THead from '@/components/ui/Table/THead'
+import Alert from '@/components/ui/Alert'
 
 export default function FormTransplanteProg() {
     const { token } = useToken()
     const { user } = useSessionUser()
     const { id_paciente } = useParams()
     const [loading, setLoading] = useState(false)
-    const [mensaje, setMensaje] = useState({ tipo: '', texto: '' })
+    const [mensaje, setMensaje] = useState<{
+        tipo: 'exito' | 'error'
+        texto: string
+    } | null>(null)
     const [trasplanteExistente, setTrasplanteExistente] = useState(null)
     const [cargando, setCargando] = useState(true)
+    const [mostrarMensaje, setMostrarMensaje] = useState(true)
+    const [mostrarMensajeInfo, setMostrarMensajeInfo] = useState(true)
 
     const {
         control,
@@ -41,7 +47,6 @@ export default function FormTransplanteProg() {
         },
     })
 
-    // Verificar si el paciente ya tiene un trasplante al cargar el componente
     useEffect(() => {
         const verificarTrasplanteExistente = async () => {
             if (!id_paciente) {
@@ -63,14 +68,12 @@ export default function FormTransplanteProg() {
                     resultado.status === 'success' &&
                     resultado.data
                 ) {
-                    // Determinar si los datos son un array o un objeto
                     const datosTransplante = Array.isArray(resultado.data)
-                        ? resultado.data[0] // Tomar el primer elemento si es un array
-                        : resultado.data // Usar directamente si es un objeto
+                        ? resultado.data[0]
+                        : resultado.data
 
                     setTrasplanteExistente(datosTransplante)
 
-                    // Actualizar el formulario con los datos existentes
                     reset({
                         paciente: datosTransplante.paciente || '',
                         padres: datosTransplante.padres || '',
@@ -96,12 +99,23 @@ export default function FormTransplanteProg() {
         verificarTrasplanteExistente()
     }, [id_paciente, token, reset])
 
+    const handleCloseAlert = () => {
+        setMostrarMensaje(false)
+        if (mensaje?.tipo === 'exito') {
+            // Puedes realizar acciones adicionales si es necesario
+        }
+    }
+
+    const handleCloseAlertInfo = () => {
+        setMostrarMensajeInfo(false)
+    }
+
     const onSubmit = async (data) => {
         try {
             setLoading(true)
-            setMensaje({ tipo: '', texto: '' })
+            setMensaje(null)
+            setMostrarMensaje(true)
 
-            // Si ya existe un trasplante, mostrar mensaje y no continuar
             if (trasplanteExistente) {
                 setMensaje({
                     tipo: 'error',
@@ -128,7 +142,6 @@ export default function FormTransplanteProg() {
                     texto: 'Transplante de progenitores guardado correctamente',
                 })
 
-                // Actualizar el estado para reflejar que ahora existe un trasplante
                 if (response.data) {
                     setTrasplanteExistente(response.data)
                 }
@@ -166,34 +179,44 @@ export default function FormTransplanteProg() {
 
     return (
         <div>
-            {/* Mensaje informativo sobre existencia de trasplante */}
-            {trasplanteExistente && (
-                <div className="mb-6 p-3 rounded-md bg-blue-100 text-blue-800">
-                    Ya existe un registro de trasplante de progenitores para
-                    este paciente. Se muestran los datos actuales.
+            {mensaje && mensaje.texto && mostrarMensaje && (
+                <div className="mb-4">
+                    <Alert
+                        showIcon
+                        closable
+                        title={
+                            mensaje.tipo === 'exito' ? 'Correcto' : 'Atención'
+                        }
+                        type={mensaje.tipo === 'exito' ? 'success' : 'danger'}
+                        duration={10000}
+                        onClose={handleCloseAlert}
+                    >
+                        {mensaje.texto}
+                    </Alert>
                 </div>
             )}
 
-            {/* Mensaje de estado */}
-            {mensaje.texto && (
-                <div
-                    className={`mb-4 p-3 rounded-md ${
-                        mensaje.tipo === 'exito'
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-red-100 text-red-800'
-                    }`}
-                >
-                    {mensaje.texto}
+            {trasplanteExistente && mostrarMensajeInfo && (
+                <div className="mb-4">
+                    <Alert
+                        showIcon
+                        closable
+                        title="Información"
+                        type="info"
+                        duration={10000}
+                        onClose={handleCloseAlertInfo}
+                    >
+                        Ya existe un registro de trasplante de progenitores para
+                        este paciente. Se muestran los datos actuales.
+                    </Alert>
                 </div>
             )}
 
-            {/* FORMULARIO - Mostrar solo si NO existe trasplante previo */}
             {!trasplanteExistente && (
                 <form
                     className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full"
                     onSubmit={handleSubmit(onSubmit)}
                 >
-                    {/* Sección Trasplante de progenitores */}
                     <SectionTitle
                         text="Trasplante de progenitores"
                         className="col-span-1 md:col-span-2 lg:col-span-4"
@@ -263,7 +286,6 @@ export default function FormTransplanteProg() {
                         />
                     </div>
 
-                    {/* Botón */}
                     <div className="col-span-4 flex justify-end mt-6">
                         <Button type="submit" disabled={loading}>
                             {loading ? 'Guardando...' : 'Guardar'}
@@ -272,7 +294,6 @@ export default function FormTransplanteProg() {
                 </form>
             )}
 
-            {/* Tabla con datos existentes - Siempre visible cuando hay datos */}
             {trasplanteExistente && (
                 <div className="mt-8">
                     <SectionTitle

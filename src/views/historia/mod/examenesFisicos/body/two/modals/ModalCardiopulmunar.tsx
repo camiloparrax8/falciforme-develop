@@ -21,39 +21,28 @@ export default function ModalCardiopulmonar({
         control,
         handleSubmit,
         formState: { errors },
+        setValue,
     } = useForm<CardiopulmunarData>({
         defaultValues: defaultValuesCardiopulmonar,
     })
 
     const { updateCardiopulmunar, isLoading, result } = useExamenFisicoUpdate()
-    const { idExamenFisico } = useExamenFisico()
+    const { idExamenFisico, examenData } = useExamenFisico()
     const [showMessage, setShowMessage] = useState(false)
-
-    useEffect(() => {
-        console.log(
-            'ID del examen físico en ModalCardiopulmunar:',
-            idExamenFisico,
-        )
-    }, [idExamenFisico])
+    const [existeRegistro, setExisteRegistro] = useState(false)
 
     const onSubmit = async (data: CardiopulmunarData) => {
         try {
-            console.log(
-                'Enviando actualización cardiopulmunar con ID de examen físico:',
-                idExamenFisico,
-            )
-            console.log('Datos del formulario:', data)
-
             await updateCardiopulmunar(data)
             setShowMessage(true)
+            setExisteRegistro(true)
 
-            // Cerrar automáticamente después de 2 segundos en caso de éxito
-            if (result?.success) {
-                setTimeout(() => {
-                    setShowMessage(false)
+            setTimeout(() => {
+                setShowMessage(false)
+                if (onClose) {
                     onClose()
-                }, 2000)
-            }
+                }
+            }, 2000)
         } catch (error) {
             console.error(
                 'Error al actualizar información cardiopulmunar:',
@@ -63,20 +52,45 @@ export default function ModalCardiopulmonar({
         }
     }
 
+    useEffect(() => {
+        if (isOpen && examenData) {
+            const tieneObservacion =
+                examenData.cardio_pulmunar !== undefined &&
+                examenData.cardio_pulmunar !== null
+            setValue(
+                'observacion',
+                tieneObservacion ? String(examenData.cardio_pulmunar) : '',
+            )
+            setExisteRegistro(tieneObservacion)
+        }
+    }, [isOpen, examenData, setValue])
+
     return (
         <Dialog
             isOpen={isOpen}
-            onRequestClose={onRequestClose}
-            onClose={onClose}
+            onRequestClose={() => {
+                setShowMessage(false)
+                onRequestClose()
+            }}
+            onClose={() => {
+                setShowMessage(false)
+                onClose()
+            }}
         >
             <div className="flex flex-col h-full space-y-4">
-                <h5 className="text-lg font-bold">Cardiopulmonar</h5>
+                <h5 className="text-lg font-bold">Cardio pulmonar</h5>
 
                 {showMessage && result && (
                     <div
                         className={`p-2 rounded ${result.success ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
                     >
                         {result.message}
+                    </div>
+                )}
+
+                {existeRegistro && (
+                    <div className="bg-yellow-100 text-yellow-800 p-2 rounded">
+                        Este registro ya existe y no puede ser modificado.
                     </div>
                 )}
 
@@ -103,13 +117,14 @@ export default function ModalCardiopulmonar({
                         className="col-span-3"
                         errors={errors}
                         value=""
+                        disabled={existeRegistro}
                     />
 
                     <div className="flex justify-end">
                         <Button
                             type="submit"
                             className="ml-2"
-                            disabled={isLoading || !idExamenFisico}
+                            disabled={isLoading || !idExamenFisico || existeRegistro}
                         >
                             {isLoading ? 'Guardando...' : 'Guardar'}
                         </Button>

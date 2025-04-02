@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui'
 import SectionTitle from '@/views/common/form/SectionTitle'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { FaUpload } from 'react-icons/fa'
 import ModalCardiopulmunar from './modals/ModalCardiopulmunar'
 import ModalAbdominal from './modals/ModalAbdominal'
@@ -9,8 +9,8 @@ import { useExamenFisico } from '@/hooks/useExamenFisico'
 export default function SeccionTwo() {
     const icon = <FaUpload />
 
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { idExamenFisico } = useExamenFisico() // Usar el contexto
-    console.log('ID del examen físico en SeccionTwo:', idExamenFisico)
 
     // Estados para cada modal
     const [Cardiopulmunar, setCardiopulmunar] = useState(false)
@@ -19,9 +19,26 @@ export default function SeccionTwo() {
     // Métodos para abrir y cerrar modales
     const openDialog = (setDialog) => setDialog(true)
     const closeDialog = (setDialog) => {
-        console.log('Modal closed')
         setDialog(false)
     }
+
+    const closeModal = () => {
+        setCardiopulmunar(false)
+        setAbdomen(false)
+    }
+
+        // Efecto para cerrar modal con ESC
+        useEffect(() => {
+        const handleEscapeKey = (e) => {
+            if (e.key === 'Escape') {
+                // Cerrar todos los modales abiertos
+                setCardiopulmunar(false)
+                setAbdomen(false)
+            }
+        }
+        window.addEventListener('keydown', handleEscapeKey)
+            return () => window.removeEventListener('keydown', handleEscapeKey)
+        }, [])
 
     return (
         <>
@@ -35,7 +52,7 @@ export default function SeccionTwo() {
                 className="m-2"
                 onClick={() => openDialog(setCardiopulmunar)}
             >
-                Cardio Pulmunar
+                Cardio Pulmonar
             </Button>
             <Button
                 variant="solid"
@@ -48,12 +65,12 @@ export default function SeccionTwo() {
 
             <ModalCardiopulmunar
                 isOpen={Cardiopulmunar}
-                onClose={() => closeDialog(setCardiopulmunar)}
+                onClose={closeModal}
                 onRequestClose={() => closeDialog(setCardiopulmunar)}
             ></ModalCardiopulmunar>
             <ModalAbdominal
                 isOpen={Abdomen}
-                onClose={() => closeDialog(setAbdomen)}
+                onClose={closeModal}
                 onRequestClose={() => closeDialog(setAbdomen)}
             ></ModalAbdominal>
         </>

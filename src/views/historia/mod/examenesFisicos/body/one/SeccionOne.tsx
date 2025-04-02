@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { FaUpload } from 'react-icons/fa'
 import ModalPerimetroCefalico from './modals/ModalPerimetroCefalico'
 import ModalAgudezaVisual from './modals/ModalAgudezaVisual'
@@ -30,9 +30,33 @@ function SeccionOne() {
     // Métodos para abrir y cerrar modales
     const openDialog = (setDialog) => setDialog(true)
     const closeDialog = (setDialog) => {
-        console.log('Modal closed')
         setDialog(false)
     }
+
+    // Función específica para cerrar el modal al insertar un registro
+    const closeModal = () => {
+        setDialogIsOpenAgudezaVisual(false)
+        setDialogIsOpenPerimetroCefalico(false)
+        setDialogIsOpenExamenORL(false)
+        setDialogIsOpenCaries(false)
+        setDialogIsOpenCuello(false)
+    }
+
+    // Efecto para cerrar modal con ESC
+    useEffect(() => {
+        const handleEscapeKey = (e) => {
+            if (e.key === 'Escape') {
+                // Cerrar todos los modales abiertos
+                setDialogIsOpenPerimetroCefalico(false)
+                setDialogIsOpenAgudezaVisual(false)
+                setDialogIsOpenExamenORL(false)
+                setDialogIsOpenCaries(false)
+                setDialogIsOpenCuello(false)
+            }
+        }
+        window.addEventListener('keydown', handleEscapeKey)
+        return () => window.removeEventListener('keydown', handleEscapeKey)
+    }, [])
 
     return (
         <>
@@ -85,7 +109,7 @@ function SeccionOne() {
             {/* Modales */}
             <ModalPerimetroCefalico
                 isOpen={dialogIsOpenPerimetroCefalico}
-                onClose={() => closeDialog(setDialogIsOpenPerimetroCefalico)}
+                onClose={closeModal}
                 onRequestClose={() =>
                     closeDialog(setDialogIsOpenPerimetroCefalico)
                 }
@@ -93,25 +117,25 @@ function SeccionOne() {
 
             <ModalAgudezaVisual
                 isOpen={dialogIsOpenAgudezaVisual}
-                onClose={() => closeDialog(setDialogIsOpenAgudezaVisual)}
+                onClose={closeModal}
                 onRequestClose={() => closeDialog(setDialogIsOpenAgudezaVisual)}
             />
 
             <ModalExamenORL
                 isOpen={dialogIsOpenExamenORL}
-                onClose={() => closeDialog(setDialogIsOpenExamenORL)}
+                onClose={closeModal}
                 onRequestClose={() => closeDialog(setDialogIsOpenExamenORL)}
             />
 
             <ModalCaries
                 isOpen={dialogIsOpenCaries}
-                onClose={() => closeDialog(setDialogIsOpenCaries)}
+                onClose={closeModal}
                 onRequestClose={() => closeDialog(setDialogIsOpenCaries)}
             />
 
             <ModalCuello
                 isOpen={dialogIsOpenCuello}
-                onClose={() => closeDialog(setDialogIsOpenCuello)}
+                onClose={closeModal}
                 onRequestClose={() => closeDialog(setDialogIsOpenCuello)}
             />
         </>

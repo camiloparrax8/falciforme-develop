@@ -37,8 +37,6 @@ export const crearExamenFisico = async (token, formData) => {
             id_user_create: formData.id_user_create,
         };
 
-        console.log("Datos enviados al backend:", data);
-
         const result = await axiosInstance.post(`/historia-clinica/examenes-fisicos/`, data, {
             headers: { Authorization: token },
         });

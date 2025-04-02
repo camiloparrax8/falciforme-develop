@@ -5,8 +5,11 @@ import Button from '@/components/ui/Button'
 import { defaultValuesPC } from '../../one/modals/defaultValuesSeccionOne'
 import validationSeccionOne from '../../../../../../../validation/validationSeccionOne'
 import { useExamenFisicoUpdate } from '@/hooks/useExamenFisicoUpdate'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useExamenFisico } from '@/hooks/useExamenFisico'
+import { useToken } from '@/store/authStore'
+import { useParams } from 'react-router-dom'
+import { consultarExamenFisicoPorPaciente } from '@/customService/services/examenesFisicosService'
 
 interface PerimetroCefalicoData {
     perimetro_cefalico: string
@@ -21,46 +24,83 @@ export default function ModalPerimetroCefalico({
         control,
         handleSubmit,
         formState: { errors },
+        setValue,
     } = useForm<PerimetroCefalicoData>({ defaultValues: defaultValuesPC })
 
     const { updatePerimetroCefalico, isLoading, result } =
         useExamenFisicoUpdate()
-    const { idExamenFisico } = useExamenFisico()
+    const { idExamenFisico, examenData, setExamenData } = useExamenFisico()
     const [showMessage, setShowMessage] = useState(false)
+    const [existeRegistro, setExisteRegistro] = useState(false)
+    const { token } = useToken()
+    const { id_paciente } = useParams()
+
+    const verificarExistenciaRegistro = useCallback(() => {
+        if (!examenData) return false
+
+        return (
+            examenData.perimetro_cefalico !== undefined &&
+            examenData.perimetro_cefalico !== null
+        )
+    }, [examenData])
+
+    const actualizarContexto = useCallback(async () => {
+        if (!id_paciente || !token) return
+
+        try {
+            const resultado = await consultarExamenFisicoPorPaciente(
+                token,
+                id_paciente,
+            )
+
+            const examenActualizado = resultado?.data || resultado
+
+            if (examenActualizado && examenActualizado.id) {
+                setExamenData(examenActualizado)
+            }
+        } catch (error) {
+            console.error('Error al actualizar datos del examen:', error)
+        }
+    }, [id_paciente, token, setExamenData])
 
     useEffect(() => {
-        console.log(
-            'ID del examen físico en ModalPerimetroCefalico:',
-            idExamenFisico,
-        )
-    }, [idExamenFisico])
+        if (isOpen) {
+            actualizarContexto()
+        }
+    }, [isOpen, actualizarContexto])
 
     const onSubmit = async (data: PerimetroCefalicoData) => {
         try {
-            console.log(
-                'Enviando actualización con ID de examen físico:',
-                idExamenFisico,
-            )
-            console.log('Datos del formulario:', data)
-
-            // IMPORTANTE: el hook espera "perimetroCefalico" en camelCase
             await updatePerimetroCefalico({
                 perimetroCefalico: data.perimetro_cefalico,
             })
             setShowMessage(true)
 
-            // Cerrar automáticamente después de 2 segundos en caso de éxito
-            if (result?.success) {
-                setTimeout(() => {
-                    setShowMessage(false)
+            // Actualizar el contexto inmediatamente
+            await actualizarContexto()
+
+            setTimeout(() => {
+                setShowMessage(false)
+                if (onClose) {
                     onClose()
-                }, 2000)
-            }
+                }
+            }, 1000)
         } catch (error) {
             console.error('Error al actualizar perímetro cefálico:', error)
             setShowMessage(true)
         }
     }
+
+    useEffect(() => {
+        if (isOpen && examenData) {
+            const tieneRegistro = verificarExistenciaRegistro()
+            setValue(
+                'perimetro_cefalico',
+                tieneRegistro ? String(examenData.perimetro_cefalico) : '',
+            )
+            setExisteRegistro(tieneRegistro)
+        }
+    }, [isOpen, examenData, setValue, verificarExistenciaRegistro])
 
     return (
         <Dialog
@@ -76,6 +116,12 @@ export default function ModalPerimetroCefalico({
                         className={`p-2 rounded ${result.success ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
                     >
                         {result.message}
+                    </div>
+                )}
+
+                {existeRegistro && (
+                    <div className="bg-yellow-100 text-yellow-800 p-2 rounded">
+                        Este registro ya existe y no puede ser modificado.
                     </div>
                 )}
 
@@ -102,13 +148,16 @@ export default function ModalPerimetroCefalico({
                         className="col-span-3"
                         errors={errors}
                         value=""
+                        disabled={existeRegistro}
                     />
 
                     <div className="flex justify-end">
                         <Button
                             type="submit"
                             className="ml-2"
-                            disabled={isLoading || !idExamenFisico}
+                            disabled={
+                                isLoading || !idExamenFisico || existeRegistro
+                            }
                         >
                             {isLoading ? 'Guardando...' : 'Guardar'}
                         </Button>

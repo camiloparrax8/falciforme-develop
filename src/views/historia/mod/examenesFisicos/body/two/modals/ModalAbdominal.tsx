@@ -5,8 +5,11 @@ import Button from '@/components/ui/Button'
 import validationValuesSeccionTwo from '../../../../../../../validation/validationSeccionTwo'
 import { defaultValuesAbdominal } from '../../two/modals/defaultValuesSeccionTwo'
 import { useExamenFisicoUpdate } from '@/hooks/useExamenFisicoUpdate'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useExamenFisico } from '@/hooks/useExamenFisico'
+import { useToken } from '@/store/authStore'
+import { useParams } from 'react-router-dom'
+import { consultarExamenFisicoPorPaciente } from '@/customService/services/examenesFisicosService'
 
 interface AbdominalData {
     condicionesAbdominales: string[]
@@ -17,41 +20,93 @@ export default function ModalAbdominal({ isOpen, onClose, onRequestClose }) {
         control,
         handleSubmit,
         formState: { errors },
+        setValue,
     } = useForm<AbdominalData>({
         defaultValues: defaultValuesAbdominal,
     })
 
     const { updateAbdominal, isLoading, result } = useExamenFisicoUpdate()
-    const { idExamenFisico } = useExamenFisico()
+    const { idExamenFisico, examenData, setExamenData } = useExamenFisico()
     const [showMessage, setShowMessage] = useState(false)
+    const [existeRegistro, setExisteRegistro] = useState(false)
+    const { token } = useToken()
+    const { id_paciente } = useParams()
 
-    useEffect(() => {
-        console.log('ID del examen físico en ModalAbdominal:', idExamenFisico)
-    }, [idExamenFisico])
+    const verificarExistenciaRegistro = useCallback(() => {
+        if (!examenData) return false
+
+        return (
+            examenData.condicion_abdominal !== undefined &&
+            examenData.condicion_abdominal !== null &&
+            examenData.condicion_abdominal !== ''
+        )
+    }, [examenData])
+
+    const actualizarContexto = useCallback(async () => {
+        if (!id_paciente || !token) return
+
+        try {
+            const resultado = await consultarExamenFisicoPorPaciente(
+                token,
+                id_paciente,
+            )
+
+            const examenActualizado = resultado?.data || resultado
+
+            if (examenActualizado && examenActualizado.id) {
+                setExamenData(examenActualizado)
+            }
+        } catch (error) {
+            console.error('Error al actualizar datos del examen:', error)
+        }
+    }, [id_paciente, token, setExamenData])
 
     const onSubmit = async (data: AbdominalData) => {
         try {
-            console.log(
-                'Enviando actualización abdominal con ID de examen físico:',
-                idExamenFisico,
-            )
-            console.log('Datos del formulario:', data)
-
             await updateAbdominal(data)
             setShowMessage(true)
 
-            // Cerrar automáticamente después de 2 segundos en caso de éxito
-            if (result?.success) {
-                setTimeout(() => {
-                    setShowMessage(false)
+            await actualizarContexto()
+
+            setTimeout(() => {
+                setShowMessage(false)
+                if (onClose) {
                     onClose()
-                }, 2000)
-            }
+                }
+            }, 1000)
         } catch (error) {
             console.error('Error al actualizar información abdominal:', error)
             setShowMessage(true)
         }
     }
+
+    useEffect(() => {
+        if (isOpen) {
+            actualizarContexto()
+        }
+    }, [isOpen, actualizarContexto])
+
+    useEffect(() => {
+        if (isOpen && examenData) {
+            const tieneCondicion = verificarExistenciaRegistro()
+
+            if (
+                tieneCondicion &&
+                typeof examenData.condicion_abdominal === 'string'
+            ) {
+                const condiciones = examenData.condicion_abdominal
+                    .split(',')
+                    .map((item) => item.trim())
+                setValue('condicionesAbdominales', condiciones)
+            } else {
+                setValue('condicionesAbdominales', [])
+            }
+
+            setExisteRegistro(tieneCondicion)
+        } else {
+            setExisteRegistro(false)
+        }
+    }, [isOpen, examenData, setValue, verificarExistenciaRegistro])
 
     const opcionesAbdominal = [
         { value: 'esplenomegalia', label: 'Esplenomegalia' },
@@ -61,8 +116,14 @@ export default function ModalAbdominal({ isOpen, onClose, onRequestClose }) {
     return (
         <Dialog
             isOpen={isOpen}
-            onRequestClose={onRequestClose}
-            onClose={onClose}
+            onRequestClose={() => {
+                setShowMessage(false)
+                onRequestClose()
+            }}
+            onClose={() => {
+                setShowMessage(false)
+                onClose()
+            }}
         >
             <div className="flex flex-col h-full space-y-4">
                 <h5 className="text-lg font-bold">Examen Abdominal</h5>
@@ -72,6 +133,12 @@ export default function ModalAbdominal({ isOpen, onClose, onRequestClose }) {
                         className={`p-2 rounded ${result.success ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
                     >
                         {result.message}
+                    </div>
+                )}
+
+                {existeRegistro && (
+                    <div className="bg-yellow-100 text-yellow-800 p-2 rounded">
+                        Este registro ya existe y no puede ser modificado.
                     </div>
                 )}
 
@@ -101,13 +168,16 @@ export default function ModalAbdominal({ isOpen, onClose, onRequestClose }) {
                         }
                         defaultValue={[]}
                         errors={errors}
+                        isDisabled={existeRegistro}
                     />
 
                     <div className="flex justify-end">
                         <Button
                             type="submit"
                             className="ml-2"
-                            disabled={isLoading || !idExamenFisico}
+                            disabled={
+                                isLoading || !idExamenFisico || existeRegistro
+                            }
                         >
                             {isLoading ? 'Guardando...' : 'Guardar'}
                         </Button>

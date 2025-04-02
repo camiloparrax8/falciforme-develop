@@ -6,8 +6,11 @@ import Button from '@/components/ui/Button'
 import validationSeccionThree from '../../../../../../../validation/validationSeccionThree'
 import { defaultValuesExtremidades } from '../../three/modals/defaultValuesSeccionThree'
 import { useExamenFisicoUpdate } from '@/hooks/useExamenFisicoUpdate'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useExamenFisico } from '@/hooks/useExamenFisico'
+import { useToken } from '@/store/authStore'
+import { useParams } from 'react-router-dom'
+import { consultarExamenFisicoPorPaciente } from '@/customService/services/examenesFisicosService'
 
 interface ExtremidadesData {
     observacion: string
@@ -20,39 +23,90 @@ export default function ModalExtremidades({ isOpen, onClose, onRequestClose }) {
         control,
         handleSubmit,
         formState: { errors },
+        setValue,
     } = useForm<ExtremidadesData>({
         defaultValues: defaultValuesExtremidades,
     })
 
     const { updateExtremidades, isLoading, result } = useExamenFisicoUpdate()
-    const { idExamenFisico } = useExamenFisico()
+    const { idExamenFisico, examenData, setExamenData } = useExamenFisico()
     const [showMessage, setShowMessage] = useState(false)
+    const [existeRegistro, setExisteRegistro] = useState(false)
+    const { token } = useToken()
+    const { id_paciente } = useParams()
+
+    const verificarExistenciaRegistro = useCallback(() => {
+        if (!examenData) return false
+
+        const tieneObservacion =
+            examenData.extremidades_observacion !== undefined &&
+            examenData.extremidades_observacion !== null &&
+            examenData.extremidades_observacion !== ''
+
+        const tienePiel =
+            examenData.extremidades_estado_piel !== undefined &&
+            examenData.extremidades_estado_piel !== null &&
+            examenData.extremidades_estado_piel !== ''
+
+        const tieneEdemasUlceras =
+            Array.isArray(examenData.extremidades_condicion) &&
+            examenData.extremidades_condicion.length > 0
+
+        return tieneObservacion || tienePiel || tieneEdemasUlceras
+    }, [examenData])
+
+    const actualizarContexto = useCallback(async () => {
+        if (!id_paciente || !token) return
+
+        try {
+            const resultado = await consultarExamenFisicoPorPaciente(
+                token,
+                id_paciente,
+            )
+
+            const examenActualizado = resultado?.data || resultado
+
+            if (examenActualizado && examenActualizado.id) {
+                setExamenData(examenActualizado)
+            }
+        } catch (error) {
+            console.error('Error al actualizar datos del examen:', error)
+        }
+    }, [id_paciente, token, setExamenData])
 
     useEffect(() => {
-        console.log(
-            'ID del examen físico en ModalExtremidades:',
-            idExamenFisico,
-        )
-    }, [idExamenFisico])
+        if (isOpen) {
+            actualizarContexto()
+        }
+    }, [isOpen, actualizarContexto])
+
+    useEffect(() => {
+        if (isOpen && examenData) {
+            const tieneObservacion = verificarExistenciaRegistro()
+            setValue(
+                'observacion',
+                tieneObservacion
+                    ? String(examenData.extremidades_observacion)
+                    : '',
+            )
+            setExisteRegistro(tieneObservacion)
+        }
+    }, [isOpen, examenData, setValue, verificarExistenciaRegistro])
 
     const onSubmit = async (data: ExtremidadesData) => {
         try {
-            console.log(
-                'Enviando actualización de extremidades con ID de examen físico:',
-                idExamenFisico,
-            )
-            console.log('Datos del formulario:', data)
-
             await updateExtremidades(data)
             setShowMessage(true)
 
-            // Cerrar automáticamente después de 2 segundos en caso de éxito
-            if (result?.success) {
-                setTimeout(() => {
-                    setShowMessage(false)
+            // Actualizar el contexto inmediatamente
+            await actualizarContexto()
+
+            setTimeout(() => {
+                setShowMessage(false)
+                if (onClose) {
                     onClose()
-                }, 2000)
-            }
+                }
+            }, 1000)
         } catch (error) {
             console.error(
                 'Error al actualizar información de extremidades:',
@@ -70,8 +124,14 @@ export default function ModalExtremidades({ isOpen, onClose, onRequestClose }) {
     return (
         <Dialog
             isOpen={isOpen}
-            onRequestClose={onRequestClose}
-            onClose={onClose}
+            onRequestClose={() => {
+                setShowMessage(false)
+                onRequestClose()
+            }}
+            onClose={() => {
+                setShowMessage(false)
+                onClose()
+            }}
         >
             <div className="flex flex-col h-full space-y-4">
                 <h5 className="text-lg font-bold">Extremidades</h5>
@@ -81,6 +141,12 @@ export default function ModalExtremidades({ isOpen, onClose, onRequestClose }) {
                         className={`p-2 rounded ${result.success ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
                     >
                         {result.message}
+                    </div>
+                )}
+
+                {existeRegistro && (
+                    <div className="bg-yellow-100 text-yellow-800 p-2 rounded">
+                        Este registro ya existe y no puede ser modificado.
                     </div>
                 )}
 
@@ -107,6 +173,7 @@ export default function ModalExtremidades({ isOpen, onClose, onRequestClose }) {
                         errors={errors}
                         className="col-span-3"
                         value=""
+                        disabled={existeRegistro}
                     />
 
                     <InputForm
@@ -118,6 +185,7 @@ export default function ModalExtremidades({ isOpen, onClose, onRequestClose }) {
                         errors={errors}
                         className="col-span-3"
                         value=""
+                        disabled={existeRegistro}
                     />
 
                     <SelectMultiple
@@ -130,13 +198,16 @@ export default function ModalExtremidades({ isOpen, onClose, onRequestClose }) {
                         validation={validationSeccionThree.edemasUlceras}
                         defaultValue={[]}
                         errors={errors}
+                        isDisabled={existeRegistro}
                     />
 
                     <div className="flex justify-end">
                         <Button
                             type="submit"
                             className="ml-2"
-                            disabled={isLoading || !idExamenFisico}
+                            disabled={
+                                isLoading || !idExamenFisico || existeRegistro
+                            }
                         >
                             {isLoading ? 'Guardando...' : 'Guardar'}
                         </Button>

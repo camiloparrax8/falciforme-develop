@@ -5,8 +5,11 @@ import Button from '@/components/ui/Button'
 import validationSeccionOne from '../../../../../../../validation/validationSeccionOne'
 import { defaultValuesCaries } from '../../one/modals/defaultValuesSeccionOne'
 import { useExamenFisicoUpdate } from '@/hooks/useExamenFisicoUpdate'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useExamenFisico } from '@/hooks/useExamenFisico'
+import { useToken } from '@/store/authStore'
+import { useParams } from 'react-router-dom'
+import { consultarExamenFisicoPorPaciente } from '@/customService/services/examenesFisicosService'
 
 interface CariesData {
     caries: string
@@ -17,30 +20,87 @@ export default function ModalCaries({ isOpen, onClose, onRequestClose }) {
         control,
         handleSubmit,
         formState: { errors },
+        setValue,
     } = useForm<CariesData>({
         defaultValues: defaultValuesCaries,
     })
 
     const { updateCaries, isLoading, result } = useExamenFisicoUpdate()
-    const { idExamenFisico } = useExamenFisico()
+    const { idExamenFisico, examenData, setExamenData } = useExamenFisico()
     const [showMessage, setShowMessage] = useState(false)
+    const [existeRegistro, setExisteRegistro] = useState(false)
+    const { token } = useToken()
+    const { id_paciente } = useParams()
+
+    const verificarExistenciaRegistro = useCallback(() => {
+        if (!examenData) return false
+
+        return examenData.caries === 'Si' || examenData.caries === 'No'
+    }, [examenData])
+
+    const actualizarContexto = useCallback(async () => {
+        if (!id_paciente || !token) return
+
+        try {
+            const resultado = await consultarExamenFisicoPorPaciente(
+                token,
+                id_paciente,
+            )
+
+            const examenActualizado = resultado?.data || resultado
+
+            if (examenActualizado && examenActualizado.id) {
+                setExamenData(examenActualizado)
+            }
+        } catch (error) {
+            console.error('Error al actualizar datos del examen:', error)
+        }
+    }, [id_paciente, token, setExamenData])
 
     useEffect(() => {
-        console.log('ID del examen físico en ModalCaries:', idExamenFisico)
-    }, [idExamenFisico])
+        if (isOpen) {
+            actualizarContexto()
+        }
+    }, [isOpen, actualizarContexto])
+
+    useEffect(() => {
+        if (existeRegistro) {
+            return
+        }
+
+        if (isOpen && examenData) {
+            const tieneCaries = verificarExistenciaRegistro()
+
+            if (tieneCaries) {
+                setValue('caries', examenData.caries === true ? 'Si' : 'No')
+            }
+
+            setExisteRegistro(tieneCaries)
+        } else {
+            setExisteRegistro(false)
+        }
+    }, [
+        isOpen,
+        examenData,
+        setValue,
+        existeRegistro,
+        verificarExistenciaRegistro,
+    ])
 
     const onSubmit = async (data: CariesData) => {
         try {
             await updateCaries(data)
             setShowMessage(true)
+            setExisteRegistro(true)
 
-            // Cerrar automáticamente después de 2 segundos en caso de éxito
-            if (result?.success) {
-                setTimeout(() => {
-                    setShowMessage(false)
+            await actualizarContexto()
+
+            setTimeout(() => {
+                setShowMessage(false)
+                if (onClose) {
                     onClose()
-                }, 2000)
-            }
+                }
+            }, 1000)
         } catch (error) {
             console.error('Error al actualizar información de caries:', error)
             setShowMessage(true)
@@ -55,8 +115,14 @@ export default function ModalCaries({ isOpen, onClose, onRequestClose }) {
     return (
         <Dialog
             isOpen={isOpen}
-            onRequestClose={onRequestClose}
-            onClose={onClose}
+            onRequestClose={() => {
+                setShowMessage(false)
+                onRequestClose()
+            }}
+            onClose={() => {
+                setShowMessage(false)
+                onClose()
+            }}
         >
             <div className="flex flex-col h-full space-y-4">
                 <h5 className="text-lg font-bold">Caries</h5>
@@ -66,6 +132,12 @@ export default function ModalCaries({ isOpen, onClose, onRequestClose }) {
                         className={`p-2 rounded ${result.success ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
                     >
                         {result.message}
+                    </div>
+                )}
+
+                {existeRegistro && (
+                    <div className="bg-yellow-100 text-yellow-800 p-2 rounded">
+                        Este registro ya existe y no puede ser modificado.
                     </div>
                 )}
 
@@ -90,13 +162,16 @@ export default function ModalCaries({ isOpen, onClose, onRequestClose }) {
                         options={opcionesCaries}
                         validation={validationSeccionOne.caries}
                         errors={errors}
+                        disabled={!idExamenFisico || existeRegistro}
                     />
 
                     <div className="flex justify-end">
                         <Button
                             type="submit"
                             className="ml-2"
-                            disabled={isLoading}
+                            disabled={
+                                isLoading || !idExamenFisico || existeRegistro
+                            }
                         >
                             {isLoading ? 'Guardando...' : 'Guardar'}
                         </Button>

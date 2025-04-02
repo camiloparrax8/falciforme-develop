@@ -90,7 +90,8 @@ function SeccionOne() {
     }
 
     const tieneCaries = () => {
-        return examenData?.caries === true || examenData?.caries === false
+        // Ahora simplemente verificamos si el valor no es null ni undefined
+        return examenData?.caries !== null && examenData?.caries !== undefined
     }
 
     const tieneCuello = () => {

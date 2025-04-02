@@ -11,8 +11,6 @@ export const crearTransplanteProgenitores = async (token, formData) => {
             id_user_create: formData.id_user_create,
         };
 
-        console.log("Datos enviados al backend:", data);
-
         const result = await axiosInstance.post(`/historia-clinica/trasplantes-progenitores`, data, {
             headers: { Authorization: token },
         });
@@ -31,7 +29,6 @@ export const consultarTransplantesProgenitoresPorPaciente = async (token, idPaci
             throw new Error("ID de paciente no proporcionado");
         }
 
-        console.log(`Consultando trasplantes para el paciente ID: ${idPaciente}`);
 
         // Asegurar que el ID sea un número
         const idPacienteNumerico = parseInt(idPaciente);

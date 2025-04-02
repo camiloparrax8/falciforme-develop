@@ -45,7 +45,7 @@ export default function ModalPerimetroCefalico({
                 if (onClose) {
                     onClose()
                 }
-            }, 2000)
+            }, 1000)
         } catch (error) {
             console.error('Error al actualizar perímetro cefálico:', error)
             setShowMessage(true)

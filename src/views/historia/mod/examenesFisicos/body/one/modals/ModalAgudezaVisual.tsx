@@ -47,7 +47,7 @@ export default function ModalAgudezaVisual({
                 if (onClose) {
                     onClose()
                 }
-            }, 2000)
+            }, 1000)
         } catch (error) {
             console.error('Error al actualizar agudeza visual:', error)
             setShowMessage(true)

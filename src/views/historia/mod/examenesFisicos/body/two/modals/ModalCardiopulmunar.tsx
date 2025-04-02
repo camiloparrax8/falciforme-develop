@@ -42,7 +42,7 @@ export default function ModalCardiopulmonar({
                 if (onClose) {
                     onClose()
                 }
-            }, 2000)
+            }, 1000)
         } catch (error) {
             console.error(
                 'Error al actualizar información cardiopulmunar:',

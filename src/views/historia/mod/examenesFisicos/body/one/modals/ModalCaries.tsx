@@ -61,7 +61,7 @@ export default function ModalCaries({ isOpen, onClose, onRequestClose }) {
                 if (onClose) {
                     onClose()
                 }
-            }, 2000)
+            }, 1000)
         } catch (error) {
             console.error('Error al actualizar información de caries:', error)
             setShowMessage(true)

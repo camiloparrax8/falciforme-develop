@@ -105,5 +105,4 @@ export const MotivoOptions = [
     { value: ' Neumonía complicada', label: ' Neumonía complicada' },
     { value: 'Sepsis', label: 'Sepsis ' },
     { value: 'Evento cerebrovascular', label: 'Evento cerebrovascular' },
-    { value: 'Otro', label: 'Otro' },
 ];

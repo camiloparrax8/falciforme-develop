@@ -3,7 +3,7 @@ import { Dialog } from '@/components/ui'
 import InputForm from '@/views/common/form/InputForm'
 import SelectMultiple from '@/views/common/form/SelectMultiple'
 import Button from '@/components/ui/Button'
-import validationSeccionThree from '../../../../../../../validation/validationSeccionThree'
+import validationSeccionThree from '@/validation/validationSeccionThree'
 import { defaultValuesExtremidades } from '../../three/modals/defaultValuesSeccionThree'
 import { useExamenFisicoUpdate } from '@/hooks/useExamenFisicoUpdate'
 import { useState, useEffect, useCallback } from 'react'
@@ -83,13 +83,35 @@ export default function ModalExtremidades({ isOpen, onClose, onRequestClose }) {
     useEffect(() => {
         if (isOpen && examenData) {
             const tieneObservacion = verificarExistenciaRegistro()
+            const tienePiel = verificarExistenciaRegistro()
+            const tieneEdemasUlceras = verificarExistenciaRegistro()
+
+            if (
+                tieneEdemasUlceras &&
+                typeof examenData.extremidades_condicion === 'string'
+            ) {
+                const condiciones = examenData.extremidades_condicion
+                    .split(',')
+                    .map((item) => item.trim())
+                setValue('edemasUlceras', condiciones)
+            } else {
+                setValue('edemasUlceras', [])
+            }
             setValue(
                 'observacion',
                 tieneObservacion
                     ? String(examenData.extremidades_observacion)
                     : '',
             )
+            setValue(
+                'piel',
+                tienePiel
+                    ? String(examenData.extremidades_estado_piel)
+                    : '',
+            )
             setExisteRegistro(tieneObservacion)
+            setExisteRegistro(tienePiel)
+            setExisteRegistro(tieneEdemasUlceras)
         }
     }, [isOpen, examenData, setValue, verificarExistenciaRegistro])
 

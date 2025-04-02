@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui'
-import { FaUpload } from 'react-icons/fa'
+import { FaUpload, FaEye } from 'react-icons/fa'
 import SectionTitle from '@/views/common/form/SectionTitle'
 import { useState, useEffect } from 'react'
 import ModalExtremidades from './modals/ModalExtremidades'
@@ -8,9 +8,10 @@ import { useExamenFisico } from '@/hooks/useExamenFisico'
 
 function SeccionThree() {
     const icon = <FaUpload />
+    const iconEye = <FaEye />
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { idExamenFisico } = useExamenFisico()
+    const { idExamenFisico, examenData } = useExamenFisico()
 
     // Estados para cada modal
     const [tanner, setTanner] = useState(false)
@@ -41,6 +42,27 @@ function SeccionThree() {
             return () => window.removeEventListener('keydown', handleEscapeKey)
         }, [])
 
+        const tieneTanner = () => {
+            return (
+                examenData?.tanner !== undefined &&
+                examenData?.tanner !== null &&
+                examenData?.tanner !== ''
+            )
+        }
+
+        const tieneExtremidades = () => {
+            return (
+                (examenData?.extremidades_observacion !== undefined &&
+                examenData?.extremidades_observacion !== null &&
+                examenData?.extremidades_observacion !== '') ||
+                (examenData?.extremidades_estado_piel !== undefined &&
+                examenData?.extremidades_estado_piel !== null &&
+                examenData?.extremidades_estado_piel !== '') ||
+                (Array.isArray(examenData?.extremidades_condicion) &&
+                examenData?.extremidades_condicion.length > 0)
+            )
+        }
+
     return (
         <>
             <SectionTitle
@@ -49,22 +71,37 @@ function SeccionThree() {
                 }
                 className={'mt-3'}
             ></SectionTitle>
+            <div className="flex flex-wrap gap-3 mb-6">
             <Button
                 variant="solid"
-                icon={icon}
-                className="m-2"
+                icon={tieneTanner() ? iconEye : icon}
+                className={`px-4 py-2 ${
+                    tieneTanner()
+                        ? 'bg-green-500 hover:bg-green-600 text-white'
+                        : 'bg-blue-500 hover:bg-blue-600 text-white'
+                }`}
                 onClick={() => openDialog(setTanner)}
             >
-                Tanner (Desarrollo)
+                <span className="whitespace-nowrap">
+                    {tieneTanner() ? 'Ver Tanner' : 'Tanner (Desarrollo)'}
+                </span>
             </Button>
             <Button
                 variant="solid"
-                icon={icon}
-                className="m-2"
+                icon={tieneExtremidades() ? iconEye : icon}
+                className={`px-4 py-2 ${
+                    tieneExtremidades()
+                        ? 'bg-green-500 hover:bg-green-600 text-white'
+                        : 'bg-blue-500 hover:bg-blue-600 text-white'
+                }`}
                 onClick={() => openDialog(setExtremidades)}
             >
-                Extremidades
+                <span className="whitespace-nowrap">
+                    {tieneExtremidades() ? 'Ver Extremidades' : 'Extremidades'}
+                </span>
             </Button>
+            </div>
+
             <ModalExtremidades
                 isOpen={extremidades}
                 onClose={() => closeModal()}

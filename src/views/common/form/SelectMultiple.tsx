@@ -14,6 +14,7 @@ const SelectMultiple = ({
     className,
     label,
     isCreatable = false,
+    isDisabled = false,
 }) => {
     return (
         <div className={className}>
@@ -27,6 +28,7 @@ const SelectMultiple = ({
                     <Select
                         {...field}
                         isMulti
+                        isDisabled={isDisabled}
                         options={options}
                         placeholder={placeholder}
                         componentAs={isCreatable ? CreatableSelect : undefined}
@@ -35,41 +37,41 @@ const SelectMultiple = ({
                                 ? (inputValue) => `Crear "${inputValue}"`
                                 : undefined
                         }
-                        onChange={(selected) => {
-                            const selectedValues = selected
-                                ? selected.map((option) => {
-                                      if (option.__isNew__) {
-                                          return option.value
-                                      }
-                                      return option.value
-                                  })
-                                : []
-                            field.onChange(selectedValues)
-                        }}
                         value={
                             field.value
                                 ? field.value.map((value) => {
-                                      const existingOption = options.find(
-                                          (opt) => opt.value === value,
-                                      )
-                                      return (
-                                          existingOption || {
-                                              value: value,
-                                              label: value,
-                                          }
-                                      )
-                                  })
+                                    const existingOption = options.find(
+                                        (opt) => opt.value === value,
+                                    )
+                                    return (
+                                        existingOption || {
+                                            value: value,
+                                            label: value,
+                                        }
+                                    )
+                                })
                                 : []
                         }
                         getNewOptionData={
                             isCreatable
                                 ? (inputValue) => ({
-                                      value: inputValue,
-                                      label: inputValue,
-                                      __isNew__: true,
-                                  })
+                                    value: inputValue,
+                                    label: inputValue,
+                                    __isNew__: true,
+                                })
                                 : undefined
                         }
+                        onChange={(selected) => {
+                            const selectedValues = selected
+                                ? selected.map((option) => {
+                                    if (option.__isNew__) {
+                                        return option.value
+                                    }
+                                    return option.value
+                                })
+                                : []
+                            field.onChange(selectedValues)
+                        }}
                     />
                 )}
             />

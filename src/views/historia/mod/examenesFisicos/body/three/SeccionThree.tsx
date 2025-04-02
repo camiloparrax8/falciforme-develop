@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui'
 import { FaUpload } from 'react-icons/fa'
 import SectionTitle from '@/views/common/form/SectionTitle'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import ModalExtremidades from './modals/ModalExtremidades'
 import ModalTanner from './modals/ModalTanner'
 import { useExamenFisico } from '@/hooks/useExamenFisico'
@@ -9,8 +9,8 @@ import { useExamenFisico } from '@/hooks/useExamenFisico'
 function SeccionThree() {
     const icon = <FaUpload />
 
-    const { idExamenFisico } = useExamenFisico() // Usar el contexto
-    console.log('ID del examen físico en SeccionThree:', idExamenFisico)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { idExamenFisico } = useExamenFisico()
 
     // Estados para cada modal
     const [tanner, setTanner] = useState(false)
@@ -19,9 +19,27 @@ function SeccionThree() {
     // Métodos para abrir y cerrar modales
     const openDialog = (setDialog) => setDialog(true)
     const closeDialog = (setDialog) => {
-        console.log('Modal closed')
         setDialog(false)
     }
+
+        // Función específica para cerrar el modal al insertar un registro
+        const closeModal = () => {
+        setTanner(false)
+        setExtremidades(false)
+    }
+
+        // Efecto para cerrar modal con ESC
+        useEffect(() => {
+            const handleEscapeKey = (e) => {
+            if (e.key === 'Escape') {
+                // Cerrar todos los modales abiertos
+                setTanner(false)
+                setExtremidades(false)
+            }
+            }
+            window.addEventListener('keydown', handleEscapeKey)
+            return () => window.removeEventListener('keydown', handleEscapeKey)
+        }, [])
 
     return (
         <>
@@ -49,12 +67,12 @@ function SeccionThree() {
             </Button>
             <ModalExtremidades
                 isOpen={extremidades}
-                onClose={() => closeDialog(setExtremidades)}
+                onClose={() => closeModal()}
                 onRequestClose={() => closeDialog(setExtremidades)}
             ></ModalExtremidades>
             <ModalTanner
                 isOpen={tanner}
-                onClose={() => closeDialog(setTanner)}
+                onClose={() => closeModal()}
                 onRequestClose={() => closeDialog(setTanner)}
             ></ModalTanner>
         </>

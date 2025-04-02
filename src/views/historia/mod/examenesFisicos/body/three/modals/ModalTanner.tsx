@@ -17,36 +17,58 @@ export default function ModalTanner({ isOpen, onClose, onRequestClose }) {
         control,
         handleSubmit,
         formState: { errors },
+        setValue,
     } = useForm<TannerData>({
         defaultValues: defaultValuesTanner,
     })
 
     const { updateTanner, isLoading, result } = useExamenFisicoUpdate()
-    const { idExamenFisico } = useExamenFisico()
+    const { idExamenFisico, examenData } = useExamenFisico()
     const [showMessage, setShowMessage] = useState(false)
+    const [existeRegistro, setExisteRegistro] = useState(false)
+    const [yaSeGuardo, setYaSeGuardo] = useState(false)
 
     useEffect(() => {
-        console.log('ID del examen físico en ModalTanner:', idExamenFisico)
-    }, [idExamenFisico])
+        // Si ya se guardó anteriormente, mantener deshabilitado
+        if (yaSeGuardo) {
+            setExisteRegistro(true)
+            return
+        }
+
+        if (isOpen && examenData) {
+            // Verificar si ya existe un valor para estadio Tanner
+            const tieneTanner =
+                examenData.tanner !== undefined &&
+                examenData.tanner !== null &&
+                examenData.tanner !== ''
+
+            // Establecer el valor si existe
+            if (tieneTanner) {
+                setValue('estadioTanner', String(examenData.tanner))
+                setExisteRegistro(true)
+            } else {
+                setValue('estadioTanner', '')
+                setExisteRegistro(false)
+            }
+        } else {
+            setExisteRegistro(false)
+        }
+    }, [isOpen, examenData, setValue, yaSeGuardo])
 
     const onSubmit = async (data: TannerData) => {
         try {
-            console.log(
-                'Enviando actualización de Tanner con ID de examen físico:',
-                idExamenFisico,
-            )
-            console.log('Datos del formulario:', data)
-
             await updateTanner(data)
             setShowMessage(true)
+            setExisteRegistro(true)
+            setYaSeGuardo(true) // Marcar que ya se guardó
 
-            // Cerrar automáticamente después de 2 segundos en caso de éxito
-            if (result?.success) {
-                setTimeout(() => {
-                    setShowMessage(false)
+            // Cerrar automáticamente después de 2 segundos
+            setTimeout(() => {
+                setShowMessage(false)
+                if (onClose) {
                     onClose()
-                }, 2000)
-            }
+                }
+            }, 2000)
         } catch (error) {
             console.error('Error al actualizar estadio Tanner:', error)
             setShowMessage(true)
@@ -64,8 +86,14 @@ export default function ModalTanner({ isOpen, onClose, onRequestClose }) {
     return (
         <Dialog
             isOpen={isOpen}
-            onRequestClose={onRequestClose}
-            onClose={onClose}
+            onRequestClose={() => {
+                setShowMessage(false)
+                onRequestClose()
+            }}
+            onClose={() => {
+                setShowMessage(false)
+                onClose()
+            }}
         >
             <div className="flex flex-col h-full space-y-4">
                 <h5 className="text-lg font-bold">Estadio Tanner</h5>
@@ -75,6 +103,12 @@ export default function ModalTanner({ isOpen, onClose, onRequestClose }) {
                         className={`p-2 rounded ${result.success ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
                     >
                         {result.message}
+                    </div>
+                )}
+
+                {existeRegistro && (
+                    <div className="bg-yellow-100 text-yellow-800 p-2 rounded">
+                        Este registro ya existe y no puede ser modificado.
                     </div>
                 )}
 
@@ -101,13 +135,16 @@ export default function ModalTanner({ isOpen, onClose, onRequestClose }) {
                         options={opcionesTanner}
                         validation={validationSeccionThree.estadioTanner}
                         errors={errors}
+                        disabled={existeRegistro}
                     />
 
                     <div className="flex justify-end">
                         <Button
                             type="submit"
                             className="ml-2"
-                            disabled={isLoading || !idExamenFisico}
+                            disabled={
+                                isLoading || !idExamenFisico || existeRegistro
+                            }
                         >
                             {isLoading ? 'Guardando...' : 'Guardar'}
                         </Button>

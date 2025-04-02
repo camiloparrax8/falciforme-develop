@@ -20,39 +20,31 @@ export default function ModalExtremidades({ isOpen, onClose, onRequestClose }) {
         control,
         handleSubmit,
         formState: { errors },
+        setValue,
     } = useForm<ExtremidadesData>({
         defaultValues: defaultValuesExtremidades,
     })
 
     const { updateExtremidades, isLoading, result } = useExamenFisicoUpdate()
-    const { idExamenFisico } = useExamenFisico()
+    const { idExamenFisico, examenData } = useExamenFisico()
     const [showMessage, setShowMessage] = useState(false)
+    const [existeRegistro, setExisteRegistro] = useState(false)
 
-    useEffect(() => {
-        console.log(
-            'ID del examen físico en ModalExtremidades:',
-            idExamenFisico,
-        )
-    }, [idExamenFisico])
+
 
     const onSubmit = async (data: ExtremidadesData) => {
         try {
-            console.log(
-                'Enviando actualización de extremidades con ID de examen físico:',
-                idExamenFisico,
-            )
-            console.log('Datos del formulario:', data)
-
             await updateExtremidades(data)
             setShowMessage(true)
+            setExisteRegistro(true)
 
-            // Cerrar automáticamente después de 2 segundos en caso de éxito
-            if (result?.success) {
-                setTimeout(() => {
-                    setShowMessage(false)
+            // Cerrar automáticamente después de 2 segundos
+            setTimeout(() => {
+                setShowMessage(false)
+                if (onClose) {
                     onClose()
-                }, 2000)
-            }
+                }
+            }, 2000)
         } catch (error) {
             console.error(
                 'Error al actualizar información de extremidades:',
@@ -62,6 +54,55 @@ export default function ModalExtremidades({ isOpen, onClose, onRequestClose }) {
         }
     }
 
+    useEffect(() => {
+        if (isOpen && examenData) {
+            // Verificar usando los nombres correctos de propiedad
+            const tieneObservacion =
+                examenData.extremidades_observacion !== undefined &&
+                examenData.extremidades_observacion !== null &&
+                examenData.extremidades_observacion !== ''
+
+            const tienePiel =
+                examenData.extremidades_estado_piel !== undefined &&
+                examenData.extremidades_estado_piel !== null &&
+                examenData.extremidades_estado_piel !== ''
+
+            const tieneEdemasUlceras =
+                Array.isArray(examenData.extremidades_condicion) &&
+                examenData.extremidades_condicion.length > 0
+
+            // Si cualquiera de los campos tiene datos, consideramos que el registro existe
+            const tieneRegistro =
+                tieneObservacion || tienePiel || tieneEdemasUlceras
+
+            // Establecer los valores de los campos
+            if (tieneObservacion) {
+                setValue(
+                    'observacion',
+                    String(examenData.extremidades_observacion),
+                )
+            }
+
+            if (tienePiel) {
+                setValue('piel', String(examenData.extremidades_estado_piel))
+            }
+
+            if (tieneEdemasUlceras) {
+                setValue(
+                    'edemasUlceras',
+                    tieneEdemasUlceras &&
+                        typeof examenData.extremidades_condicion === 'string'
+                        ? [examenData.extremidades_condicion]
+                        : [],
+                )
+            }
+
+            setExisteRegistro(tieneRegistro)
+        } else {
+            setExisteRegistro(false)
+        }
+    }, [isOpen, examenData, setValue])
+
     const opcionesExtremidades = [
         { value: 'edemas', label: 'Edemas' },
         { value: 'ulceras', label: 'Úlceras' },
@@ -70,8 +111,14 @@ export default function ModalExtremidades({ isOpen, onClose, onRequestClose }) {
     return (
         <Dialog
             isOpen={isOpen}
-            onRequestClose={onRequestClose}
-            onClose={onClose}
+            onRequestClose={() => {
+                setShowMessage(false)
+                onRequestClose()
+            }}
+            onClose={() => {
+                setShowMessage(false)
+                onClose()
+            }}
         >
             <div className="flex flex-col h-full space-y-4">
                 <h5 className="text-lg font-bold">Extremidades</h5>
@@ -81,6 +128,12 @@ export default function ModalExtremidades({ isOpen, onClose, onRequestClose }) {
                         className={`p-2 rounded ${result.success ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
                     >
                         {result.message}
+                    </div>
+                )}
+
+                {existeRegistro && (
+                    <div className="bg-yellow-100 text-yellow-800 p-2 rounded">
+                        Este registro ya existe y no puede ser modificado.
                     </div>
                 )}
 
@@ -107,6 +160,7 @@ export default function ModalExtremidades({ isOpen, onClose, onRequestClose }) {
                         errors={errors}
                         className="col-span-3"
                         value=""
+                        disabled={existeRegistro}
                     />
 
                     <InputForm
@@ -118,6 +172,7 @@ export default function ModalExtremidades({ isOpen, onClose, onRequestClose }) {
                         errors={errors}
                         className="col-span-3"
                         value=""
+                        disabled={existeRegistro}
                     />
 
                     <SelectMultiple
@@ -130,13 +185,16 @@ export default function ModalExtremidades({ isOpen, onClose, onRequestClose }) {
                         validation={validationSeccionThree.edemasUlceras}
                         defaultValue={[]}
                         errors={errors}
+                        isDisabled={existeRegistro}
                     />
 
                     <div className="flex justify-end">
                         <Button
                             type="submit"
                             className="ml-2"
-                            disabled={isLoading || !idExamenFisico}
+                            disabled={
+                                isLoading || !idExamenFisico || existeRegistro
+                            }
                         >
                             {isLoading ? 'Guardando...' : 'Guardar'}
                         </Button>

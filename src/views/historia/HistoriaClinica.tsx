@@ -8,6 +8,7 @@ import { buscarPacienteById } from '@/customService/services/pacienteService'
 import { consultarExamenFisicoPorPaciente } from '@/customService/services/examenesFisicosService'
 import { consultarTransplantesProgenitoresPorPaciente } from '@/customService/services/transplantesProgenitoresService'
 import { obtenerComplicacionAgudaPorPaciente } from '@/customService/services/complicacionAgudaService'
+import { obtenerLaboratoriosPorPaciente } from '@/customService/services/laboratorioService'
 import { useToken } from '@/store/authStore'
 import SectionTitle from '../common/form/SectionTitle'
 
@@ -47,7 +48,7 @@ const HistoriaClinica = () => {
         }
     }, [id, setPaciente, token])
 
-    // Efecto para verificar el estado del examen físico y trasplante de progenitores
+    // Efecto para verificar los estados de los módulos
     useEffect(() => {
         const verificarEstadoModulos = async () => {
             if (!id || !token) return
@@ -80,7 +81,7 @@ const HistoriaClinica = () => {
                         (Array.isArray(respuestaExamen) &&
                             respuestaExamen.length > 0))
 
-                // 3. Verificar si existe una complicación aguda para este paciente
+                // 2. Verificar si existe una complicación aguda para este paciente
                 const respuestaComplicacion =
                     await obtenerComplicacionAgudaPorPaciente(token, id)
 
@@ -110,6 +111,20 @@ const HistoriaClinica = () => {
                             respuestaTrasplante.data.length > 0 &&
                             respuestaTrasplante.data[0].id))
 
+                // 5. Verificar si existe un laboratorio para este paciente
+                const respuestaLaboratorio =
+                    await obtenerLaboratoriosPorPaciente(token, id)
+
+                // Verificación para laboratorios
+                const laboratorioExiste =
+                    respuestaLaboratorio &&
+                    respuestaLaboratorio.status === 'success' &&
+                    respuestaLaboratorio.data &&
+                    (respuestaLaboratorio.data.id ||
+                        (Array.isArray(respuestaLaboratorio.data) &&
+                            respuestaLaboratorio.data.length > 0 &&
+                            respuestaLaboratorio.data[0].id))
+
                 // Actualizar los módulos con el estado correcto
                 const modulosActualizados = nuevosModulos.map((modulo) => {
                     if (modulo.id === 1) {
@@ -129,6 +144,12 @@ const HistoriaClinica = () => {
                         return {
                             ...modulo,
                             estado: trasplanteExiste ? 1 : 0,
+                        }
+                    } else if (modulo.id === 5) {
+                        // Módulo de Laboratorios (id: 5)
+                        return {
+                            ...modulo,
+                            estado: laboratorioExiste ? 1 : 0,
                         }
                     }
                     return modulo

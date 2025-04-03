@@ -6,14 +6,12 @@ import FormModalLaboratorios from '../laboratorios/FormModalLaboratorios'
 import { RiStickyNoteAddFill } from 'react-icons/ri'
 import { useToken, useSessionUser } from '@/store/authStore'
 import { useParams } from 'react-router-dom'
-import { obtenerLaboratoriosPorPaciente } from '@/customService/services/laboratorioService'
+import {
+    obtenerLaboratoriosPorPaciente,
+    eliminarLogicamenteLaboratorio,
+} from '@/customService/services/laboratorioService'
 import Alert from '@/components/ui/Alert'
-import { Table } from '@/components/ui'
-import Tr from '@/components/ui/Table/Tr'
-import TBody from '@/components/ui/Table/TBody'
-import Td from '@/components/ui/Table/Td'
-import Th from '@/components/ui/Table/Th'
-import THead from '@/components/ui/Table/THead'
+import TableCustom from '@/views/common/TableCustom'
 
 function FormLaboratorios() {
     const { token } = useToken()
@@ -28,6 +26,18 @@ function FormLaboratorios() {
     const [mostrarMensaje, setMostrarMensaje] = useState(true)
     const [laboratorios, setLaboratorios] = useState([])
 
+    const header = [
+        'Registro',
+        'Fecha',
+        'Hemoglobina',
+        'Hematíes',
+        'Hematocritos',
+        'MCV',
+        'MCH',
+        'MCHC',
+        'RDW',
+    ]
+
     const cargarLaboratorios = useCallback(async () => {
         try {
             setLoading(true)
@@ -38,16 +48,22 @@ function FormLaboratorios() {
 
             if (resultado.status === 'success' && resultado.data) {
                 const datosFormateados = Array.isArray(resultado.data)
-                    ? resultado.data.map((lab) => ({
-                          Fecha: new Date(lab.created_at).toLocaleDateString(),
-                          Hematíes: lab.hematies,
-                          Hematocritos: lab.hematocritos,
-                          MCH: lab.mch,
-                          RDW: lab.rdw,
-                          Hemoglobina: lab.hemoglobina,
-                          MCV: lab.mcv,
-                          MCHC: lab.mchc,
-                      }))
+                    ? resultado.data
+                          .filter((lab) => !lab.is_deleted)
+                          .map((lab, index) => ({
+                              id: lab.id,
+                              Registro: index + 1,
+                              Fecha: new Date(
+                                  lab.created_at,
+                              ).toLocaleDateString(),
+                              Hemoglobina: `${lab.hemoglobina} g/dL`,
+                              Hematíes: `${lab.hematies} millones/μL`,
+                              Hematocritos: `${lab.hematocritos} %`,
+                              MCV: `${lab.mcv} fL`,
+                              MCH: `${lab.mch} pg`,
+                              MCHC: `${lab.mchc} g/dL`,
+                              RDW: `${lab.rdw} %`,
+                          }))
                     : []
                 setLaboratorios(datosFormateados)
             } else {
@@ -97,6 +113,41 @@ function FormLaboratorios() {
         setMostrarMensaje(false)
     }
 
+    const handleEliminarLaboratorio = async (laboratorio) => {
+        try {
+            setLoading(true)
+            const resultado = await eliminarLogicamenteLaboratorio(
+                token,
+                laboratorio.id,
+            )
+
+            if (resultado.status === 'success') {
+                await cargarLaboratorios()
+                setMensaje({
+                    tipo: 'success',
+                    texto: 'Laboratorio eliminado correctamente',
+                })
+                setMostrarMensaje(true)
+            } else {
+                setMensaje({
+                    tipo: 'error',
+                    texto:
+                        resultado.message || 'Error al eliminar el laboratorio',
+                })
+                setMostrarMensaje(true)
+            }
+        } catch (error) {
+            console.error('Error al eliminar laboratorio:', error)
+            setMensaje({
+                tipo: 'error',
+                texto: 'Error al eliminar el laboratorio',
+            })
+            setMostrarMensaje(true)
+        } finally {
+            setLoading(false)
+        }
+    }
+
     return (
         <>
             <SectionTitle
@@ -136,34 +187,13 @@ function FormLaboratorios() {
                 <div className="p-4 text-center">Cargando laboratorios...</div>
             ) : laboratorios.length > 0 ? (
                 <div className="mt-8 mb-8 p-4 border border-gray-200 rounded-lg">
-                    <Table>
-                        <THead>
-                            <Tr>
-                                <Th>Fecha</Th>
-                                <Th>Hemoglobina</Th>
-                                <Th>Hematocritos</Th>
-                                <Th>MCH</Th>
-                                <Th>RDW</Th>
-                                <Th>Hematíes</Th>
-                                <Th>MCV</Th>
-                                <Th>MCHC</Th>
-                            </Tr>
-                        </THead>
-                        <TBody>
-                            {laboratorios.map((lab, index) => (
-                                <Tr key={index}>
-                                    <Td>{lab.Fecha}</Td>
-                                    <Td>{lab.Hemoglobina} g/dL</Td>
-                                    <Td>{lab.Hematocritos}%</Td>
-                                    <Td>{lab.MCH} pg</Td>
-                                    <Td>{lab.RDW}%</Td>
-                                    <Td>{lab.Hematíes} millones/μL</Td>
-                                    <Td>{lab.MCV} fL</Td>
-                                    <Td>{lab.MCHC} g/dL</Td>
-                                </Tr>
-                            ))}
-                        </TBody>
-                    </Table>
+                    <TableCustom
+                        data={laboratorios}
+                        header={header}
+                        className="w-full"
+                        showDeleteOption={true}
+                        onDelete={handleEliminarLaboratorio}
+                    />
                 </div>
             ) : (
                 <div className="p-4 text-center text-gray-500">

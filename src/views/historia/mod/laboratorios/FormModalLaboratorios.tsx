@@ -5,6 +5,7 @@ import { crearLaboratorio } from '@/customService/services/laboratorioService'
 import { useToken } from '@/store/authStore'
 import { useState } from 'react'
 import validationLaboratorios from '@/validation/validationLaboratorios'
+import defaultValuesLaboratorios from '@/views/historia/mod/laboratorios/defaultValuesLaboratorios'
 
 interface LaboratorioFormData {
     hemoglobina: string
@@ -36,15 +37,7 @@ function FormModalLaboratorios({
         handleSubmit,
         formState: { errors },
     } = useForm<LaboratorioFormData>({
-        defaultValues: {
-            hemoglobina: '',
-            hematies: '',
-            hematocritos: '',
-            mcv: '',
-            mch: '',
-            mchc: '',
-            rdw: '',
-        },
+        defaultValues: defaultValuesLaboratorios,
     })
 
     const onSubmit = async (data: LaboratorioFormData) => {

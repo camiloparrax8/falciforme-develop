@@ -1,8 +1,8 @@
 import { useParams } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { AdaptiveCard, Container } from '@/components/shared'
-import CardHC from '../common/historia/CardHc'
-import { modulos } from './modulos'
+import CardHC from '@/views/common/historia/CardHc'
+import { modulos } from '@/views/historia/modulos'
 import { usePatient, PatientProvider } from '@/context/PatientContext'
 import { buscarPacienteById } from '@/customService/services/pacienteService'
 import { consultarExamenFisicoPorPaciente } from '@/customService/services/examenesFisicosService'
@@ -10,7 +10,7 @@ import { consultarTransplantesProgenitoresPorPaciente } from '@/customService/se
 import { obtenerComplicacionAgudaPorPaciente } from '@/customService/services/complicacionAgudaService'
 import { obtenerLaboratoriosPorPaciente } from '@/customService/services/laboratorioService'
 import { useToken } from '@/store/authStore'
-import SectionTitle from '../common/form/SectionTitle'
+import SectionTitle from '@/views/common/form/SectionTitle'
 
 const HistoriaClinicaWrapper = () => {
     return (

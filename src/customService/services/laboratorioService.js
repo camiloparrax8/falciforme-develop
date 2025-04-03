@@ -1,4 +1,4 @@
-import axiosInstance from "../adapters/axiosInstance";
+import axiosInstance from "@/customService/adapters/axiosInstance";
 
 export const crearLaboratorio = async (token, formData) => {
     try {
@@ -84,4 +84,27 @@ export const obtenerLaboratoriosPorPaciente = async (token, idPaciente) => {
             data: null
         };
     }
-}; 
+};
+
+export const eliminarLogicamenteLaboratorio = async (token, idLaboratorio) => {
+    try {
+        const response = await axiosInstance.put(
+            `/historia-clinica/laboratorios/${idLaboratorio}`,
+            { is_deleted: true },
+            {
+                headers: {
+                    Authorization: token,
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+
+        return response.data;
+    } catch (error) {
+        console.error('Error al eliminar laboratorio:', error);
+        return {
+            status: 'error',
+            message: error.response?.data?.message || 'Error al eliminar laboratorio',
+        };
+    }
+};

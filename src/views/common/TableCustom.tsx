@@ -1,12 +1,18 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState } from 'react'
 import Table from '@/components/ui/Table'
 import Button from '@/components/ui/Button'
 import Dialog from '@/components/ui/Dialog'
 
-
 const { Tr, Th, Td, THead, TBody } = Table
 
-const TableCustom = ({ data, header, className}) => {
+const TableCustom = ({
+    data,
+    header,
+    className,
+    showDeleteOption = true,
+    onDelete = null,
+}) => {
     const [dialogIsOpenDelete, setIsOpenDelete] = useState(false)
     const [selectedRow, setSelectedRow] = useState(null)
 
@@ -19,20 +25,22 @@ const TableCustom = ({ data, header, className}) => {
         setIsOpenDelete(false)
     }
 
-    const onDialogOkDelete = (id) => {
-        alert(id)
+    const onDialogOkDelete = async (id) => {
+        if (onDelete && typeof onDelete === 'function') {
+            await onDelete(selectedRow)
+        }
         setIsOpenDelete(false)
     }
 
     return (
-        <div className = {className}>
+        <div className={className}>
             <Table compact>
                 <THead>
                     <Tr>
                         {header.map((col, index) => (
                             <Th key={index}>{col}</Th>
                         ))}
-                        <Th>Opciones</Th>
+                        {showDeleteOption && <Th>Opciones</Th>}
                     </Tr>
                 </THead>
                 <TBody>
@@ -41,48 +49,54 @@ const TableCustom = ({ data, header, className}) => {
                             {header.map((col, colIndex) => (
                                 <Td key={colIndex}>{row[col]}</Td>
                             ))}
-                            <Td>
-                                <Button
-                                    variant="solid"
-                                    onClick={() => openDialogDelete(row)}
-                                >
-                                    Eliminar
-                                </Button>
-                            </Td>
+                            {showDeleteOption && (
+                                <Td>
+                                    <Button
+                                        variant="solid"
+                                        onClick={() => openDialogDelete(row)}
+                                    >
+                                        Eliminar
+                                    </Button>
+                                </Td>
+                            )}
                         </Tr>
                     ))}
                 </TBody>
             </Table>
 
-            <Dialog
-                isOpen={dialogIsOpenDelete}
-                onClose={onDialogCloseDelete}
-                onRequestClose={onDialogCloseDelete}
-            >
-                <h5 className="mb-4">Confirmar Eliminación</h5>
-                {selectedRow && (
-                    <p>
-                        ¿Estás seguro de que deseas eliminar el registro con la
-                        siguiente información?
-                        <br />
-                        <strong>ID:</strong> {selectedRow.id}
-                        <br />
-                        <strong>Nombre:</strong> {selectedRow.Nombre}
-                    </p>
-                )}
-                <div className="text-right mt-6">
-                    <Button
-                        className="ltr:mr-2 rtl:ml-2"
-                        variant="plain"
-                        onClick={onDialogCloseDelete}
-                    >
-                        Cancelar
-                    </Button>
-                    <Button variant="solid" onClick={() => onDialogOkDelete(selectedRow.id)}>
-                        Eliminar
-                    </Button>
-                </div>
-            </Dialog>
+            {showDeleteOption && (
+                <Dialog
+                    isOpen={dialogIsOpenDelete}
+                    onClose={onDialogCloseDelete}
+                    onRequestClose={onDialogCloseDelete}
+                >
+                    <h5 className="mb-4">Confirmar Eliminación</h5>
+                    {selectedRow && (
+                        <p>
+                            ¿Estás seguro de que deseas eliminar el registro con
+                            la siguiente información?
+                            <br />
+                            <strong>Registro:</strong> {selectedRow.Registro}
+                            <br />
+                        </p>
+                    )}
+                    <div className="text-right mt-6">
+                        <Button
+                            className="ltr:mr-2 rtl:ml-2"
+                            variant="plain"
+                            onClick={onDialogCloseDelete}
+                        >
+                            Cancelar
+                        </Button>
+                        <Button
+                            variant="solid"
+                            onClick={() => onDialogOkDelete(selectedRow.id)}
+                        >
+                            Eliminar
+                        </Button>
+                    </div>
+                </Dialog>
+            )}
         </div>
     )
 }

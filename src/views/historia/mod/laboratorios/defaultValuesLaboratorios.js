@@ -1,12 +1,11 @@
 const defaultValuesLaboratorios = {
-    hematies: '',
-    hemoglobina: '',
-    hematocrito: '',
-    mcv: '',
-    mch: '',
-    mchc: '',
-    rdw: '',
-  };
-  
-  export default defaultValuesLaboratorios;
-  
+  hematies: '',
+  hemoglobina: '',
+  hematocritos: '',
+  mcv: '',
+  mch: '',
+  mchc: '',
+  rdw: '',
+};
+
+export default defaultValuesLaboratorios;

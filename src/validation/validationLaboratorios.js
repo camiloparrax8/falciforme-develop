@@ -2,7 +2,7 @@ const validationLaboratorios = {
     hematies: {
         required: 'El número de hematíes es obligatorio',
         pattern: {
-            value: /^[0-9]+(\.[0-9]{1,2})?$/, // Para valores numéricos, con hasta 2 decimales
+            value: /^[0-9]+(\.[0-9]{1,2})?$/,
             message: 'El valor debe ser un número válido',
         },
         min: {
@@ -11,25 +11,25 @@ const validationLaboratorios = {
         },
     },
     hemoglobina: {
-        required: 'La hemoglobina es obligatoria',
+        required: 'La concentración de hemoglobina es obligatoria',
         pattern: {
             value: /^[0-9]+(\.[0-9]{1,2})?$/,
             message: 'El valor debe ser un número válido',
         },
         min: {
             value: 0,
-            message: 'La hemoglobina no puede ser negativa',
+            message: 'La concentración de hemoglobina no puede ser negativa',
         },
     },
-    hematocrito: {
-        required: 'El hematocrito es obligatorio',
+    hematocritos: {
+        required: 'El porcentaje de hematocritos es obligatorio',
         pattern: {
             value: /^[0-9]+(\.[0-9]{1,2})?$/,
             message: 'El valor debe ser un número válido',
         },
         min: {
             value: 0,
-            message: 'El hematocrito no puede ser negativo',
+            message: 'El porcentaje de hematocritos no puede ser negativo',
         },
     },
     mcv: {
@@ -73,7 +73,7 @@ const validationLaboratorios = {
         },
         min: {
             value: 0,
-            message: 'El RDW no puede ser negativo',
+            message: 'La anchura de distribución eritrocitaria (RDW) no puede ser negativa',
         },
     },
 };

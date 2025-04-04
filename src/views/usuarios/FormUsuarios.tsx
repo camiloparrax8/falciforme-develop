@@ -9,7 +9,7 @@ import validationUsuario from "@/validation/validationUsuario";
 import {crearUsuario} from '@/customService/services/UsuariosService'
 import SelectRoles from "../common/form/SelectRoles";
 import Button from "@/components/ui/Button";
-function FormUsuarios({ isOpen, onClose, onRequestClose, setMensaje }) {
+function FormUsuarios({ isOpen, onClose, onRequestClose, setMensaje, actualizarUsuarios }) {
     const {
         control,
         handleSubmit,
@@ -33,23 +33,22 @@ function FormUsuarios({ isOpen, onClose, onRequestClose, setMensaje }) {
     const [loading, setLoading] = useState(false);
 
     const onSubmit = async (data) => {
-        console.log(data);
         try {
             setLoading(true);
             setMensaje([]);
             const response = await crearUsuario(token, data);
-            setMensaje({ status: 'success', message: response.message || 'Usuario creado con éxito.' })
-            onClose() 
+            await actualizarUsuarios(); // <--- actualizar la tabla
+            setMensaje({ status: 'success', message: response.message || 'Usuario creado con éxito.' });
+            onClose();
         } catch (error) {
             setMensaje({
                 status: 'error',
                 message: error.response?.data?.message || 'Error al crear el usuario.',
-            })
-            console.log(data)
+            });
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
-    }
+    };    
 
 
 

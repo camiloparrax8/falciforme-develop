@@ -1,43 +1,49 @@
-import { useState } from 'react';
-import FormImgDiagnosticos from './FormImgDiagnosticos';
-import SectionTitle from '@/views/common/form/SectionTitle';
-import TableCustom from '../../../common/TableCustom';
+import { useParams } from 'react-router-dom'
+import FormImgDiagnosticos from './FormImgDiagnosticos'
+import SectionTitle from '@/views/common/form/SectionTitle'
+import TableCustom from '@/views/common/TableCustom'
+import Alert from '@/components/ui/Alert'
+import { useImagenesDiagnosticas } from '@/hooks/useImagenesDiagnosticas'
 
+/**
+ * Componente principal para la gestión de imágenes diagnósticas.
+ * Maneja la visualización, creación y eliminación de registros de imágenes diagnósticas.
+ */
 function ImgDiagnosticos() {
-    const [imagenes, setImagenes] = useState([
-        {
-            id: 1,
-            imagenDiagnostica: 'Radiografía, Ecografía',
-            fecha: '2024-12-01',
-            tipoResultado: 'Normal',
-            resultado: 'Sin anomalías detectadas',
-        },
-        {
-            id: 2,
-            imagenDiagnostica: 'Tomografía',
-            fecha: '2024-11-15',
-            tipoResultado: 'Anormal',
-            resultado: 'Lesión en el lóbulo derecho',
-        },
-    ]);
-
-    const handleFormSubmit = (data) => {
-        const nuevaImagen = {
-            id: imagenes.length + 1,
-            imagenDiagnostica: data.imagenDiagnostica.join(', '),
-            fecha: data.fecha,
-            tipoResultado: data.tipoResultado.join(', '),
-            resultado: data.resultado,
-        };
-        setImagenes([...imagenes, nuevaImagen]);
-    };
-
-    const headers = ['imagenDiagnostica', 'fecha', 'tipoResultado', 'resultado'];
+    const { id_paciente } = useParams()
+    const {
+        loading,
+        imagenes,
+        mensaje,
+        mostrarMensaje,
+        headers,
+        handleFormSubmit,
+        handleEliminarImagen,
+        handleCloseAlert
+    } = useImagenesDiagnosticas({ id_paciente })
 
     return (
         <div className="bg-white p-6 rounded-lg shadow-md">
+            {mensaje && mostrarMensaje && (
+                <div className="mb-4">
+                    <Alert
+                        showIcon
+                        closable
+                        title={mensaje.tipo === 'success' ? 'Correcto' : 'Atención'}
+                        type={mensaje.tipo === 'success' ? 'success' : 'danger'}
+                        duration={5000}
+                        onClose={handleCloseAlert}
+                    >
+                        {mensaje.texto}
+                    </Alert>
+                </div>
+            )}
+
             {/* Formulario */}
-            <FormImgDiagnosticos onSubmit={handleFormSubmit} />
+            <FormImgDiagnosticos
+                loading={loading}
+                onSubmit={handleFormSubmit}
+            />
 
             {/* Tabla */}
             <section className="mt-6">
@@ -45,20 +51,27 @@ function ImgDiagnosticos() {
                     text="Imágenes Cargadas"
                     className="col-span-1 md:col-span-2 lg:col-span-4"
                 />
-                <div className="mb-4">
-                    <input
-                        type="text"
-                        placeholder="Buscar..."
-                        className="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500"
+
+                {loading ? (
+                    <div className="p-4 text-center">
+                        Cargando imágenes diagnósticas...
+                    </div>
+                ) : imagenes.length > 0 ? (
+                    <TableCustom
+                        className={'mt-4'}
+                        data={imagenes}
+                        header={headers}
+                        showDeleteOption={true}
+                        onDelete={handleEliminarImagen}
                     />
-                </div>
-                <TableCustom className={'mt-4'} data={imagenes} header={headers} />
+                ) : (
+                    <div className="p-4 text-center text-gray-500">
+                        No hay imágenes diagnósticas registradas
+                    </div>
+                )}
             </section>
         </div>
-    );
+    )
 }
 
-export default ImgDiagnosticos;
-
-
-
+export default ImgDiagnosticos

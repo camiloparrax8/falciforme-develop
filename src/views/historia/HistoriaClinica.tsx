@@ -9,6 +9,7 @@ import { consultarExamenFisicoPorPaciente } from '@/customService/services/exame
 import { consultarTransplantesProgenitoresPorPaciente } from '@/customService/services/transplantesProgenitoresService'
 import { obtenerComplicacionAgudaPorPaciente } from '@/customService/services/complicacionAgudaService'
 import { obtenerLaboratoriosPorPaciente } from '@/customService/services/laboratorioService'
+import { obtenerImagenesDiagnosticasPorPaciente } from '@/customService/services/imagenDiagnosticaService'
 import { useToken } from '@/store/authStore'
 import SectionTitle from '@/views/common/form/SectionTitle'
 
@@ -125,6 +126,20 @@ const HistoriaClinica = () => {
                             respuestaLaboratorio.data.length > 0 &&
                             respuestaLaboratorio.data[0].id))
 
+                // 6. Verificar si existe una imagen diagnóstica para este paciente
+                const respuestaImagenDiagnostica =
+                    await obtenerImagenesDiagnosticasPorPaciente(token, id)
+
+                //Verififcacion para imagenes diagnosticas
+                const imagenDiagnosticaExiste =
+                        respuestaImagenDiagnostica &&
+                        respuestaImagenDiagnostica.status === 'success' &&
+                        respuestaImagenDiagnostica.data &&
+                        (respuestaImagenDiagnostica.data.id ||
+                            (Array.isArray(respuestaImagenDiagnostica.data) &&
+                                respuestaImagenDiagnostica.data.length > 0 &&
+                                respuestaImagenDiagnostica.data[0].id))
+
                 // Actualizar los módulos con el estado correcto
                 const modulosActualizados = nuevosModulos.map((modulo) => {
                     if (modulo.id === 1) {
@@ -150,6 +165,12 @@ const HistoriaClinica = () => {
                         return {
                             ...modulo,
                             estado: laboratorioExiste ? 1 : 0,
+                        }
+                    } else if (modulo.id === 6) {
+                        // Módulo de Imágenes Diagnósticas (id: 6)
+                        return {
+                            ...modulo,
+                            estado: imagenDiagnosticaExiste ? 1 : 0,
                         }
                     }
                     return modulo

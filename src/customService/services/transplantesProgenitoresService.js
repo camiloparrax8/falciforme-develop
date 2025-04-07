@@ -71,7 +71,6 @@ export const consultarTransplantesProgenitoresPorPaciente = async (token, idPaci
         }
     } catch (error) {
         if (error.response && error.response.status === 404) {
-            console.log("No se encontraron trasplantes para este paciente (404)");
             return {
                 status: 'error',
                 message: "No se encontraron trasplantes",

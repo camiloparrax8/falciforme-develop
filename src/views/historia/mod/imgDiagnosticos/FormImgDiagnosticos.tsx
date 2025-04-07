@@ -1,45 +1,70 @@
-import { useForm } from 'react-hook-form';
-import Button from '@/components/ui/Button';
-import SectionTitle from '@/views/common/form/SectionTitle';
-import InputForm from '@/views/common/form/InputForm';
-import InputDatePickerForm from '@/views/common/form/InputDate';
-import validationImgDiagnosticos from '@/validation/validationImgDiagnosticos';
-import InputSelect from '@/views/common/form/InputSelect';
+import { useForm } from 'react-hook-form'
+import Button from '@/components/ui/Button'
+import SectionTitle from '@/views/common/form/SectionTitle'
+import InputForm from '@/views/common/form/InputForm'
+import InputDatePickerForm from '@/views/common/form/InputDate'
+import validationImgDiagnosticos from '@/validation/validationImgDiagnosticos'
+import InputSelect from '@/views/common/form/InputSelect'
+import defaultValuesImgDiagnosticas from '@/views/historia/mod/imgDiagnosticos/defaultValuesImgDiagnosticas'
+import { useEffect, useState } from 'react'
 
-function FormImgDiagnosticos({ onSubmit }) {
+/**
+ * Componente de formulario para la creación de imágenes diagnósticas.
+ * Implementa validación de campos y manejo de estado del formulario.
+ *
+ * @param {Object} props
+ * @param {Function} props.onSubmit - Función que se ejecuta al enviar el formulario
+ * @param {boolean} props.loading - Estado de carga del formulario
+ */
+function FormImgDiagnosticos({ onSubmit, loading }) {
+    // Estado para forzar el reinicio del formulario
+    const [resetKey, setResetKey] = useState(0)
+
+    // Configuración del formulario usando react-hook-form
     const {
         control,
         handleSubmit,
-        formState: { errors },
+        reset,
+        formState: { errors, isSubmitSuccessful },
     } = useForm({
-        defaultValues: {
-            imagenDiagnostica: '',
-            fecha: '',
-            tipoResultado: '',
-            resultado: '',
-        },
-    });
+        defaultValues: defaultValuesImgDiagnosticas,
+    })
+
+    /**
+     * Efecto que reinicia el formulario cuando se envía exitosamente.
+     * Incrementa resetKey para forzar la recreación del formulario.
+     */
+    useEffect(() => {
+        if (isSubmitSuccessful) {
+            reset(defaultValuesImgDiagnosticas)
+            setResetKey((prev) => prev + 1)
+        }
+    }, [isSubmitSuccessful, reset])
 
     const opcionesImagenDiagnostica = [
-        { value: 'radiografia', label: 'Radiografía' },
-        { value: 'tomografia', label: 'Tomografía' },
-        { value: 'ecografia', label: 'Ecografía' },
-        { value: 'resonancia', label: 'Resonancia Magnética' },
-    ];
+        { value: 'Radiografía', label: 'Radiografía' },
+        { value: 'Tomografía', label: 'Tomografía' },
+        { value: 'Ecografía', label: 'Ecografía' },
+        { value: 'Resonancia Magnética', label: 'Resonancia Magnética' },
+    ]
 
     const opcionesTipoResultado = [
-        { value: 'normal', label: 'Normal' },
-        { value: 'anormal', label: 'Anormal' },
-        { value: 'pendiente', label: 'Pendiente de Evaluación' },
-    ];
+        { value: 'Normal', label: 'Normal' },
+        { value: 'Anormal', label: 'Anormal' },
+        { value: 'Pendiente de Evaluación', label: 'Pendiente de Evaluación' },
+    ]
 
+    /**
+     * Maneja el envío del formulario.
+     * @param {Object} data - Datos del formulario validados
+     */
     const handleFormSubmit = (data) => {
-        console.log('Datos enviados:', data); // Mostrar datos enviados
-        onSubmit(data);
-    };
+        onSubmit(data)
+    }
 
     return (
         <form
+            key={resetKey}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full"
             onSubmit={handleSubmit(handleFormSubmit)}
         >
@@ -90,10 +115,12 @@ function FormImgDiagnosticos({ onSubmit }) {
 
             {/* Botón */}
             <div className="col-span-4 flex justify-end mt-2">
-                <Button type="submit">Guardar</Button>
+                <Button type="submit" disabled={loading}>
+                    {loading ? 'Guardando...' : 'Guardar'}
+                </Button>
             </div>
         </form>
-    );
+    )
 }
 
-export default FormImgDiagnosticos;
+export default FormImgDiagnosticos

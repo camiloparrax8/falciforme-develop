@@ -1,8 +1,12 @@
 import pdfMake from 'pdfmake/build/pdfmake';
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import { historiaClinicaData } from '../data/historiaClinicaData';
 import { consultarExamenFisicoPorPaciente } from '@/customService/services/examenesFisicosService';
 import { consultarTransplantesProgenitoresPorPaciente } from '@/customService/services/transplantesProgenitoresService';
+import { obtenerComplicacionAgudaPorPaciente } from '@/customService/services/complicacionAgudaService';
 import { useToken } from '@/store/authStore';
+import { saveAs } from 'file-saver';
 
 pdfMake.fonts = {
     Roboto: {
@@ -24,10 +28,14 @@ export const useGeneratePDF = () => {
                 throw new Error('ID de paciente no proporcionado');
             }
 
-            // Obtener exámenes físicos de forma dinámica
+            // Obtener datos de forma dinámica
             const examenesFisicos = await consultarExamenFisicoPorPaciente(token, data.paciente.id);
             const trasplanteProgenitores = await consultarTransplantesProgenitoresPorPaciente(token, data.paciente.id);
+            const complicacionesAgudas = await obtenerComplicacionAgudaPorPaciente(token, data.paciente.id);
 
+            // Crear el documento PDF
+            const doc = new jsPDF();
+            
             const standardTableLayout = {
                 hLineWidth: () => 0.5,
                 vLineWidth: () => 0.5,
@@ -39,13 +47,31 @@ export const useGeneratePDF = () => {
                 paddingBottom: () => 8,
             };
 
-            //   const keyFormatter = (key) => {
-            //       return key
-            //           .replace(/_/g, ' ')
-            //           .replace(/\b\w/g, (char) => char.toUpperCase());
-            //   };
+            const formatearFecha = (fechaStr) => {
+                if (!fechaStr) return ''
+        
+                try {
+                    const fechaString = fechaStr.split('T')[0]
+                    const [year, month, day] = fechaString.split('-')
+                    return `${day}/${month}/${year}`
+                } catch {
+                    return fechaStr
+                }
+            }
+
+            const fecha = new Date();
+            const fechaFormateada = `${fecha.getDate().toString().padStart(2, '0')}${(fecha.getMonth() + 1).toString().padStart(2, '0')}${fecha.getFullYear()}${fecha.getHours().toString().padStart(2, '0')}${fecha.getMinutes().toString().padStart(2, '0')}${fecha.getSeconds().toString().padStart(2, '0')}`;
+            const fileName = `HC_${data.paciente.identificacion}_${fechaFormateada}.pdf`;
 
             const docDefinition = {
+                info: {
+                    title: fileName,
+                    author: 'Sistema de Historia Clínica',
+                    subject: 'Historia Clínica del Paciente',
+                    keywords: 'historia clínica, paciente, documento médico',
+                    creationDate: new Date(),
+                    modDate: new Date()
+                },
                 content: [
                     { text: 'HISTORIA CLÍNICA', style: 'header', alignment: 'center', margin: [0, 0, 0, 10] },
 
@@ -223,12 +249,12 @@ export const useGeneratePDF = () => {
                                 table: {
                                     widths: ['auto', '*'],
                                     body: [
-                                        ['Fecha', hc.complicacionesAgudas.crisis_dolor.fecha],
-                                        ['Días', hc.complicacionesAgudas.crisis_dolor.dias],
-                                        ['Intensidad (1-10)', hc.complicacionesAgudas.crisis_dolor.intensidad],
-                                        ['Manejo', hc.complicacionesAgudas.crisis_dolor.manejo],
-                                        ['Tratamiento', hc.complicacionesAgudas.crisis_dolor.tratamiento],
-                                        ['Huesos Afectados', hc.complicacionesAgudas.crisis_dolor.huesos_afectados],
+                                        ['Fecha', formatearFecha(complicacionesAgudas?.data?.fecha) || "N/A"],
+                                        ['Días', complicacionesAgudas?.data?.dias_crisis || "N/A"],
+                                        ['Intensidad (1-10)', complicacionesAgudas?.data?.intensidad || "N/A"],
+                                        ['Manejo', complicacionesAgudas?.data?.manejo || "N/A"],
+                                        ['Tratamiento', complicacionesAgudas?.data?.tratamiento || "N/A"],
+                                        ['Huesos Afectados', complicacionesAgudas?.data?.huesos_afectados || "N/A"]
                                     ],
                                 },
                                 layout: standardTableLayout,
@@ -237,9 +263,10 @@ export const useGeneratePDF = () => {
                                 table: {
                                     widths: ['auto', '*'],
                                     body: [
-                                        ['Germen', hc.complicacionesAgudas.infecciones.germen],
-                                        ['Tratamiento', hc.complicacionesAgudas.infecciones.tratamiento],
-                                        ['Días', hc.complicacionesAgudas.infecciones.dias],
+                                        ['Germen', complicacionesAgudas?.data?.germen || "N/A"],
+                                        ['Tratamiento', complicacionesAgudas?.data?.tratamiento || "N/A"],
+                                        ['Días', complicacionesAgudas?.data?.dias_infeccion || "N/A"],
+                                        ['Crisis Aplastica Infecciosa', complicacionesAgudas?.data?.crisis_aplastica_infecciosa ? 'Sí' : 'No']
                                     ],
                                 },
                                 layout: standardTableLayout,
@@ -431,8 +458,8 @@ export const useGeneratePDF = () => {
                                 table: {
                                     widths: ['auto', '*'],
                                     body: [
-                                        ['Paciente', trasplanteProgenitores?.paciente || "N/A"],
-                                        ['Padres', trasplanteProgenitores?.padres || "N/A"]
+                                        ['Paciente', trasplanteProgenitores?.data?.paciente || "N/A"],
+                                        ['Padres', trasplanteProgenitores?.data?.padres || "N/A"]
                                     ]
                                 },
                                 layout: standardTableLayout,
@@ -442,8 +469,8 @@ export const useGeneratePDF = () => {
                                 table: {
                                     widths: ['auto', '*'],
                                     body: [
-                                        ['Hermanos', trasplanteProgenitores?.hermanos || "N/A"],
-                                        ['Tipo de Trasplante', trasplanteProgenitores?.tipo_indicaciones || "N/A"]
+                                        ['Hermanos', trasplanteProgenitores?.data?.hermanos || "N/A"],
+                                        ['Tipo de Trasplante', trasplanteProgenitores?.data?.tipo_indicaciones || "N/A"]
                                     ]
                                 },
                                 layout: standardTableLayout,
@@ -623,11 +650,11 @@ export const useGeneratePDF = () => {
                 pageMargins: [40, 40, 40, 40],
             };
 
-            const fileName = `historia_clinica_${data.paciente.nombre.replace(/\s+/g, "_")}.pdf`;
             const pdfDoc = pdfMake.createPdf(docDefinition);
 
             if (window) {
                 pdfDoc.open({}, window);
+    
             } else {
                 pdfDoc.download(fileName);
             }

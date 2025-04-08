@@ -3,7 +3,7 @@ import { useToken } from "@/store/authStore";
 import { useSessionUser } from "@/store/authStore";
 import { useState } from "react";
 import Button from "@/components/ui/Button";
-import {eliminarUsuario} from '@/customService/services/UsuariosService'
+import {eliminarUsuario} from '@/customService/services/usuariosService'
 function DialogDelete({ 
     isOpen, 
     onClose, 

@@ -1,5 +1,4 @@
 import { Button, Card } from '@/components/ui';
-import TableCustom from '../common/TableCustom';
 import { useEffect, useState } from "react";
 import { getUsuarios } from "../../customService/services/usuariosService.js";
 import { useToken } from "@/store/authStore";

@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form"
 import SectionTitle from "../common/form/SectionTitle";
 import InputForm from "../common/form/InputForm";
 import validationUsuario from "@/validation/validationUsuario";
-import {crearUsuario} from '@/customService/services/UsuariosService'
+import {crearUsuario} from '@/customService/services/usuariosService'
 import SelectRoles from "../common/form/SelectRoles";
 import Button from "@/components/ui/Button";
 function FormUsuarios({ isOpen, onClose, onRequestClose, setMensaje }) {

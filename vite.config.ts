@@ -17,7 +17,8 @@ export default defineConfig({
     port: 8000, // Puerto donde correrá la aplicación
     proxy: {
       '/api': {
-        target: 'http://localhost:3000',// uri donde se conecta con el backend
+        // target: 'http://localhost:3000',// uri donde se conecta con el backend
+        target: 'https://falciforme-back-railway-production.up.railway.app',// uri donde se conecta con el backend
         changeOrigin: true,
         secure: false
       }

@@ -1,12 +1,11 @@
 import axios from 'axios'
 import AxiosResponseIntrceptorErrorCallback from './AxiosResponseIntrceptorErrorCallback'
 import AxiosRequestIntrceptorConfigCallback from './AxiosRequestIntrceptorConfigCallback'
-import appConfig from '@/configs/app.config'
 import type { AxiosError } from 'axios'
 
 const AxiosBase = axios.create({
     timeout: 60000,
-    baseURL: appConfig.apiPrefix,
+    baseURL: import.meta.env.VITE_REACT_APP_BASE_URL,
 })
 
 AxiosBase.interceptors.request.use(

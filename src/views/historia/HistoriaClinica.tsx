@@ -9,6 +9,7 @@ import { consultarExamenFisicoPorPaciente } from '@/customService/services/exame
 import { consultarTransplantesProgenitoresPorPaciente } from '@/customService/services/transplantesProgenitoresService'
 import { obtenerComplicacionAgudaPorPaciente } from '@/customService/services/complicacionAgudaService'
 import { obtenerLaboratoriosPorPaciente } from '@/customService/services/laboratorioService'
+import { buscarComplicacionesCronicasPorIdPaciente } from '@/customService/services/complicacionesCronicasService'
 import { obtenerImagenesDiagnosticasPorPaciente } from '@/customService/services/imagenDiagnosticaService'
 import { useToken } from '@/store/authStore'
 import SectionTitle from '@/views/common/form/SectionTitle'
@@ -96,6 +97,19 @@ const HistoriaClinica = () => {
                             respuestaComplicacion.data.length > 0 &&
                             respuestaComplicacion.data[0].id))
 
+                // 3. Verificar si existen complicaciones crónicas para este paciente
+                const respuestaComplicacionCronica =
+                    await buscarComplicacionesCronicasPorIdPaciente(token, id)
+
+                // Verificación para complicaciones crónicas
+                const complicacionCronicaExiste =
+                    respuestaComplicacionCronica &&
+                    respuestaComplicacionCronica.status === 'success' &&
+                    respuestaComplicacionCronica.data &&
+                    (respuestaComplicacionCronica.data.id ||
+                        (Array.isArray(respuestaComplicacionCronica.data) &&
+                            respuestaComplicacionCronica.data.length > 0))
+
                 // 4. Verificar si existe un trasplante de progenitores para este paciente
                 const respuestaTrasplante =
                     await consultarTransplantesProgenitoresPorPaciente(
@@ -153,6 +167,12 @@ const HistoriaClinica = () => {
                         return {
                             ...modulo,
                             estado: complicacionExiste ? 1 : 0,
+                        }
+                    } else if (modulo.id === 3) {
+                        // Módulo de Complicaciones Crónicas (id: 3)
+                        return {
+                            ...modulo,
+                            estado: complicacionCronicaExiste ? 1 : 0,
                         }
                     } else if (modulo.id === 4) {
                         // Módulo de Trasplante de Progenitores (id: 4)

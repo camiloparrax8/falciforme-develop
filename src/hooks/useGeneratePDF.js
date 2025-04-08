@@ -1,12 +1,9 @@
 import pdfMake from 'pdfmake/build/pdfmake';
-import { jsPDF } from 'jspdf';
-import autoTable from 'jspdf-autotable';
 import { historiaClinicaData } from '../data/historiaClinicaData';
 import { consultarExamenFisicoPorPaciente } from '@/customService/services/examenesFisicosService';
 import { consultarTransplantesProgenitoresPorPaciente } from '@/customService/services/transplantesProgenitoresService';
 import { obtenerComplicacionAgudaPorPaciente } from '@/customService/services/complicacionAgudaService';
 import { useToken } from '@/store/authStore';
-import { saveAs } from 'file-saver';
 
 pdfMake.fonts = {
     Roboto: {
@@ -34,8 +31,6 @@ export const useGeneratePDF = () => {
             const complicacionesAgudas = await obtenerComplicacionAgudaPorPaciente(token, data.paciente.id);
 
             // Crear el documento PDF
-            const doc = new jsPDF();
-            
             const standardTableLayout = {
                 hLineWidth: () => 0.5,
                 vLineWidth: () => 0.5,
@@ -49,7 +44,6 @@ export const useGeneratePDF = () => {
 
             const formatearFecha = (fechaStr) => {
                 if (!fechaStr) return ''
-        
                 try {
                     const fechaString = fechaStr.split('T')[0]
                     const [year, month, day] = fechaString.split('-')

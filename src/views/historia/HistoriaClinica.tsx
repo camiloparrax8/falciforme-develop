@@ -26,6 +26,7 @@ const HistoriaClinica = () => {
     const { paciente, setPaciente } = usePatient()
     const { token } = useToken()
     const [modulosActualizados, setModulosActualizados] = useState([...modulos])
+    const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
         if (id) {
@@ -56,6 +57,7 @@ const HistoriaClinica = () => {
             if (!id || !token) return
 
             try {
+                setIsLoading(true)
                 // Crear una copia de los módulos originales
                 const nuevosModulos = JSON.parse(JSON.stringify(modulos))
 
@@ -116,15 +118,33 @@ const HistoriaClinica = () => {
                         token,
                         id,
                     )
-                // Verificación para trasplante de progenitores
-                const trasplanteExiste =
+
+                // Verificación estricta para trasplante de progenitores
+                let trasplanteExiste = false
+
+                if (
                     respuestaTrasplante &&
                     respuestaTrasplante.status === 'success' &&
-                    respuestaTrasplante.data &&
-                    (respuestaTrasplante.data.id ||
-                        (Array.isArray(respuestaTrasplante.data) &&
-                            respuestaTrasplante.data.length > 0 &&
-                            respuestaTrasplante.data[0].id))
+                    respuestaTrasplante.data
+                ) {
+                    if (respuestaTrasplante.data.id) {
+                        // Si es un objeto directo con ID
+                        trasplanteExiste = true
+                    } else if (
+                        Array.isArray(respuestaTrasplante.data) &&
+                        respuestaTrasplante.data.length > 0
+                    ) {
+                        // Si es un array, verificar que el primer elemento tenga ID
+                        trasplanteExiste = !!respuestaTrasplante.data[0]?.id
+                    } else if (
+                        respuestaTrasplante.data.data &&
+                        respuestaTrasplante.data.data.id
+                    ) {
+                        // Si tiene un objeto anidado data con ID
+                        trasplanteExiste = true
+                    }
+                    // En cualquier otro caso, trasplanteExiste permanece false
+                }
 
                 // 5. Verificar si existe un laboratorio para este paciente
                 const respuestaLaboratorio =
@@ -146,13 +166,13 @@ const HistoriaClinica = () => {
 
                 //Verififcacion para imagenes diagnosticas
                 const imagenDiagnosticaExiste =
-                        respuestaImagenDiagnostica &&
-                        respuestaImagenDiagnostica.status === 'success' &&
-                        respuestaImagenDiagnostica.data &&
-                        (respuestaImagenDiagnostica.data.id ||
-                            (Array.isArray(respuestaImagenDiagnostica.data) &&
-                                respuestaImagenDiagnostica.data.length > 0 &&
-                                respuestaImagenDiagnostica.data[0].id))
+                    respuestaImagenDiagnostica &&
+                    respuestaImagenDiagnostica.status === 'success' &&
+                    respuestaImagenDiagnostica.data &&
+                    (respuestaImagenDiagnostica.data.id ||
+                        (Array.isArray(respuestaImagenDiagnostica.data) &&
+                            respuestaImagenDiagnostica.data.length > 0 &&
+                            respuestaImagenDiagnostica.data[0].id))
 
                 // Actualizar los módulos con el estado correcto
                 const modulosActualizados = nuevosModulos.map((modulo) => {
@@ -201,6 +221,8 @@ const HistoriaClinica = () => {
                 console.error('Error al verificar estado de módulos:', error)
                 // En caso de error, asegurarse de que los módulos estén como pendientes
                 setModulosActualizados(modulos)
+            } finally {
+                setIsLoading(false)
             }
         }
 
@@ -217,19 +239,28 @@ const HistoriaClinica = () => {
                     }
                     className="col-span-1 md:col-span-2 lg:col-span-4"
                 />
-                <div className="mt-4 grid grid-cols-6 gap-4">
-                    {modulosActualizados.map((item) => (
-                        <CardHC
-                            key={item.id}
-                            title={item.title}
-                            uri={`${item.uri}/${id}`}
-                            iconName={item.iconName}
-                            estado={item.estado}
-                            recomendacion={item.recomendacion}
-                            className="col-span-6 sm:col-span-3 lg:col-span-2"
-                        />
-                    ))}
-                </div>
+                {isLoading ? (
+                    <div className="flex justify-center items-center h-40">
+                        <p className="text-gray-500">
+                            Cargando información de módulos...
+                        </p>
+                        {/* Puedes agregar aquí un componente de spinner si lo tienes */}
+                    </div>
+                ) : (
+                    <div className="mt-4 grid grid-cols-6 gap-4">
+                        {modulosActualizados.map((item) => (
+                            <CardHC
+                                key={item.id}
+                                title={item.title}
+                                uri={`${item.uri}/${id}`}
+                                iconName={item.iconName}
+                                estado={item.estado}
+                                recomendacion={item.recomendacion}
+                                className="col-span-6 sm:col-span-3 lg:col-span-2"
+                            />
+                        ))}
+                    </div>
+                )}
             </AdaptiveCard>
         </Container>
     )

@@ -31,7 +31,7 @@ export const modulos = [
         title: 'Trasplantes de Progenitores',
         uri: '/historia-clinica/transplantes-progenitores',
         iconName: 'diagnostics',
-        estado: 1,
+        estado: 0,
         recomendacion:
             'Asegurarse de registrar todos los pasos del proceso de trasplante y el seguimiento postoperatorio.',
     },
@@ -59,7 +59,7 @@ export const modulos = [
         title: 'Soportes Transfusionales',
         uri: '/historia-clinica/soportes-transfucionales',
         iconName: 'diagnostics',
-        estado: 1,
+        estado: 0,
         recomendacion:
             'Registrar cada soporte transfusional con detalles como tipo de sangre, fecha y reacción del paciente.',
     },
@@ -68,7 +68,7 @@ export const modulos = [
         title: 'Vacunas',
         uri: '/historia-clinica/Vacunas',
         iconName: 'diagnostics',
-        estado: 1,
+        estado: 0,
         recomendacion:
             'Verificar que el esquema de vacunación esté completo y actualizado según las recomendaciones oficiales.',
     },
@@ -78,7 +78,7 @@ export const modulos = [
         title: 'Tratamientos',
         uri: '/historia-clinica/tratamientos',
         iconName: 'diagnostics',
-        estado: 1,
+        estado: 0,
         recomendacion:
             'Actualizar la sección de tratamientos con cambios de medicación o ajustes en la dosis según el progreso del paciente.',
     },

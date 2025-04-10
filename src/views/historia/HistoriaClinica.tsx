@@ -13,6 +13,7 @@ import { buscarComplicacionesCronicasPorIdPaciente } from '@/customService/servi
 import { obtenerImagenesDiagnosticasPorPaciente } from '@/customService/services/imagenDiagnosticaService'
 import { useToken } from '@/store/authStore'
 import SectionTitle from '@/views/common/form/SectionTitle'
+import Spinner from '@/components/ui/Spinner'
 
 const HistoriaClinicaWrapper = () => {
     return (
@@ -240,11 +241,8 @@ const HistoriaClinica = () => {
                     className="col-span-1 md:col-span-2 lg:col-span-4"
                 />
                 {isLoading ? (
-                    <div className="flex justify-center items-center h-40">
-                        <p className="text-gray-500">
-                            Cargando información de módulos...
-                        </p>
-                        {/* Puedes agregar aquí un componente de spinner si lo tienes */}
+                    <div className="flex flex-col justify-center items-center h-40">
+                        <Spinner size={40} />
                     </div>
                 ) : (
                     <div className="mt-4 grid grid-cols-6 gap-4">

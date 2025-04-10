@@ -14,6 +14,7 @@ import { obtenerImagenesDiagnosticasPorPaciente } from '@/customService/services
 import { useSoportesTransfusionales } from '@/hooks/useSoportesTransfusionales'
 import { useToken } from '@/store/authStore'
 import SectionTitle from '@/views/common/form/SectionTitle'
+import { useVacunas_hc } from '@/hooks/useVacunas_hc'
 import Spinner from '@/components/ui/Spinner'
 
 const HistoriaClinicaWrapper = () => {
@@ -28,6 +29,7 @@ const HistoriaClinica = () => {
     const { paciente, setPaciente } = usePatient()
     const { token } = useToken()
     const [modulosActualizados, setModulosActualizados] = useState([...modulos])
+    const { existeVacuna } = useVacunas_hc({ id_paciente: id })
     const [isLoading, setIsLoading] = useState(true)
     const { existenSoportes } = useSoportesTransfusionales({ id_paciente: id })
 
@@ -221,6 +223,12 @@ const HistoriaClinica = () => {
                             ...modulo,
                             estado: existenSoportes ? 1 : 0,
                         }
+                    } else if (modulo.id === 8) {
+                        // Módulo de Vacunas (id: 8)
+                        return {
+                            ...modulo,
+                            estado: existeVacuna ? 1 : 0,
+                        }
                     }
                     return modulo
                 })
@@ -236,7 +244,7 @@ const HistoriaClinica = () => {
         }
 
         verificarEstadoModulos()
-    }, [id, token, existenSoportes])
+    }, [id, token, existeVacuna, existenSoportes])
 
     return (
         <Container>

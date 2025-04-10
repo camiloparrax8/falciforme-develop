@@ -1,40 +1,77 @@
 import { useForm } from 'react-hook-form'
 import Button from '@/components/ui/Button'
-import validationTransfuncionales from '../../../../validation/validationTransfuncionales'
+import validationTransfuncionales from '@/validation/validationTransfuncionales'
 import SectionTitle from '@/views/common/form/SectionTitle'
 import InputDate from '@/views/common/form/InputDate'
 import InputSelect from '@/views/common/form/InputSelect'
 import InputForm from '@/views/common/form/InputForm'
-import defaultValues from './defaultValues' // Importa los valores predeterminados
+import defaultValues from '@/views/historia/mod/soportesTransfucionales/defaultValues'
+import { useEffect, useState } from 'react'
 
 import {
     soporteT,
     numeroTranfu,
     frecuencia,
-    aloinmunización,
-    quelantes,
+    aloinmunizacion,
+    quelentes,
     ferritina,
     lic,
     pancratica,
     evaluacionCardiaca,
-} from './dataSelect';
-function FormTrasnfucionales() {
+} from '@/views/historia/mod/soportesTransfucionales/dataSelect'
+
+interface FormTrasnfucionalesProps {
+    loading: boolean
+    onSubmit: (data: {
+        fecha: string
+        soporte_transfusional: string
+        numero_transfusiones: string
+        frecuencia: string
+        aloinmunizacion: string
+        fecha_sobrecarga_hierro: string
+        quelentes: string
+        ferritina: string
+        ferritina_dosis: string
+        fecha_sobrecarga_organo: string
+        lic: string
+        pancreatica: string
+        evaluacion_cardiaca: string
+    }) => void
+}
+
+function FormTrasnfucionales({ loading, onSubmit }: FormTrasnfucionalesProps) {
+    // Estado para forzar el reinicio del formulario
+    const [resetKey, setResetKey] = useState(0)
+
     const {
         control,
         handleSubmit,
-        formState: { errors },
+        reset,
+        formState: { errors, isSubmitSuccessful },
     } = useForm({
         defaultValues: defaultValues,
     })
-    const onSubmit = (data) => {
-        console.log('Datos enviados:', data)
+
+    /**
+     * Efecto que reinicia el formulario cuando se envía exitosamente.
+     * Incrementa resetKey para forzar la recreación del formulario.
+     */
+    useEffect(() => {
+        if (isSubmitSuccessful) {
+            reset(defaultValues)
+            setResetKey((prev) => prev + 1)
+        }
+    }, [isSubmitSuccessful, reset])
+
+    const handleFormSubmit = (data) => {
+        onSubmit(data)
     }
-    
 
     return (
         <form
+            key={resetKey}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full"
-            onSubmit={handleSubmit(onSubmit)}
+            onSubmit={handleSubmit(handleFormSubmit)}
         >
             <SectionTitle
                 text="Soporte Transfucional"
@@ -42,8 +79,8 @@ function FormTrasnfucionales() {
             />
             <InputDate
                 control={control}
-                name="fechaInicio"
-                rules={validationTransfuncionales.fechaInicio}
+                name="fecha"
+                rules={validationTransfuncionales.fecha}
                 errors={errors}
                 label="Inicio de Soporte Transfusional"
                 placeholder="Ingrese la Fecha"
@@ -52,9 +89,9 @@ function FormTrasnfucionales() {
             <InputSelect
                 control={control}
                 errors={errors}
-                validation={validationTransfuncionales.documensoportetType}
+                validation={validationTransfuncionales.soporte_transfusional}
                 options={soporteT}
-                name="soporte"
+                name="soporte_transfusional"
                 placeholder="Seleccione un soporte"
                 label="Soporte Transfusional"
                 className="col-span-1"
@@ -62,9 +99,9 @@ function FormTrasnfucionales() {
             <InputSelect
                 control={control}
                 errors={errors}
-                validation={validationTransfuncionales.numeroTranfu}
+                validation={validationTransfuncionales.numero_transfusiones}
                 options={numeroTranfu}
-                name="numeroTranfu"
+                name="numero_transfusiones"
                 placeholder="Seleccione un Numero"
                 label="Numero de Transfusiones"
                 className="col-span-1"
@@ -83,7 +120,7 @@ function FormTrasnfucionales() {
                 control={control}
                 errors={errors}
                 validation={validationTransfuncionales.aloinmunizacion}
-                options={aloinmunización}
+                options={aloinmunizacion}
                 name="aloinmunizacion"
                 placeholder="Seleccione"
                 label="Aloinmunización"
@@ -95,8 +132,8 @@ function FormTrasnfucionales() {
             />
             <InputDate
                 control={control}
-                name="fechaHierro"
-                rules={validationTransfuncionales.fechaHierro}
+                name="fecha_sobrecarga_hierro"
+                rules={validationTransfuncionales.fecha_sobrecarga_hierro}
                 errors={errors}
                 label="Fecha de Sobrecarga de Hierro"
                 placeholder="Ingrese la Fecha"
@@ -105,9 +142,9 @@ function FormTrasnfucionales() {
             <InputSelect
                 control={control}
                 errors={errors}
-                validation={validationTransfuncionales.quelante}
-                options={quelantes}
-                name="quelantes"
+                validation={validationTransfuncionales.quelentes}
+                options={quelentes}
+                name="quelentes"
                 placeholder="Selección tipo de quelante"
                 label="Quelantes"
                 className="col-span-1"
@@ -125,8 +162,8 @@ function FormTrasnfucionales() {
             <InputForm
                 control={control}
                 errors={errors}
-                rules={validationTransfuncionales.dosis}
-                name="dosis"
+                rules={validationTransfuncionales.ferritina_dosis}
+                name="ferritina_dosis"
                 inputPlaceholder="Ingrese la Dosis"
                 label="Dosis mg/kg/día"
                 className="col-span-1"
@@ -138,8 +175,8 @@ function FormTrasnfucionales() {
             />
             <InputDate
                 control={control}
-                name="FechaOrgano"
-                rules={validationTransfuncionales.FechaOrgano}
+                name="fecha_sobrecarga_organo"
+                rules={validationTransfuncionales.fecha_sobrecarga_organo}
                 errors={errors}
                 label="Fecha de Sobrecarga de Órgano"
                 placeholder="Ingrese la Fecha"
@@ -158,9 +195,9 @@ function FormTrasnfucionales() {
             <InputSelect
                 control={control}
                 errors={errors}
-                validation={validationTransfuncionales.pancratica}
+                validation={validationTransfuncionales.pancreatica}
                 options={pancratica}
-                name="pancratica"
+                name="pancreatica"
                 placeholder="Selección Pancreática (R2, Herzios)"
                 label="Pancreática (R2, Herzios)"
                 className="col-span-1"
@@ -168,9 +205,9 @@ function FormTrasnfucionales() {
             <InputSelect
                 control={control}
                 errors={errors}
-                validation={validationTransfuncionales.evaluacionCardiaca}
+                validation={validationTransfuncionales.evaluacion_cardiaca}
                 options={evaluacionCardiaca}
-                name="evaluacionCardiaca"
+                name="evaluacion_cardiaca"
                 placeholder="Selección Evaluación Cardíaca (T2, milisegundos)"
                 label="Evaluación Cardíaca (T2, milisegundos)"
                 className="col-span-1"
@@ -178,7 +215,9 @@ function FormTrasnfucionales() {
 
             {/* Botón */}
             <div className="col-span-4 flex justify-end mt-6">
-                <Button type="submit">Guardar</Button>
+                <Button type="submit" disabled={loading}>
+                    {loading ? 'Guardando...' : 'Guardar'}
+                </Button>
             </div>
         </form>
     )

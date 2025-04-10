@@ -32,13 +32,19 @@ const TableCustom = ({
         setIsOpenDelete(false)
     }
 
+    // Función para formatear los headers: reemplaza _ por espacios y capitaliza
+    const formatHeader = (header) => {
+        const withSpaces = header.replace(/_/g, ' ')
+        return withSpaces.charAt(0).toUpperCase() + withSpaces.slice(1)
+    }
+
     return (
         <div className={className}>
             <Table compact>
                 <THead>
                     <Tr>
                         {header.map((col, index) => (
-                            <Th key={index}>{col}</Th>
+                            <Th key={index}>{formatHeader(col)}</Th>
                         ))}
                         {showDeleteOption && <Th>Opciones</Th>}
                     </Tr>

@@ -1,8 +1,8 @@
 // Archivo: optionsTransfuncionales.js
 
 export const soporteT = [
-    { value: 'demanda', label: 'Demanda' },
-    { value: 'cronico', label: 'Cronico' },
+    { value: 'Demanda', label: 'Demanda' },
+    { value: 'Cronico', label: 'Cronico' },
 ];
 
 export const numeroTranfu = [
@@ -12,19 +12,18 @@ export const numeroTranfu = [
 ];
 
 export const frecuencia = [
-    { value: 'mensual', label: 'Mensual' },
-    { value: 'trimestral ', label: 'Trimestral' },
-    { value: 'semestral ', label: 'Semestral' },
-    { value: 'anual  ', label: 'Anual' },
-    { value: 'no requiere  ', label: 'No requiere' },
+    { value: 'Mensual', label: 'Mensual' },
+    { value: 'Trimestral', label: 'Trimestral' },
+    { value: 'Anual', label: 'Anual' },
+    { value: 'No requiere', label: 'No requiere' },
 ];
 
-export const aloinmunización = [
+export const aloinmunizacion = [
     { value: 'Si', label: 'Si' },
     { value: 'No', label: 'No' },
 ];
 
-export const quelantes = [
+export const quelentes = [
     { value: 'Deferoxamina', label: 'Deferoxamina' },
     { value: 'Deferasirox', label: 'Deferasirox' },
     { value: 'Penicilamina', label: 'Penicilamina' },

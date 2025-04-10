@@ -1,12 +1,12 @@
 const validationTransfuncionales = {
-    fechaInicio: {
+    fecha: {
         required: 'La fecha de inicio es obligatoria',
     },
-    documensoportetType: {
+    soporte_transfusional: {
         required: 'El soporte transfusional es obligatorio',
     },
-    numeroTranfu: {
-        required: 'La identificación es obligatoria',
+    numero_transfusiones: {
+        required: 'El número de transfusiones es obligatorio',
     },
     frecuencia: {
         required: 'La frecuencia es obligatoria',
@@ -14,35 +14,28 @@ const validationTransfuncionales = {
     aloinmunizacion: {
         required: 'La aloinmunizacion es obligatoria',
     },
-    reacciones: {
-        required: 'Las reacciones son obligatorias',
-    },
     ferritina: {
         required: 'El valor de ferritina es obligatorio',
     },
-    quelante: {
+    quelentes: {
         required: 'El quelante es obligatorio',
     },
-   dosis: {
-    required: 'La dosis es obligatoria',
-    pattern: {
-        value: /^[0-9]{1,4}$/,
-        message: 'La dosis debe ser un valor numérico entre 1 y 4 dígitos',
+    ferritina_dosis: {
+        required: 'La dosis es obligatoria',
     },
-},
-    fechaHierro: {
+    fecha_sobrecarga_hierro: {
         required: 'La fecha de medición de hierro es obligatoria',
     },
-    FechaOrgano: {
+    fecha_sobrecarga_organo: {
         required: 'La fecha de evaluación de órgano es obligatoria',
     },
     lic: {
         required: 'El valor de LIC es obligatorio',
     },
-    pancratica: {
+    pancreatica: {
         required: 'El valor de páncreas es obligatorio',
     },
-    evaluacionCardiaca: {
+    evaluacion_cardiaca: {
         required: 'La evaluación cardíaca es obligatoria',
     },
 };

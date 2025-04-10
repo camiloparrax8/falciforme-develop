@@ -26,18 +26,11 @@ export const useUpdateVacunas_hc = () => {
         setResult(null);
 
         try {
-            console.log('=== INICIO CREACIÓN VACUNA ===');
-            console.log('Datos recibidos del formulario:', data);
-            console.log('Tipo de datos recibidos:');
-            console.log('- nombre_vacuna:', data.nombre_vacuna, typeof data.nombre_vacuna);
-            console.log('- fecha:', data.fecha, typeof data.fecha);
-            console.log('ID del paciente:', id_paciente);
 
             if (!id_paciente) {
                 throw new Error('ID del paciente no proporcionado');
             }
 
-            console.log('=== CREANDO NUEVA VACUNA ===');
             const nuevaVacuna = {
                 id_paciente: id_paciente,
                 nombre_vacuna: data.nombre_vacuna,
@@ -45,12 +38,8 @@ export const useUpdateVacunas_hc = () => {
                 id_user_create: user.id,
             };
 
-            console.log('=== DATOS ENVIADOS AL BACKEND (CREACIÓN) ===');
-            console.log('Datos formateados:', nuevaVacuna);
-            console.log('==========================================');
 
             const result = await crearVacuna(token, nuevaVacuna);
-            console.log('Respuesta de creación:', result);
             
             if (result.status === 'success') {
                 setResult({
@@ -61,7 +50,6 @@ export const useUpdateVacunas_hc = () => {
             } else {
                 throw new Error(result.message || 'Error al crear la vacuna');
             }
-            console.log('=== FIN CREACIÓN VACUNA ===');
         } catch (error) {
             console.error('Error al crear vacuna:', error);
             setResult({
@@ -82,18 +70,11 @@ export const useUpdateVacunas_hc = () => {
                 throw new Error('ID de la vacuna no proporcionado');
             }
 
-            console.log('=== INICIO ACTUALIZACIÓN VACUNA ===');
-            console.log('Datos recibidos del formulario:', data);
-            console.log('ID de la vacuna:', idVacuna);
-
             const datosActualizados = {
                 nombre_vacuna: data.nombre_vacuna,
                 fecha: data.fecha,
             };
 
-            console.log('=== DATOS ENVIADOS AL BACKEND (ACTUALIZACIÓN) ===');
-            console.log('Datos formateados:', datosActualizados);
-            console.log('==========================================');
 
             const response = await actualizarVacuna(
                 token,
@@ -129,8 +110,6 @@ export const useUpdateVacunas_hc = () => {
                 throw new Error('ID de la vacuna no proporcionado');
             }
 
-            console.log('=== INICIO ELIMINACIÓN VACUNA ===');
-            console.log('ID de la vacuna:', idVacuna);
 
             const response = await eliminarLogicamenteVacuna(
                 token,

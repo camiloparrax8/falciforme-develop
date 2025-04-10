@@ -11,6 +11,7 @@ import { obtenerComplicacionAgudaPorPaciente } from '@/customService/services/co
 import { obtenerLaboratoriosPorPaciente } from '@/customService/services/laboratorioService'
 import { buscarComplicacionesCronicasPorIdPaciente } from '@/customService/services/complicacionesCronicasService'
 import { obtenerImagenesDiagnosticasPorPaciente } from '@/customService/services/imagenDiagnosticaService'
+import { useSoportesTransfusionales } from '@/hooks/useSoportesTransfusionales'
 import { useToken } from '@/store/authStore'
 import SectionTitle from '@/views/common/form/SectionTitle'
 import Spinner from '@/components/ui/Spinner'
@@ -28,6 +29,7 @@ const HistoriaClinica = () => {
     const { token } = useToken()
     const [modulosActualizados, setModulosActualizados] = useState([...modulos])
     const [isLoading, setIsLoading] = useState(true)
+    const { existenSoportes } = useSoportesTransfusionales({ id_paciente: id })
 
     useEffect(() => {
         if (id) {
@@ -213,6 +215,12 @@ const HistoriaClinica = () => {
                             ...modulo,
                             estado: imagenDiagnosticaExiste ? 1 : 0,
                         }
+                    } else if (modulo.id === 7) {
+                        // Módulo de Soportes Transfusionales (id: 7)
+                        return {
+                            ...modulo,
+                            estado: existenSoportes ? 1 : 0,
+                        }
                     }
                     return modulo
                 })
@@ -228,7 +236,7 @@ const HistoriaClinica = () => {
         }
 
         verificarEstadoModulos()
-    }, [id, token])
+    }, [id, token, existenSoportes])
 
     return (
         <Container>

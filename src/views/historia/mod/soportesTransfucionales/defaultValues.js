@@ -1,17 +1,17 @@
 const defaultValues = {
-    fechaInicio: '',
-    soporte: '',
-    numeroTranfu: '',
+    fecha: '',
+    soporte_transfusional: '',
+    numero_transfusiones: '',
+    frecuencia: '',
     aloinmunizacion: '',
-    reacciones: '',
+    fecha_sobrecarga_hierro: '',
+    quelentes: '',
     ferritina: '',
-    quelante: '',
-    dosis: '',
-    fechaHierro: '',
-    FechaOrgano: '',
+    ferritina_dosis: '',
+    fecha_sobrecarga_organo: '',
     lic: '',
-    pancratica: '',
-    evaluacionCardiaca: '',
+    pancreatica: '',
+    evaluacion_cardiaca: '',
 }
 
 export default defaultValues

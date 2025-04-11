@@ -1,9 +1,10 @@
 import { useParams } from 'react-router-dom'
 import { useState, useEffect } from 'react'
+import { useToken } from '@/store/authStore'
+import { usePatient, PatientProvider } from '@/context/PatientContext'
 import { AdaptiveCard, Container } from '@/components/shared'
 import CardHC from '@/views/common/historia/CardHc'
 import { modulos } from '@/views/historia/modulos'
-import { usePatient, PatientProvider } from '@/context/PatientContext'
 import { buscarPacienteById } from '@/customService/services/pacienteService'
 import { consultarExamenFisicoPorPaciente } from '@/customService/services/examenesFisicosService'
 import { consultarTransplantesProgenitoresPorPaciente } from '@/customService/services/transplantesProgenitoresService'
@@ -12,9 +13,9 @@ import { obtenerLaboratoriosPorPaciente } from '@/customService/services/laborat
 import { buscarComplicacionesCronicasPorIdPaciente } from '@/customService/services/complicacionesCronicasService'
 import { obtenerImagenesDiagnosticasPorPaciente } from '@/customService/services/imagenDiagnosticaService'
 import { useSoportesTransfusionales } from '@/hooks/useSoportesTransfusionales'
-import { useToken } from '@/store/authStore'
-import SectionTitle from '@/views/common/form/SectionTitle'
 import { useVacunas_hc } from '@/hooks/useVacunas_hc'
+import { useTratamientos } from '@/hooks/useTratamientos'
+import SectionTitle from '@/views/common/form/SectionTitle'
 import Spinner from '@/components/ui/Spinner'
 
 const HistoriaClinicaWrapper = () => {
@@ -32,6 +33,7 @@ const HistoriaClinica = () => {
     const { existeVacuna } = useVacunas_hc({ id_paciente: id })
     const [isLoading, setIsLoading] = useState(true)
     const { existenSoportes } = useSoportesTransfusionales({ id_paciente: id })
+    const { existenTratamientos } = useTratamientos({ id_paciente: id })
 
     useEffect(() => {
         if (id) {
@@ -229,6 +231,12 @@ const HistoriaClinica = () => {
                             ...modulo,
                             estado: existeVacuna ? 1 : 0,
                         }
+                    } else if (modulo.id === 9) {
+                        // Módulo de Tratamientos (id: 9)
+                        return {
+                            ...modulo,
+                            estado: existenTratamientos ? 1 : 0,
+                        }
                     }
                     return modulo
                 })
@@ -244,7 +252,7 @@ const HistoriaClinica = () => {
         }
 
         verificarEstadoModulos()
-    }, [id, token, existeVacuna, existenSoportes])
+    }, [id, token, existeVacuna, existenSoportes, existenTratamientos])
 
     return (
         <Container>

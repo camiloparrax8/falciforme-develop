@@ -74,7 +74,7 @@ export const modulos = [
     },
 
     {
-        id: 0,
+        id: 9,
         title: 'Tratamientos',
         uri: '/historia-clinica/tratamientos',
         iconName: 'diagnostics',

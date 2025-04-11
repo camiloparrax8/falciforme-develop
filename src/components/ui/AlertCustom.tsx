@@ -1,6 +1,6 @@
 import React from 'react'
-import Alert from './Alert'
-import type { CommonProps } from './@types/common'
+import Alert from '@/components/ui/Alert'
+import type { CommonProps } from '@/components/ui/@types/common'
 import type { ReactNode, MouseEvent } from 'react'
 
 export interface AlertCustomProps extends CommonProps {

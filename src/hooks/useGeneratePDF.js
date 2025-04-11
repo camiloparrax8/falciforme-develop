@@ -4,6 +4,9 @@ import { consultarExamenFisicoPorPaciente } from '@/customService/services/exame
 import { consultarTransplantesProgenitoresPorPaciente } from '@/customService/services/transplantesProgenitoresService';
 import { obtenerComplicacionAgudaPorPaciente } from '@/customService/services/complicacionAgudaService';
 import { useToken } from '@/store/authStore';
+import { obtenerVacunasPorPaciente } from '@/customService/services/vacunas_hcService';
+
+
 
 pdfMake.fonts = {
     Roboto: {
@@ -14,13 +17,24 @@ pdfMake.fonts = {
     },
 };
 
+const toBase64 = async (url) => {
+    const res = await fetch(url);
+    const blob = await res.blob();
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  };
+
 export const useGeneratePDF = () => {
     const { token } = useToken();
 
     const generatePDF = async (data, window) => {
         try {
             const hc = historiaClinicaData;
-
+            const logoBase64 = await toBase64('/img/logo/logo-light-full.png');
             if (!data?.paciente?.id) {
                 throw new Error('ID de paciente no proporcionado');
             }
@@ -29,6 +43,16 @@ export const useGeneratePDF = () => {
             const examenesFisicos = await consultarExamenFisicoPorPaciente(token, data.paciente.id);
             const trasplanteProgenitores = await consultarTransplantesProgenitoresPorPaciente(token, data.paciente.id);
             const complicacionesAgudas = await obtenerComplicacionAgudaPorPaciente(token, data.paciente.id);
+            
+            // Obtener datos de vacunas
+            const resultadoVacunas = await obtenerVacunasPorPaciente(token, data.paciente.id);
+            const vacunasFormateadas = resultadoVacunas.status === 'success' && resultadoVacunas.data 
+                ? resultadoVacunas.data.map((vac, index) => ({
+                    Registro: resultadoVacunas.data.length - index,
+                    nombre_vacuna: vac.nombre_vacuna,
+                    fecha: vac.fecha ? vac.fecha.split('T')[0].split('-').reverse().join('/') : 'Fecha no disponible'
+                }))
+                : [];
 
             // Crear el documento PDF
             const standardTableLayout = {
@@ -66,6 +90,16 @@ export const useGeneratePDF = () => {
                     creationDate: new Date(),
                     modDate: new Date()
                 },
+                header: (currentPage) => ({
+                    columns: [
+                        {
+                            image: logoBase64, width: 150, 
+                            fontSize: 24,
+                            bold: true,
+                            margin: [40, 20, 0, 0]
+                        }
+                    ]
+                }),
                 content: [
                     { text: 'HISTORIA CLÍNICA', style: 'header', alignment: 'center', margin: [0, 0, 0, 10] },
 
@@ -602,10 +636,14 @@ export const useGeneratePDF = () => {
                     { text: 'Vacunas', style: 'header', margin: [0, 10, 0, 5] },
                     {
                         table: {
-                            widths: ['auto', '*'],
+                            widths: ['auto', '*', '*'],
                             body: [
-                                ['Nombre', hc.vacunas.nombre_vacuna],
-                                ['Fecha', hc.vacunas.fecha_vacunacion],
+                                ['Registro', 'Nombre de la Vacuna', 'Fecha'],
+                                ...vacunasFormateadas.map(vacuna => [
+                                    vacuna.Registro,
+                                    vacuna.nombre_vacuna,
+                                    vacuna.fecha
+                                ])
                             ],
                         },
                         layout: standardTableLayout,
@@ -641,7 +679,8 @@ export const useGeneratePDF = () => {
                     subheader: { fontSize: 14, bold: true },
                     subsubheader: { fontSize: 13, bold: true },
                 },
-                pageMargins: [40, 40, 40, 40],
+                pageMargins: [40, 80, 40, 40],
+                
             };
 
             const pdfDoc = pdfMake.createPdf(docDefinition);

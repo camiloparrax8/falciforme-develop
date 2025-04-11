@@ -1,28 +1,36 @@
-import { Table } from '@/components/ui'
 import TableCustom from '@/views/common/TableCustom'
-import classNames from 'classnames'
-import { compact } from 'lodash'
 
-const { Tr, Th, Td, THead, TBody } = Table
+interface Tratamiento {
+    id: number
+    Registro?: number
+    titulo: string
+    n_dias: number
+    dosis: string
+    tipo: string
+}
 
-function TableMD () {
-    const data = [
-        {
-            medicamento: 'Opioides',
-            dias: 31,
-            dosis: 3
-        },
-        {
-            medicamento: 'Acetaminofén',
-            dias: 15,
-            dosis: 15
-        },
-    ]
+interface TableMDProps {
+    tratamientos: Tratamiento[]
+    onDelete?: (tratamiento: Tratamiento) => void
+}
 
-    const header = ['medicamento', 'dias', 'dosis']
+function TableMD({ tratamientos = [], onDelete }: TableMDProps) {
+    const header = ['Registro', 'tipo', 'n_dias', 'dosis']
 
-    return(
-        <TableCustom data={data} header={header} className={compact} />
+    // Generamos los datos con Registro calculado de forma independiente
+    const dataWithIndex = tratamientos.map((tratamiento, index) => ({
+        ...tratamiento,
+        Registro: tratamientos.length - index,
+    }))
+
+    return (
+        <TableCustom
+            data={dataWithIndex}
+            header={header}
+            className={'compact'}
+            showDeleteOption={!!onDelete}
+            onDelete={onDelete}
+        />
     )
 }
 

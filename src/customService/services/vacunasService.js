@@ -7,8 +7,7 @@ export const obtenerVacunasPaciente= async (token, idPaciente) => {
         });
         return result.data;
     } catch (error) {
-        console.log("Error al buscar esquema-vacunacion:", error.response?.data || error.message);
-        throw error; // Lanza el error para manejarlo desde el componente que consume este servicio
+        throw error; 
     }
 };
 export const inputVacunas= async (token) => {
@@ -18,8 +17,7 @@ export const inputVacunas= async (token) => {
         });
         return result.data;
     } catch (error) {
-        console.log("Error al buscar las vacunas:", error.response?.data || error.message);
-        throw error; // Lanza el error para manejarlo desde el componente que consume este servicio
+        throw error; 
     }
 };
 

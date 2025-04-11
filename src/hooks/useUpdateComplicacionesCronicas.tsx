@@ -79,21 +79,12 @@ export const useUpdateComplicacionesCronicas = () => {
         setResult(null);
 
         try {
-            console.log('=== INICIO UPDATE CEREBRALES ===');
-            console.log('Datos recibidos del formulario:', data);
-            console.log('Tipo de datos recibidos:');
-            console.log('- vasculopatiaCerebral:', data.vasculopatiaCerebral, typeof data.vasculopatiaCerebral);
-            console.log('- infartosCerebralesSilentes:', data.infartosCerebralesSilentes, typeof data.infartosCerebralesSilentes);
-            console.log('- epilepsiaYConvulsiones:', data.epilepsiaYConvulsiones, typeof data.epilepsiaYConvulsiones);
-            console.log('- cefaleasRecurrentes:', data.cefaleasRecurrentes, typeof data.cefaleasRecurrentes);
-            console.log('- deficitCognitivo:', data.deficitCognitivo, typeof data.deficitCognitivo);
-            console.log('Estado actual de complicación:', complicacionData);
+            
 
             if (!id_paciente) {
                 throw new Error('ID del paciente no proporcionado');
             }
 
-            console.log('=== ACTUALIZANDO COMPLICACIÓN ===');
             const nuevaComplicacion = {
                 id_paciente: id_paciente,
                 fecha_diagnostico: new Date().toISOString(),
@@ -106,19 +97,7 @@ export const useUpdateComplicacionesCronicas = () => {
                 deficit_cognitivo: data.deficitCognitivo === 'Si',
             };
 
-            console.log('=== DATOS ENVIADOS AL BACKEND (CREACIÓN) ===');
-            console.log('Datos formateados:', nuevaComplicacion);
-            console.log('Valores booleanos:');
-            console.log('- vasculopatia_cerebral:', nuevaComplicacion.vasculopatia_cerebral, typeof nuevaComplicacion.vasculopatia_cerebral);
-            console.log('- infartos_cerebrales_silentes:', nuevaComplicacion.infartos_cerebrales_silentes, typeof nuevaComplicacion.infartos_cerebrales_silentes);
-            console.log('- epilepsia_convulsiones:', nuevaComplicacion.epilepsia_convulsiones, typeof nuevaComplicacion.epilepsia_convulsiones);
-            console.log('- cefaleas_recurrentes:', nuevaComplicacion.cefaleas_recurrentes, typeof nuevaComplicacion.cefaleas_recurrentes);
-            console.log('- deficit_cognitivo:', nuevaComplicacion.deficit_cognitivo, typeof nuevaComplicacion.deficit_cognitivo);
-            console.log('==========================================');
-
-            console.log('Datos a enviar al crear:', nuevaComplicacion);
             const result = await crearComplicacionesCronicas(token, nuevaComplicacion);
-            console.log('Respuesta de creación:', result);
             
             if (result.status === 'success') {
                 await actualizarComplicacion();
@@ -130,9 +109,7 @@ export const useUpdateComplicacionesCronicas = () => {
             } else {
                 throw new Error(result.message || 'Error al crear la complicación crónica');
             }
-            console.log('=== FIN UPDATE CEREBRALES ===');
         } catch (error) {
-            console.error('Error al crear complicaciones cerebrales:', error);
             setResult({
                 success: false,
                 message: error.message || 'Error al crear las complicaciones cerebrales',
@@ -152,16 +129,6 @@ export const useUpdateComplicacionesCronicas = () => {
                 throw new Error('No hay una complicación crónica activa');
             }
 
-            console.log('=== INICIO UPDATE OCULARES ===');
-            console.log('Datos recibidos del formulario:', datos);
-            console.log('Tipo de datos recibidos:');
-            console.log('- retinopatiaDrepanocitica:', datos.retinopatiaDrepanocitica, typeof datos.retinopatiaDrepanocitica);
-            console.log('- hemorragiasVitreas:', datos.hemorragiasVitreas, typeof datos.hemorragiasVitreas);
-            console.log('- neovascularizacionRetiniana:', datos.neovascularizacionRetiniana, typeof datos.neovascularizacionRetiniana);
-            console.log('- iritisUveitis:', datos.iritisUveitis, typeof datos.iritisUveitis);
-            console.log('- oclusionVasosRetinianos:', datos.oclusionVasosRetinianos, typeof datos.oclusionVasosRetinianos);
-            console.log('ID de complicación:', complicacionData.id);
-
             const camposActualizados = {
                 retinopatia_drepanocitica: datos.retinopatiaDrepanocitica,
                 hemorragias_vitreas: datos.hemorragiasVitreas,
@@ -169,16 +136,6 @@ export const useUpdateComplicacionesCronicas = () => {
                 iritis_uveitis: datos.iritisUveitis,
                 oclusion_vasos_retinianos: datos.oclusionVasosRetinianos,
             };
-
-            console.log('=== DATOS ENVIADOS AL BACKEND (ACTUALIZACIÓN) ===');
-            console.log('Datos formateados:', camposActualizados);
-            console.log('Valores booleanos:');
-            console.log('- retinopatia_drepanocitica:', camposActualizados.retinopatia_drepanocitica, typeof camposActualizados.retinopatia_drepanocitica);
-            console.log('- hemorragias_vitreas:', camposActualizados.hemorragias_vitreas, typeof camposActualizados.hemorragias_vitreas);
-            console.log('- neovascularizacion_retiniana:', camposActualizados.neovascularizacion_retiniana, typeof camposActualizados.neovascularizacion_retiniana);
-            console.log('- iritis_uveitis:', camposActualizados.iritis_uveitis, typeof camposActualizados.iritis_uveitis);
-            console.log('- oclusion_vasos_retinianos:', camposActualizados.oclusion_vasos_retinianos, typeof camposActualizados.oclusion_vasos_retinianos);
-            console.log('==========================================');
 
             const response = await actualizarComplicacionesCronicas(
                 token,

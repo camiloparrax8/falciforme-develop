@@ -17,6 +17,14 @@ import { useVacunas_hc } from '@/hooks/useVacunas_hc'
 import { useTratamientos } from '@/hooks/useTratamientos'
 import SectionTitle from '@/views/common/form/SectionTitle'
 import Spinner from '@/components/ui/Spinner'
+import {
+    cerrarHistoriaClinica,
+    buscarHcOpenById,
+} from '@/customService/services/historiaClinicaService'
+import { toast } from '@/components/ui/toast'
+import Notification from '@/components/ui/Notification'
+import { Button } from '@/components/ui'
+import { useGeneratePDF } from '@/hooks/useGeneratePDF'
 
 const HistoriaClinicaWrapper = () => {
     return (
@@ -34,6 +42,9 @@ const HistoriaClinica = () => {
     const [isLoading, setIsLoading] = useState(true)
     const { existenSoportes } = useSoportesTransfusionales({ id_paciente: id })
     const { existenTratamientos } = useTratamientos({ id_paciente: id })
+    const [historiaClinica, setHistoriaClinica] = useState(null)
+    const [finalizandoConsulta, setFinalizandoConsulta] = useState(false)
+    const { generatePDF } = useGeneratePDF()
 
     useEffect(() => {
         if (id) {
@@ -57,6 +68,23 @@ const HistoriaClinica = () => {
             fetchPaciente()
         }
     }, [id, setPaciente, token])
+
+    useEffect(() => {
+        const obtenerHistoriaClinica = async () => {
+            try {
+                const response = await buscarHcOpenById(token, id)
+                if (response?.data) {
+                    setHistoriaClinica(response.data)
+                }
+            } catch (error) {
+                console.error('Error al obtener la historia clínica:', error)
+            }
+        }
+
+        if (id && token) {
+            obtenerHistoriaClinica()
+        }
+    }, [id, token])
 
     // Efecto para verificar los estados de los módulos
     useEffect(() => {
@@ -254,34 +282,116 @@ const HistoriaClinica = () => {
         verificarEstadoModulos()
     }, [id, token, existeVacuna, existenSoportes, existenTratamientos])
 
+    const handleFinalizarConsulta = async () => {
+        if (!historiaClinica || !historiaClinica.id) {
+            toast.push(
+                <Notification title="Advertencia" type="warning">
+                    No hay una historia clínica abierta para finalizar
+                </Notification>,
+            )
+            return
+        }
+
+        try {
+            setFinalizandoConsulta(true)
+            const response = await cerrarHistoriaClinica(
+                token,
+                historiaClinica.id,
+            )
+
+            if (response && response.status === 'success') {
+                // Guardar el ID de la historia clínica antes de actualizar el estado
+                const historiaClinicaId = historiaClinica.id
+
+                toast.push(
+                    <Notification title="Éxito" type="success">
+                        Consulta finalizada correctamente
+                    </Notification>,
+                )
+
+                // Actualizar el estado de la historia clínica
+                setHistoriaClinica(null)
+
+                // Generar el PDF automáticamente después de finalizar la consulta
+                try {
+                    const newWindow = window.open('', '_blank')
+                    await generatePDF(historiaClinicaId, newWindow)
+                } catch (pdfError) {
+                    console.error('Error al generar el PDF:', pdfError)
+                    toast.push(
+                        <Notification title="Error" type="danger">
+                            Consulta finalizada, pero hubo un error al generar
+                            el PDF
+                        </Notification>,
+                    )
+                }
+            } else {
+                toast.push(
+                    <Notification title="Error" type="danger">
+                        {response?.message || 'Error al finalizar la consulta'}
+                    </Notification>,
+                )
+            }
+        } catch (error) {
+            console.error('Error al finalizar la consulta:', error)
+            toast.push(
+                <Notification title="Error" type="danger">
+                    Error al finalizar la consulta
+                </Notification>,
+            )
+        } finally {
+            setFinalizandoConsulta(false)
+        }
+    }
+
     return (
         <Container>
             <AdaptiveCard>
-                <SectionTitle
-                    text={
-                        `Historia clínica de: ${paciente?.nombre} ${paciente?.apellido}` ||
-                        'Cargando...'
-                    }
-                    className="col-span-1 md:col-span-2 lg:col-span-4"
-                />
+                <div className="flex justify-between items-center">
+                    <SectionTitle
+                        text={
+                            `Historia clínica de: ${paciente?.nombre} ${paciente?.apellido}` ||
+                            'Cargando...'
+                        }
+                        className="col-span-1 md:col-span-2 lg:col-span-4"
+                    />
+                </div>
                 {isLoading ? (
                     <div className="flex flex-col justify-center items-center h-40">
                         <Spinner size={40} />
                     </div>
                 ) : (
-                    <div className="mt-4 grid grid-cols-6 gap-4">
-                        {modulosActualizados.map((item) => (
-                            <CardHC
-                                key={item.id}
-                                title={item.title}
-                                uri={`${item.uri}/${id}`}
-                                iconName={item.iconName}
-                                estado={item.estado}
-                                recomendacion={item.recomendacion}
-                                className="col-span-6 sm:col-span-3 lg:col-span-2"
-                            />
-                        ))}
-                    </div>
+                    <>
+                        <div className="mt-4 grid grid-cols-6 gap-4">
+                            {modulosActualizados.map((item) => (
+                                <CardHC
+                                    key={item.id}
+                                    title={item.title}
+                                    uri={`${item.uri}/${id}`}
+                                    iconName={item.iconName}
+                                    estado={item.estado}
+                                    recomendacion={item.recomendacion}
+                                    className="col-span-6 sm:col-span-3 lg:col-span-2"
+                                />
+                            ))}
+                        </div>
+
+                        {/* Botones de acción */}
+                        {historiaClinica && (
+                            <div className="mt-6 flex justify-center gap-4">
+                                <Button
+                                    variant="solid"
+                                    disabled={finalizandoConsulta}
+                                    onClick={handleFinalizarConsulta}
+                                >
+                                    {finalizandoConsulta && (
+                                        <Spinner size={24} className="mr-2" />
+                                    )}
+                                    Finalizar consulta
+                                </Button>
+                            </div>
+                        )}
+                    </>
                 )}
             </AdaptiveCard>
         </Container>

@@ -2,9 +2,11 @@ import { Card, Tabs } from '@/components/ui'
 import Input from '@/components/ui/Input'
 import Button from '@/components/ui/Button'
 import Dialog from '@/components/ui/Dialog'
-import { useState, type MouseEvent, useCallback } from 'react'
-import ButtonNavigation from '../common/ButtonNavigation'
-import { buscarHcOpenById } from '@/customService/services/historiaClinicaService'
+import { useState, type MouseEvent } from 'react'
+import {
+    buscarHcOpenById,
+    obtenerHistoriasClinicasPorPaciente,
+} from '@/customService/services/historiaClinicaService'
 import { useToken } from '@/store/authStore'
 import { useNavigate } from 'react-router-dom'
 import { TbInfoSquareRoundedFilled } from 'react-icons/tb'
@@ -14,14 +16,15 @@ import InfoAntecedentes from './add/AntecedentesPerinatologicos/InfoAntecedentes
 import InfoAntecedentesPerinatologicos from './add/AntecedentesPerinatologicos/InfoAntecedentesPerinatologicos'
 import InfoVacunas from './add/Vacunas/InfoVacunas'
 import InfoDatosIngreso from './add/Ingreso/InfoDatosIngreso'
-import Field from '../common/Field'
-import Section from '../common/Section'
-import { FaFileMedical, FaClinicMedical } from 'react-icons/fa'
+import Field from '@/views/common/Field'
+import Section from '@/views/common/Section'
+import { FaFileMedical, FaClinicMedical, FaFilePdf } from 'react-icons/fa'
 import { useFormattedDate } from '@/hooks/useFormattedDate'
 import { useCalculateAge } from '@/hooks/useCalculateAge'
 import { Table } from '@/components/ui/Table'
+import { Spinner } from '@/components/ui/Spinner'
+import { Badge } from '@/components/ui/Badge'
 import { useGeneratePDF } from '@/hooks/useGeneratePDF'
-import { FaDownload } from "react-icons/fa";
 
 const { TabNav, TabList, TabContent } = Tabs
 
@@ -30,149 +33,38 @@ export const PacienteDetail = ({ item }) => {
     const navigate = useNavigate()
     const { formatDate } = useFormattedDate()
     const { calculateAge } = useCalculateAge()
-    
-    const generateHistoriaClinicaData = useCallback(() => {
-        return {
-            fecha_creacion: new Date().toISOString().split('T')[0],
-            paciente: {
-                id: item.data.id,
-                nombre: `${item.data.nombre} ${item.data.apellido}`,
-                edad: calculateAge(item.data.fecha_nacimiento),
-                identificacion: item.data.identificacion,
-                tipo_identificacion: item.data.tipo_identificacion,
-                celular: item.data.celular,
-                direccion: item.data.direccion,
-                correo: item.data.correo
-            },
-            examenesFisicos: {
-              
-                frecuencia_cardiaca: "72",
-                frecuencia_respiratoria: "16",
-                saturacion_oxigeno: "98",
-                tension_arterial: "120/80",
-                // Peso y Talla
-                peso: "65",
-                talla: "170",
-                percentil: "50",
-                imc: "22.5",
-                // Estado Nutricional
-                deficit_zinc: "Normal",
-                deficit_acido_folico: "Normal",
-                deficit_vitamina_d: "Normal",
-                desnutricion: "No",
-                obesidad: "No",
-                // Región Cefálica
-                perimetro_cefalico: "54",
-                agudeza_visual: "20/20",
-                examen_orl: "Normal, sin alteraciones",
-                caries: "No presenta",
-                cuello: "Normal, móvil, sin adenopatías",
-                // Región Toracoabdominal
-                cardio_pulmonar: "Ruidos cardíacos rítmicos, murmullo vesicular conservado",
-                abdominal: "Blando, depresible, no doloroso",
-                // Región Pélvica
-                tanner: "Estadio III",
-                extremidades: "Simétricas, pulsos presentes, sin edemas"
-            },
-            laboratorios: {
-                hematies: "5.0",
-                hemoglobina: "14.5",
-                hematocrito: "43",
-                mcv: "88",
-                mch: "29",
-                mchc: "33",
-                rdw: "13"
-            },
-            complicacionesAgudas: {
-                crisisDolor: {
-                    fecha: "2024-03-20",
-                    dias: "5",
-                    intensidad: "8",
-                    manejo: "Hospitalización y analgesia",
-                    tratamiento: "Morfina + Ketorolaco",
-                    huesosAfectados: "Fémur, tibia y peroné"
-                },
-                infecciones: {
-                    germen: "Streptococcus pneumoniae",
-                    tratamiento: "Ceftriaxona",
-                    dias: "14"
-                },
-                anemiaAguda: {
-                    crisisAplastica: "Presente",
-                    manejo: "Transfusión de glóbulos rojos"
-                }
-            },
-            complicacionesCronicas: {
-                cerebrales: {
-                    vasculopatia_cerebral: "No",
-                    infartos_cerebrales_silentes: "No",
-                    epilepsia_convulsiones: "No",
-                    cefaleas_recurrentes: "No",
-                    deficit_cognitivo: "No"
-                },
-                oculares: {
-                    retinopatia_drepanocitica: "No",
-                    hemorragias_vitreas: "No",
-                    neovascularizacion_retiniana: "No",
-                    iritis_uveitis: "No",
-                    oclusion_vasos_retinianos: "No"
-                },
-                cardiacas: {
-                    disfuncion_diastolica_vi: "No",
-                    sobrecarga_ferrica: "No",
-                    trombosis: "No"
-                },
-                pulmonares: {
-                    hipertension_pulmonar: "No",
-                    vrt: "N/A",
-                    asma_sibilancias: {
-                        crisis_por_anio: "0",
-                        tratamientos: "Ninguno"
-                    },
-                    epfc: {
-                        hipomexia: "No",
-                        saos: "No",
-                        tratamiento: "Ninguno"
-                    }
-                },
-                hepaticas: {
-                    hepatitis_viral_cronica: "No",
-                    esplenomegalia: "No",
-                    hiperesplenismo: "No"
-                }
-            },
-            imagenesDiagnosticas: item.data.imagenesDiagnosticas || [],
-            tratamientos: item.data.tratamientos || [],
-            vacunas: item.data.vacunas || []
-        };
-    }, [item.data, calculateAge, formatDate]);
+    const { generatePDF } = useGeneratePDF()
 
-    const { generatePDF } = useGeneratePDF();
-
-    const handleGeneratePDF = async () => {
-        const data = generateHistoriaClinicaData();
-        const newWindow = window.open('', '_blank');
-        await generatePDF(data, newWindow);
-    };
+    const handleGeneratePDF = async (historiaId: number) => {
+        const newWindow = window.open('', '_blank')
+        await generatePDF(historiaId, newWindow)
+    }
 
     const [dialogIsOpenPaciente, setIsOpenPaciente] = useState(false)
     const [dialogIsOpenHC, setIsOpenHC] = useState(false)
     const [dialogIsOpenHistoriaClinica, setIsOpenHistoriaClinica] =
         useState(false)
-    const openDialogHistoriaClinica = () => setIsOpenHistoriaClinica(true)
+    const [historiasClinicas, setHistoriasClinicas] = useState([])
+    const [loadingHistorias, setLoadingHistorias] = useState(false)
+
+    const openDialogHistoriaClinica = () => {
+        setIsOpenHistoriaClinica(true)
+        cargarHistoriasClinicas()
+    }
+
     const closeDialogHistoriaClinica = () => setIsOpenHistoriaClinica(false)
 
     const openDialogPaciente = () => {
         setIsOpenPaciente(true)
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const onDialogClosePaciente = (e: MouseEvent) => {
-        console.log('onDialogClosePaciente', e)
         setIsOpenPaciente(false)
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const onDialogCloseHC = (e: MouseEvent) => {
-        console.log('onDialogCloseHC', e)
         setIsOpenHC(false)
     }
 
@@ -197,7 +89,36 @@ export const PacienteDetail = ({ item }) => {
             setIsOpenHC(true)
         }
     }
+
     const hc = <TbInfoSquareRoundedFilled />
+
+    const cargarHistoriasClinicas = async () => {
+        if (!item.data.id) return
+
+        setLoadingHistorias(true)
+        try {
+            const response = await obtenerHistoriasClinicasPorPaciente(
+                token,
+                item.data.id,
+            )
+            if (response && response.length > 0) {
+                // Ordenar las historias clínicas por fecha de creación (descendente)
+                const historiasOrdenadas = [...response].sort((a, b) => {
+                    const fechaA = new Date(a.fecha_creacion).getTime()
+                    const fechaB = new Date(b.fecha_creacion).getTime()
+                    return fechaB - fechaA // Orden descendente (más reciente primero)
+                })
+                setHistoriasClinicas(historiasOrdenadas)
+            } else {
+                setHistoriasClinicas([])
+            }
+        } catch (error) {
+            console.error('Error al cargar historias clínicas:', error)
+            setHistoriasClinicas([])
+        } finally {
+            setLoadingHistorias(false)
+        }
+    }
 
     return (
         <>
@@ -356,49 +277,129 @@ export const PacienteDetail = ({ item }) => {
 
                             <Dialog
                                 isOpen={dialogIsOpenHistoriaClinica}
-                                width={800}
+                                width={1000}
                                 height={500}
                                 onClose={closeDialogHistoriaClinica}
                                 onRequestClose={closeDialogHistoriaClinica}
                             >
                                 <div className="flex flex-col h-full space-y-4">
-                                    <h5 className="text-xl font-semibold mb-4">Historia Clínica del Paciente</h5>
+                                    <h5 className="text-xl font-semibold mb-4">
+                                        Historia Clínica del Paciente
+                                    </h5>
                                     <div className="overflow-x-auto">
-                                        <Table>
-                                            <Table.THead>
-                                                <Table.Tr>
-                                                    <Table.Th>Fecha de Historia Clínica</Table.Th>
-                                                
-                                                    <Table.Th>Opciones</Table.Th>
-                                                </Table.Tr>
-                                            </Table.THead>
-                                            <Table.TBody>
-                                                <Table.Tr>
-                                                    <Table.Td>22/10/2024</Table.Td>
-                                                    <Table.Td>
-                                                        <Button 
-                                                            icon={<FaDownload size={16} />} 
-                                                            variant="solid" 
-                                                            onClick={handleGeneratePDF}
-                                                        >
-                                                            Generar Historia Clínica
-                                                        </Button>
-                                                    </Table.Td>
-                                                </Table.Tr>
-                                                <Table.Tr>
-                                                    <Table.Td>20/10/2024</Table.Td>
-                                                    <Table.Td>
-                                                        <Button 
-                                                            icon={<FaDownload size={16} />} 
-                                                            variant="solid" 
-                                                            onClick={handleGeneratePDF}
-                                                        >
-                                                            Generar Historia Clínica
-                                                        </Button>
-                                                    </Table.Td>
-                                                </Table.Tr>
-                                            </Table.TBody>
-                                        </Table>
+                                        {loadingHistorias ? (
+                                            <div className="flex justify-center items-center h-24">
+                                                <Spinner size={40} />
+                                            </div>
+                                        ) : historiasClinicas.length === 0 ? (
+                                            <div className="text-center py-4 text-gray-500">
+                                                No hay historias clínicas
+                                                disponibles para este paciente.
+                                            </div>
+                                        ) : (
+                                            <Table>
+                                                <Table.THead>
+                                                    <Table.Tr>
+                                                        <Table.Th>
+                                                            Usuario Creador
+                                                        </Table.Th>
+                                                        <Table.Th>
+                                                            Fecha de Creación
+                                                        </Table.Th>
+                                                        <Table.Th>
+                                                            Usuario Finalizador
+                                                        </Table.Th>
+                                                        <Table.Th>
+                                                            Fecha de
+                                                            Finalización
+                                                        </Table.Th>
+                                                        <Table.Th>
+                                                            Estado
+                                                        </Table.Th>
+                                                        <Table.Th>PDF</Table.Th>
+                                                    </Table.Tr>
+                                                </Table.THead>
+                                                <Table.TBody>
+                                                    {historiasClinicas.map(
+                                                        (historia) => (
+                                                            <Table.Tr
+                                                                key={
+                                                                    historia.id
+                                                                }
+                                                            >
+                                                                <Table.Td>
+                                                                    {historia
+                                                                        .usuario_creador
+                                                                        ?.nombres ||
+                                                                        (historia.id_usuario
+                                                                            ? `ID: ${historia.id_usuario}`
+                                                                            : 'No disponible')}
+                                                                </Table.Td>
+                                                                <Table.Td>
+                                                                    {new Date(
+                                                                        historia.fecha_creacion,
+                                                                    ).toLocaleDateString(
+                                                                        'es-ES',
+                                                                    )}
+                                                                </Table.Td>
+                                                                <Table.Td>
+                                                                    {historia
+                                                                        .usuario_finalizador
+                                                                        ?.nombres ||
+                                                                        (historia.id_user_update
+                                                                            ? `ID: ${historia.id_user_update}`
+                                                                            : historia.estado
+                                                                              ? ''
+                                                                              : '')}
+                                                                </Table.Td>
+                                                                <Table.Td>
+                                                                    {historia.estado
+                                                                        ? ''
+                                                                        : historia.updated_at
+                                                                          ? new Date(
+                                                                                historia.updated_at,
+                                                                            ).toLocaleDateString(
+                                                                                'es-ES',
+                                                                            )
+                                                                          : 'No disponible'}
+                                                                </Table.Td>
+                                                                <Table.Td>
+                                                                    <Badge
+                                                                        className={
+                                                                            historia.estado
+                                                                                ? 'bg-emerald-500'
+                                                                                : 'bg-red-500'
+                                                                        }
+                                                                        content={
+                                                                            historia.estado
+                                                                                ? 'Abierta'
+                                                                                : 'Cerrada'
+                                                                        }
+                                                                    />
+                                                                </Table.Td>
+                                                                <Table.Td>
+                                                                    <Button
+                                                                        icon={
+                                                                            <FaFilePdf
+                                                                                size={
+                                                                                    16
+                                                                                }
+                                                                            />
+                                                                        }
+                                                                        variant="solid"
+                                                                        onClick={() =>
+                                                                            handleGeneratePDF(
+                                                                                historia.id,
+                                                                            )
+                                                                        }
+                                                                    ></Button>
+                                                                </Table.Td>
+                                                            </Table.Tr>
+                                                        ),
+                                                    )}
+                                                </Table.TBody>
+                                            </Table>
+                                        )}
                                     </div>
                                 </div>
                             </Dialog>

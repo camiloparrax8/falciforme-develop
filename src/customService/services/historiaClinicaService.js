@@ -38,7 +38,7 @@ export const obtenerHistoriasClinicasPorPaciente = async (token, idPaciente) => 
         }
 
         const response = await axiosInstance.get(
-            `/historia-clinica/paciente/${idPacienteNumerico}?includeUsers=true`,
+            `/historia-clinica/paciente/${idPacienteNumerico}?includeUsers=true&userFields=nombres,apellidos`,
             {
                 headers: { Authorization: token }
             }

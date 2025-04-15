@@ -20,6 +20,7 @@ import Spinner from '@/components/ui/Spinner'
 import {
     cerrarHistoriaClinica,
     buscarHcOpenById,
+    obtenerHistoriasClinicasPorPaciente,
 } from '@/customService/services/historiaClinicaService'
 import { toast } from '@/components/ui/toast'
 import Notification from '@/components/ui/Notification'
@@ -45,6 +46,7 @@ const HistoriaClinica = () => {
     const [historiaClinica, setHistoriaClinica] = useState(null)
     const [finalizandoConsulta, setFinalizandoConsulta] = useState(false)
     const { generatePDF } = useGeneratePDF()
+    const [historiasClinicas, setHistoriasClinicas] = useState([])
 
     useEffect(() => {
         if (id) {
@@ -84,6 +86,36 @@ const HistoriaClinica = () => {
         if (id && token) {
             obtenerHistoriaClinica()
         }
+    }, [id, token])
+
+    // Cargar todas las historias clínicas del paciente
+    useEffect(() => {
+        const cargarHistoriasClinicas = async () => {
+            if (!id || !token) return
+
+            try {
+                const response = await obtenerHistoriasClinicasPorPaciente(
+                    token,
+                    id,
+                )
+                if (response && response.length > 0) {
+                    // Ordenar las historias clínicas por fecha de creación (descendente)
+                    const historiasOrdenadas = [...response].sort((a, b) => {
+                        const fechaA = new Date(a.fecha_creacion).getTime()
+                        const fechaB = new Date(b.fecha_creacion).getTime()
+                        return fechaB - fechaA // Orden descendente (más reciente primero)
+                    })
+                    setHistoriasClinicas(historiasOrdenadas)
+                } else {
+                    setHistoriasClinicas([])
+                }
+            } catch (error) {
+                console.error('Error al cargar historias clínicas:', error)
+                setHistoriasClinicas([])
+            }
+        }
+
+        cargarHistoriasClinicas()
     }, [id, token])
 
     // Efecto para verificar los estados de los módulos
@@ -314,8 +346,38 @@ const HistoriaClinica = () => {
 
                 // Generar el PDF automáticamente después de finalizar la consulta
                 try {
+                    // Buscar la historia clínica por ID en el array de historias
+                    const historiaCompleta = historiasClinicas.find(
+                        (historia) => historia.id === historiaClinicaId,
+                    )
+
+                    if (!historiaCompleta) {
+                        console.error('Historia clínica no encontrada')
+                        return
+                    }
+
+                    // Preparar los datos para el PDF incluyendo información del paciente
+                    const datosParaPDF = {
+                        paciente: {
+                            ...paciente,
+                            nombre: `${paciente.nombre} ${paciente.apellido}`,
+                            edad: paciente.fecha_nacimiento
+                                ? Math.floor(
+                                      (new Date().getTime() -
+                                          new Date(
+                                              paciente.fecha_nacimiento,
+                                          ).getTime()) /
+                                          (365.25 * 24 * 60 * 60 * 1000),
+                                  )
+                                : 'N/A',
+                        },
+                        ...historiaCompleta,
+                    }
+
+                    // Abrir una nueva ventana para el PDF
                     const newWindow = window.open('', '_blank')
-                    await generatePDF(historiaClinicaId, newWindow)
+                    // Generar el PDF con los datos completos
+                    await generatePDF(datosParaPDF, newWindow)
                 } catch (pdfError) {
                     console.error('Error al generar el PDF:', pdfError)
                     toast.push(

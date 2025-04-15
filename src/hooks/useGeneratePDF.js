@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import pdfMake from 'pdfmake/build/pdfmake';
 import { useToken } from '@/store/authStore';
 import { generarSeccionExamenesFisicos, obtenerDatosExamenFisico } from '@/utils/sections/examenesFisicosSection';
@@ -9,6 +10,7 @@ import { generarSeccionImagenesDiagnosticas, obtenerDatosImagenesDiagnosticas } 
 import { generarSeccionSoportesTransfusionales, obtenerDatosSoportesTransfusionales } from '@/utils/sections/soportesTransfusionalesSection';
 import { generarSeccionVacunas, obtenerDatosVacunas } from '@/utils/sections/vacunasSection';
 import { generarSeccionTratamientos, obtenerDatosTratamientos } from '@/utils/sections/tratamientosSection';
+import { obtenerHistoriasClinicasPorPaciente } from '@/customService/services/historiaClinicaService';
 
 
 pdfMake.fonts = {
@@ -24,12 +26,12 @@ const toBase64 = async (url) => {
     const res = await fetch(url);
     const blob = await res.blob();
     return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result);
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
     });
-  };
+};
 
 export const useGeneratePDF = () => {
     const { token } = useToken();
@@ -37,21 +39,54 @@ export const useGeneratePDF = () => {
     const generatePDF = async (data, window) => {
         try {
             const logoBase64 = await toBase64('/img/logo/logo-light-full.png');
+
+            // Verificar si solo tenemos el ID de la historia clínica
+            if (typeof data === 'number' || (data && !data.paciente)) {
+                const historiaId = typeof data === 'number' ? data : data.id;
+                const pacienteId = typeof data === 'object' ? data.paciente?.id : null;
+
+                // Buscar la historia clínica por ID en todas las historias del paciente
+                const historias = await obtenerHistoriasClinicasPorPaciente(token, pacienteId);
+                const historiaCompleta = historias.find(h => h.id === historiaId);
+
+                if (historiaCompleta) {
+                    // Actualizar data con la historia completa
+                    data = historiaCompleta;
+                } else {
+                    console.error('No se pudo encontrar la historia clínica con ID:', historiaId);
+                    throw new Error('Historia clínica no encontrada');
+                }
+            }
+
             if (!data?.paciente?.id) {
                 throw new Error('ID de paciente no proporcionado');
             }
 
-            // Obtener datos de forma dinámica
-            const complicacionesCronicas = await obtenerDatosComplicacionesCronicas(token, data.paciente.id);
-            const examenesFisicos = await obtenerDatosExamenFisico(token, data.paciente.id);
-            const trasplanteProgenitores = await obtenerDatosTrasplantesProgenitores(token, data.paciente.id);
-            const datosComplicacionesAgudas = await obtenerDatosComplicacionesAgudas(token, data.paciente.id);
-            const laboratorios = await obtenerDatosLaboratorios(token, data.paciente.id);
-            const imagenesDiagnosticas = await obtenerDatosImagenesDiagnosticas(token, data.paciente.id);
-            const soportesTransfusionales = await obtenerDatosSoportesTransfusionales(token, data.paciente.id);
-            const resultadoTratamientos = await obtenerDatosTratamientos(token, data.paciente.id);
-            const vacunas = await obtenerDatosVacunas(token, data.paciente.id);
-            
+            // Preparar los datos directamente desde el objeto proporcionado
+            const examenesFisicos = data.examenes_fisicos || null;
+            const complicacionesCronicas = data.complicaciones_cronicas || null;
+            const trasplanteProgenitores = data.transplante_progenitores || null;
+
+            // Preparamos los datos para complicaciones agudas
+            const datosComplicacionesAgudas = {
+                complicacionesAgudas: { data: data.complicaciones_agudas?.length > 0 ? data.complicaciones_agudas[0] : null },
+                ingresos: {
+                    data: data.complicaciones_agudas?.length > 0 ?
+                        (data.complicaciones_agudas[0]?.ingresosComplicaciones || []) : []
+                }
+            };
+
+            // Datos de laboratorios e imágenes
+            const laboratorios = { data: data.laboratorio ? [data.laboratorio] : [] };
+            const imagenesDiagnosticas = { data: data.imagenes_diagnosticas ? [data.imagenes_diagnosticas] : [] };
+
+            // Datos de soportes transfusionales
+            const soportesTransfusionales = { data: data.soportes_transfusionales ? [data.soportes_transfusionales] : [] };
+
+            // Preparamos los datos para vacunas y tratamientos
+            const vacunas = { data: data.vacuna || [] };
+            const resultadoTratamientos = { status: 'success', data: data.tratamiento || [] };
+
             const formatearFecha = (fechaStr) => {
                 if (!fechaStr) return '';
                 try {
@@ -211,35 +246,36 @@ export const useGeneratePDF = () => {
                             ]
                         },
                         layout: {
-                            hLineWidth: function(i, node) {
+                            hLineWidth: function (i, node) {
                                 return (i === 0 || i === 1) ? 1 : 0.5;
                             },
-                            vLineWidth: function(i, node) {
+                            vLineWidth: function (i, node) {
                                 return 0.5;
                             },
-                            hLineColor: function(i, node) {
+                            hLineColor: function (i, node) {
                                 return (i === 0 || i === 1) ? '#1F2937' : '#CCCCCC';
                             },
-                            vLineColor: function(i, node) {
+                            vLineColor: function (i, node) {
                                 return '#CCCCCC';
                             },
-                            fillColor: function(rowIndex, node, columnIndex) {
+                            fillColor: function (rowIndex, node, columnIndex) {
                                 return (rowIndex === 0) ? '#00BCD4' : null;
                             }
                         },
                         margin: [0, 0, 0, 20]
                     },
 
-                    generarSeccionExamenesFisicos(examenesFisicos),
+                    // Usamos directamente los datos ya preparados en cada sección
+                    examenesFisicos ? generarSeccionExamenesFisicos(examenesFisicos) : { text: 'No hay datos de examen físico', margin: [0, 0, 0, 20] },
                     generarSeccionComplicacionesAgudas(datosComplicacionesAgudas?.complicacionesAgudas, datosComplicacionesAgudas?.ingresos),
-                    generarSeccionComplicacionesCronicas(complicacionesCronicas),
-                    generarSeccionTrasplantesProgenitores(trasplanteProgenitores),
-                    generarSeccionLaboratorios(laboratorios),
-                    generarSeccionImagenesDiagnosticas(imagenesDiagnosticas),
-                    generarSeccionSoportesTransfusionales(soportesTransfusionales),
-                    generarSeccionVacunas(vacunas),
-                    ...generarSeccionTratamientos(resultadoTratamientos),
-                    
+                    complicacionesCronicas ? generarSeccionComplicacionesCronicas({ data: complicacionesCronicas }) : { text: 'No hay datos de complicaciones crónicas', margin: [0, 0, 0, 20] },
+                    trasplanteProgenitores ? generarSeccionTrasplantesProgenitores({ data: trasplanteProgenitores }) : { text: 'No hay datos de trasplantes de progenitores', margin: [0, 0, 0, 20] },
+                    laboratorios.data.length > 0 ? generarSeccionLaboratorios(laboratorios) : { text: 'No hay datos de laboratorios', margin: [0, 0, 0, 20] },
+                    imagenesDiagnosticas.data.length > 0 ? generarSeccionImagenesDiagnosticas(imagenesDiagnosticas) : { text: 'No hay datos de imágenes diagnósticas', margin: [0, 0, 0, 20] },
+                    soportesTransfusionales.data.length > 0 ? generarSeccionSoportesTransfusionales(soportesTransfusionales) : { text: 'No hay datos de soportes transfusionales', margin: [0, 0, 0, 20] },
+                    vacunas.data.length > 0 ? generarSeccionVacunas(vacunas) : { text: 'No hay datos de vacunas', margin: [0, 0, 0, 20] },
+                    resultadoTratamientos.data.length > 0 ? generarSeccionTratamientos(resultadoTratamientos) : { text: 'No hay datos de tratamientos', margin: [0, 0, 0, 20] },
+
                 ],
                 footer: (currentPage, pageCount) => ({
                     columns: [

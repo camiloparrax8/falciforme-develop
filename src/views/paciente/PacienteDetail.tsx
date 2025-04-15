@@ -36,8 +36,30 @@ export const PacienteDetail = ({ item }) => {
     const { generatePDF } = useGeneratePDF()
 
     const handleGeneratePDF = async (historiaId: number) => {
+        // Buscar la historia clínica por ID en el array de historias
+        const historiaClinica = historiasClinicas.find(
+            (historia) => historia.id === historiaId,
+        )
+
+        if (!historiaClinica) {
+            console.error('Historia clínica no encontrada')
+            return
+        }
+
+        // Preparar los datos para el PDF incluyendo información del paciente
+        const datosParaPDF = {
+            paciente: {
+                ...item.data,
+                nombre: `${item.data.nombre} ${item.data.apellido}`,
+                edad: calculateAge(item.data.fecha_nacimiento),
+            },
+            ...historiaClinica,
+        }
+
+        // Abrir una nueva ventana para el PDF
         const newWindow = window.open('', '_blank')
-        await generatePDF(historiaId, newWindow)
+        // Generar el PDF con los datos completos
+        await generatePDF(datosParaPDF, newWindow)
     }
 
     const [dialogIsOpenPaciente, setIsOpenPaciente] = useState(false)
@@ -330,8 +352,9 @@ export const PacienteDetail = ({ item }) => {
                                                                 <Table.Td>
                                                                     {historia
                                                                         .usuario_creador
-                                                                        ?.nombres ||
-                                                                        (historia.id_usuario
+                                                                        ?.nombres && historia.usuario_creador?.apellidos
+                                                                        ? `${historia.usuario_creador.nombres} ${historia.usuario_creador.apellidos}`
+                                                                        : (historia.id_usuario
                                                                             ? `ID: ${historia.id_usuario}`
                                                                             : 'No disponible')}
                                                                 </Table.Td>
@@ -343,10 +366,10 @@ export const PacienteDetail = ({ item }) => {
                                                                     )}
                                                                 </Table.Td>
                                                                 <Table.Td>
-                                                                    {historia
-                                                                        .usuario_finalizador
-                                                                        ?.nombres ||
-                                                                        (historia.id_user_update
+                                                                    {historia.usuario_finalizador
+                                                                        ?.nombres && historia.usuario_finalizador?.apellidos
+                                                                        ? `${historia.usuario_finalizador.nombres} ${historia.usuario_finalizador.apellidos}`
+                                                                        : (historia.id_user_update
                                                                             ? `ID: ${historia.id_user_update}`
                                                                             : historia.estado
                                                                               ? ''

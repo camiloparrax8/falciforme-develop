@@ -10,15 +10,16 @@ import {
 } from '@/context/ComplicacionesCronicasContext'
 import { useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import { useToken, useSessionUser } from '@/store/authStore'
+import { useToken } from '@/store/authStore'
 import { buscarComplicacionesCronicasPorIdPaciente } from '@/customService/services/complicacionesCronicasService'
+import { BackButton } from '@/components/shared'
+import Spinner from '@/components/ui/Spinner'
 
 function ComplicacionesCronicas() {
     const { id_paciente } = useParams()
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const { token } = useToken()
-    const { user } = useSessionUser()
     const [initialComplicacion, setInitialComplicacion] =
         useState<ComplicacionesCronicasData | null>(null)
     const [mostrarMensajeInfo, setMostrarMensajeInfo] = useState(true)
@@ -37,12 +38,13 @@ function ComplicacionesCronicas() {
 
                 if (response.status === 'success' && response.data) {
                     setInitialComplicacion(response.data)
+                } else if (response.status === 'success' && !response.data) {
+                    // Si la respuesta es success pero no hay datos, simplemente dejamos initialComplicacion como null
+                    setInitialComplicacion(null)
                 }
             } catch (error) {
                 console.error('Error al cargar complicaciones crónicas:', error)
-                setError(
-                    'Error al cargar información de las complicaciones crónicas',
-                )
+                setError('Error inesperado al cargar información')
                 setInitialComplicacion(null)
             } finally {
                 setLoading(false)
@@ -74,11 +76,11 @@ function ComplicacionesCronicas() {
     }
 
     if (loading) {
-        return <div>Cargando...</div>
-    }
-
-    if (error) {
-        return <div>Error: {error}</div>
+        return (
+            <div className="flex justify-center items-center h-full">
+                <Spinner size={40} />
+            </div>
+        )
     }
 
     return (
@@ -87,6 +89,18 @@ function ComplicacionesCronicas() {
             actualizarComplicacion={actualizarComplicacion}
         >
             <Card>
+                <div className="mb-4">
+                    <BackButton variant="default" />
+                </div>
+
+                {error && (
+                    <div className="mb-4">
+                        <Alert showIcon closable title="Error" type="danger">
+                            {error}
+                        </Alert>
+                    </div>
+                )}
+
                 {initialComplicacion && mostrarMensajeInfo && (
                     <div className="mb-4">
                         <Alert
@@ -97,11 +111,12 @@ function ComplicacionesCronicas() {
                             duration={10000}
                             onClose={handleCloseAlertInfo}
                         >
-                            Este paciente ya tiene registradas complicaciones crónicas. 
-                            No podrá crear un nuevo registro.
+                            Este paciente ya tiene registradas complicaciones
+                            crónicas. Termine de llenar la informacion en los modales.
                         </Alert>
                     </div>
                 )}
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                     {/* Columna izquierda */}
                     <ImgNino></ImgNino>

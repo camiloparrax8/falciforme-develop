@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { useToken } from '@/store/authStore'
 import { usePatient, PatientProvider } from '@/context/PatientContext'
-import { AdaptiveCard, Container } from '@/components/shared'
+import { AdaptiveCard, Container, BackButton } from '@/components/shared'
 import CardHC from '@/views/common/historia/CardHc'
 import { modulos } from '@/views/historia/modulos'
 import { buscarPacienteById } from '@/customService/services/pacienteService'
@@ -409,14 +409,17 @@ const HistoriaClinica = () => {
     return (
         <Container>
             <AdaptiveCard>
-                <div className="flex justify-between items-center">
-                    <SectionTitle
-                        text={
-                            `Historia clínica de: ${paciente?.nombre} ${paciente?.apellido}` ||
-                            'Cargando...'
-                        }
-                        className="col-span-1 md:col-span-2 lg:col-span-4"
-                    />
+                <BackButton variant="default" />
+                <div className="flex justify-between items-center mb-4">
+                    <div className="flex items-center gap-4">
+                        <SectionTitle
+                            text={
+                                `Historia clínica de: ${paciente?.nombre} ${paciente?.apellido}` ||
+                                'Cargando...'
+                            }
+                            className="col-span-1 md:col-span-2 lg:col-span-4"
+                        />
+                    </div>
                 </div>
                 {isLoading ? (
                     <div className="flex flex-col justify-center items-center h-40">

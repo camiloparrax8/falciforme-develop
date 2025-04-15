@@ -5,6 +5,7 @@ import TableCustom from '@/views/common/TableCustom'
 import Alert from '@/components/ui/Alert'
 import { useVacunas_hc } from '@/hooks/useVacunas_hc'
 import Spinner from '@/components/ui/Spinner'
+import { BackButton } from '@/components/shared'
 
 /**
  * Componente principal para la gestión de vacunas.
@@ -41,6 +42,9 @@ function Vacunas() {
             )}
 
             {/* Formulario */}
+            <div className="mb-4">
+                <BackButton variant="default" />
+            </div>
             <FormVacunas
                 loading={loading}
                 onSubmit={handleFormSubmit}

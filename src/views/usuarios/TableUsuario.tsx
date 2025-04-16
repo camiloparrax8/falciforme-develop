@@ -9,12 +9,12 @@ import DialogDesactivar from './DialogDesactivar'
 import DialogEdit from './DialogEdit'
 const { Tr, Th, Td, THead, TBody } = Table
 
-const TableUsuario = ({ data, header, className}) => {
+const TableUsuario = ({ data, header, className, actualizarUsuarios, setMensaje}) => {
     const [dialogIsOpenDelete, setIsOpenDelete] = useState(false)
     const [dialogIsOpenDesactivar, setIsOpenDesactivar] = useState(false)
     const [dialogIsOpenEdit, setIsOpenEdit] = useState(false)
     const [selectedRow, setSelectedRow] = useState(null)
-    const [mensaje, setMensaje] = useState(null)
+
 
     const openDialogDelete = (row) => {
         setSelectedRow(row)
@@ -27,6 +27,7 @@ const TableUsuario = ({ data, header, className}) => {
 
     const onDialogOkDelete = async (row) => {
         console.log(row);
+        await actualizarUsuarios();
         setIsOpenDelete(false)
     }
 
@@ -55,6 +56,7 @@ const TableUsuario = ({ data, header, className}) => {
 
     const onDialogOkEdit = async (row) => {
         console.log(row);
+        await actualizarUsuarios();
         setIsOpenEdit(false)
     }
 
@@ -136,6 +138,7 @@ const TableUsuario = ({ data, header, className}) => {
                 selectedRow={selectedRow}
                 onDialogCloseEdit={onDialogCloseEdit}
                 onDialogOkEdit={onDialogOkEdit}
+                setMensaje={setMensaje}
             />
         </div>
     )

@@ -48,7 +48,8 @@ export const crearImagenDiagnostica = async (token, formData) => {
             imagenes_diagnosticas: formData.imagenDiagnostica,
             fecha: fechaFormateada,  // Fecha formateada sin conversión a UTC
             tipo_resultado: formData.tipoResultado,
-            resultado: formData.resultado
+            resultado: formData.resultado,
+            id_user_create: formData.id_user_create
         };
 
         const result = await axiosInstance.post(`/historia-clinica/imagenes-diagnosticas`, data, {

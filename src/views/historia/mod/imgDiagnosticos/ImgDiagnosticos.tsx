@@ -4,7 +4,7 @@ import SectionTitle from '@/views/common/form/SectionTitle'
 import TableCustom from '@/views/common/TableCustom'
 import Alert from '@/components/ui/Alert'
 import { useImagenesDiagnosticas } from '@/hooks/useImagenesDiagnosticas'
-
+import { BackButton } from '@/components/shared'
 /**
  * Componente principal para la gestión de imágenes diagnósticas.
  * Maneja la visualización, creación y eliminación de registros de imágenes diagnósticas.
@@ -38,7 +38,7 @@ function ImgDiagnosticos() {
                     </Alert>
                 </div>
             )}
-
+            <BackButton variant="default" />
             {/* Formulario */}
             <FormImgDiagnosticos
                 loading={loading}

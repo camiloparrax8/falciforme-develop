@@ -1,5 +1,6 @@
 import { useParams } from 'react-router-dom'
 import { Card } from '@/components/ui'
+import { BackButton } from '@/components/shared'
 import FormTrasnfucionales from '@/views/historia/mod/soportesTransfucionales/FormTrasnfucionales'
 import SectionTitle from '@/views/common/form/SectionTitle'
 import TableCustom from '@/views/common/TableCustom'
@@ -44,6 +45,7 @@ function SoportesTransfucionales() {
 
             {/* Formulario */}
             <Card>
+                <BackButton variant="default" />
                 <FormTrasnfucionales
                     loading={loading}
                     onSubmit={handleFormSubmit}

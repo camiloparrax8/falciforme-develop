@@ -1,5 +1,3 @@
-import { obtenerImagenesDiagnosticasPorPaciente } from '@/customService/services/imagenDiagnosticaService';
-
 /**
  * Genera la sección de imágenes diagnósticas para el PDF
  * @param {Object} imagenesDiagnosticas - Datos de imágenes diagnósticas del paciente
@@ -41,26 +39,26 @@ export const generarSeccionImagenesDiagnosticas = (imagenesDiagnosticas) => {
                 ...(imagenesDiagnosticas?.data?.length > 0 
                     ? imagenesDiagnosticas.data.map((img, index) => [
                         imagenesDiagnosticas.data.length - index,
-                        img.imagenes_diagnosticas || "N/A",
-                        img.fecha ? img.fecha.split('T')[0].split('-').reverse().join('/') : "N/A",
-                        img.tipo_resultado || "N/A",
-                        img.resultado || "N/A"
+                        img.imagenes_diagnosticas || "No registrado",
+                        img.fecha ? img.fecha.split('T')[0].split('-').reverse().join('/') : "No registrado",
+                        img.tipo_resultado || "No registrado",
+                        img.resultado || "No registrado"
                     ])
                     : [[{ text: 'No hay registros de imágenes diagnósticas', colSpan: 5, alignment: 'center' }, {}, {}, {}, {}]]
                 )
             ]
         },
         layout: {
-            hLineWidth: function(i, node) {
+            hLineWidth: function(i) {
                 return (i === 0 || i === 1) ? 1 : 0.5;
             },
-            vLineWidth: function(i, node) {
+            vLineWidth: function() {
                 return 0.5;
             },
-            hLineColor: function(i, node) {
+            hLineColor: function(i) {
                 return (i === 0 || i === 1) ? '#1F2937' : '#CCCCCC';
             },
-            vLineColor: function(i, node) {
+            vLineColor: function() {
                 return '#CCCCCC';
             },
             fillColor: function(rowIndex, node, columnIndex) {
@@ -77,11 +75,3 @@ export const generarSeccionImagenesDiagnosticas = (imagenesDiagnosticas) => {
  * @param {string} idPaciente - ID del paciente
  * @returns {Promise<Object>} Datos de imágenes diagnósticas
  */
-export const obtenerDatosImagenesDiagnosticas = async (token, idPaciente) => {
-    try {
-        return await obtenerImagenesDiagnosticasPorPaciente(token, idPaciente);
-    } catch (error) {
-        console.error('Error al obtener datos de imágenes diagnósticas:', error);
-        return null;
-    }
-}; 

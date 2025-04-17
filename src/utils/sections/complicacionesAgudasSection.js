@@ -1,6 +1,3 @@
-import { obtenerComplicacionAgudaPorPaciente } from '@/customService/services/complicacionAgudaService';
-import { obtenerIngresosPorComplicacion } from '@/customService/services/ingresosComplicacionesAgudasService';
-
 /**
  * Genera la sección de complicaciones agudas para el PDF
  * @param {Object} complicacionesAgudas - Datos de las complicaciones agudas del paciente
@@ -10,7 +7,7 @@ import { obtenerIngresosPorComplicacion } from '@/customService/services/ingreso
 export const generarSeccionComplicacionesAgudas = (complicacionesAgudas, ingresos) => {
     // Función para formatear la fecha
     const formatearFecha = (fechaStr) => {
-        if (!fechaStr) return "N/A";
+        if (!fechaStr) return "No registrado";
         try {
             const fecha = new Date(fechaStr);
             const dia = fecha.getDate().toString().padStart(2, '0');
@@ -24,7 +21,7 @@ export const generarSeccionComplicacionesAgudas = (complicacionesAgudas, ingreso
 
     return {
         table: {
-            widths: ['*', '*', '*', '*'],
+            widths: ['auto', '*', '*', 'auto', '*'],
             body: [
                 [
                     {
@@ -33,9 +30,9 @@ export const generarSeccionComplicacionesAgudas = (complicacionesAgudas, ingreso
                         color: 'white',
                         bold: true,
                         fontSize: 12,
-                        colSpan: 4
+                        colSpan: 5
                     },
-                    {}, {}, {}
+                    {}, {}, {}, {}
                 ],
                 [
                     {
@@ -43,9 +40,9 @@ export const generarSeccionComplicacionesAgudas = (complicacionesAgudas, ingreso
                         fillColor: '#E3F2FD',
                         bold: true,
                         fontSize: 10,
-                        colSpan: 4
+                        colSpan: 5
                     },
-                    {}, {}, {}
+                    {}, {}, {}, {}
                 ],
                 [
                     {
@@ -59,35 +56,31 @@ export const generarSeccionComplicacionesAgudas = (complicacionesAgudas, ingreso
                     {
                         stack: [
                             { text: 'Días', fontSize: 8 },
-                            { text: complicacionesAgudas?.data?.dias_crisis || "N/A", bold: true }
-                        ],
-                        colSpan: 2
-                    },
-                    {}
-                ],
-                [
-                    {
-                        stack: [
-                            { text: 'Intensidad (1-10)', fontSize: 8 },
-                            { text: complicacionesAgudas?.data?.intensidad || "N/A", bold: true }
+                            { text: complicacionesAgudas?.data?.dias_crisis || "No registrado", bold: true }
                         ],
                         colSpan: 2
                     },
                     {},
                     {
                         stack: [
-                            { text: 'Manejo', fontSize: 8 },
-                            { text: complicacionesAgudas?.data?.manejo || "N/A", bold: true }
-                        ],
-                        colSpan: 2
-                    },
-                    {}
+                            { text: 'Intensidad (1-10)', fontSize: 8 },
+                            { text: complicacionesAgudas?.data?.intensidad || "No registrado", bold: true }
+                        ]
+                    }
                 ],
                 [
                     {
                         stack: [
+                            { text: 'Manejo', fontSize: 8 },
+                            { text: complicacionesAgudas?.data?.manejo || "No registrado", bold: true }
+                        ],
+                        colSpan: 2
+                    },
+                    {},
+                    {
+                        stack: [
                             { text: 'Tratamiento', fontSize: 8 },
-                            { text: complicacionesAgudas?.data?.tratamiento || "N/A", bold: true }
+                            { text: complicacionesAgudas?.data?.tratamiento || "No registrado", bold: true }
                         ],
                         colSpan: 2
                     },
@@ -95,11 +88,9 @@ export const generarSeccionComplicacionesAgudas = (complicacionesAgudas, ingreso
                     {
                         stack: [
                             { text: 'Huesos Afectados', fontSize: 8 },
-                            { text: complicacionesAgudas?.data?.huesos_afectados || "N/A", bold: true }
-                        ],
-                        colSpan: 2
-                    },
-                    {}
+                            { text: complicacionesAgudas?.data?.huesos_afectados || "No registrado", bold: true }
+                        ]
+                    }
                 ],
                 [
                     {
@@ -107,15 +98,15 @@ export const generarSeccionComplicacionesAgudas = (complicacionesAgudas, ingreso
                         fillColor: '#E3F2FD',
                         bold: true,
                         fontSize: 10,
-                        colSpan: 4
+                        colSpan: 5
                     },
-                    {}, {}, {}
+                    {}, {}, {}, {}
                 ],
                 [
                     {
                         stack: [
                             { text: 'Germen', fontSize: 8 },
-                            { text: complicacionesAgudas?.data?.germen || "N/A", bold: true }
+                            { text: complicacionesAgudas?.data?.germen || "No registrado", bold: true }
                         ],
                         colSpan: 2
                     },
@@ -123,29 +114,27 @@ export const generarSeccionComplicacionesAgudas = (complicacionesAgudas, ingreso
                     {
                         stack: [
                             { text: 'Tratamiento', fontSize: 8 },
-                            { text: complicacionesAgudas?.data?.tratamiento || "N/A", bold: true }
-                        ],
-                        colSpan: 2
-                    },
-                    {}
-                ],
-                [
-                    {
-                        stack: [
-                            { text: 'Días', fontSize: 8 },
-                            { text: complicacionesAgudas?.data?.dias_infeccion || "N/A", bold: true }
+                            { text: complicacionesAgudas?.data?.tratamiento_infecciones || "No registrado", bold: true }
                         ],
                         colSpan: 2
                     },
                     {},
                     {
                         stack: [
+                            { text: 'Días', fontSize: 8 },
+                            { text: complicacionesAgudas?.data?.dias_infeccion || "No registrado", bold: true }
+                        ]
+                    }
+                ],
+                [
+                    {
+                        stack: [
                             { text: 'Crisis Aplástica Infecciosa', fontSize: 8 },
-                            { text: complicacionesAgudas?.data?.crisis_aplastica_infecciosa ? 'Sí' : 'No', bold: true }
+                            { text:  complicacionesAgudas?.data?.crisis_aplastica_infecciosa === true ? 'Sí' : 'No', bold: true }
                         ],
-                        colSpan: 2
+                        colSpan: 5
                     },
-                    {}
+                    {}, {}, {}, {}
                 ],
                 [
                     {
@@ -153,38 +142,40 @@ export const generarSeccionComplicacionesAgudas = (complicacionesAgudas, ingreso
                         fillColor: '#E3F2FD',
                         bold: true,
                         fontSize: 10,
-                        colSpan: 4
+                        colSpan: 5
                     },
-                    {}, {}, {}
+                    {}, {}, {}, {}
                 ],
                 [
                     { text: 'Registro', style: 'tableHeader' },
                     { text: 'Tipo de Ingreso', style: 'tableHeader' },
                     { text: 'Fecha de Ingreso', style: 'tableHeader' },
-                    { text: 'Duración (días)', style: 'tableHeader' }
+                    { text: 'Duración (días)', style: 'tableHeader' },
+                    { text: 'Motivo de Ingreso', style: 'tableHeader' }
                 ],
                 ...(ingresos?.data?.length > 0 
                     ? ingresos.data.map((ingreso, index) => [
                         ingresos.data.length - index,
                         ingreso.tipo_ingreso || "N/A",
                         formatearFecha(ingreso.fecha_ingreso),
-                        ingreso.duracion_ingreso || "N/A"
+                        ingreso.duracion_ingreso || "N/A",
+                        ingreso.motivo_ingreso || "N/A"
                     ])
-                    : [[{ text: 'No hay registros de ingresos hospitalarios', colSpan: 4, alignment: 'center' }, {}, {}, {}]]
+                    : [[{ text: 'No hay registros de ingresos hospitalarios', colSpan: 5, alignment: 'center' }, {}, {}, {}, {}]]
                 )
             ]
         },
         layout: {
-            hLineWidth: function(i, node) {
+            hLineWidth: function(i) {
                 return (i === 0 || i === 1) ? 1 : 0.5;
             },
-            vLineWidth: function(i, node) {
+            vLineWidth: function() {
                 return 0.5;
             },
-            hLineColor: function(i, node) {
+            hLineColor: function(i) {
                 return (i === 0 || i === 1) ? '#1F2937' : '#CCCCCC';
             },
-            vLineColor: function(i, node) {
+            vLineColor: function() {
                 return '#CCCCCC';
             },
             fillColor: function(rowIndex, node, columnIndex) {
@@ -201,21 +192,3 @@ export const generarSeccionComplicacionesAgudas = (complicacionesAgudas, ingreso
  * @param {string} idPaciente - ID del paciente
  * @returns {Promise<Object>} Datos de las complicaciones agudas
  */
-export const obtenerDatosComplicacionesAgudas = async (token, idPaciente) => {
-    try {
-        const complicacionesAgudas = await obtenerComplicacionAgudaPorPaciente(token, idPaciente);
-        let ingresos = null;
-        
-        if (complicacionesAgudas?.data?.id) {
-            ingresos = await obtenerIngresosPorComplicacion(token, complicacionesAgudas.data.id);
-        }
-        
-        return {
-            complicacionesAgudas,
-            ingresos
-        };
-    } catch (error) {
-        console.error('Error al obtener datos de complicaciones agudas:', error);
-        return null;
-    }
-}; 

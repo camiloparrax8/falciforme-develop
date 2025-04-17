@@ -1,5 +1,3 @@
-import { consultarTransplantesProgenitoresPorPaciente } from '@/customService/services/transplantesProgenitoresService';
-
 /**
  * Genera la sección de trasplantes de progenitores para el PDF
  * @param {Object} trasplanteProgenitores - Datos de los trasplantes de progenitores del paciente
@@ -35,13 +33,13 @@ export const generarSeccionTrasplantesProgenitores = (trasplanteProgenitores) =>
                     {
                         stack: [
                             { text: 'Paciente', fontSize: 8 },
-                            { text: trasplanteProgenitores?.data?.paciente || "N/A", bold: true }
+                            { text: trasplanteProgenitores?.data?.paciente || "No registrado", bold: true }
                         ]
                     },
                     {
                         stack: [
                             { text: 'Padres', fontSize: 8 },
-                            { text: trasplanteProgenitores?.data?.padres || "N/A", bold: true }
+                            { text: trasplanteProgenitores?.data?.padres || "No registrado", bold: true }
                         ]
                     }
                 ],
@@ -49,29 +47,29 @@ export const generarSeccionTrasplantesProgenitores = (trasplanteProgenitores) =>
                     {
                         stack: [
                             { text: 'Hermanos', fontSize: 8 },
-                            { text: trasplanteProgenitores?.data?.hermanos || "N/A", bold: true }
+                            { text: trasplanteProgenitores?.data?.hermanos || "No registrado", bold: true }
                         ]
                     },
                     {
                         stack: [
                             { text: 'Tipo de indicacion', fontSize: 8 },
-                            { text: trasplanteProgenitores?.data?.tipo_indicaciones || "N/A", bold: true }
+                            { text: trasplanteProgenitores?.data?.tipo_indicaciones || "No registrado", bold: true }
                         ]
                     }
                 ]
             ]
         },
         layout: {
-            hLineWidth: function(i, node) {
+            hLineWidth: function(i) {
                 return (i === 0 || i === 1) ? 1 : 0.5;
             },
-            vLineWidth: function(i, node) {
+            vLineWidth: function() {
                 return 0.5;
             },
-            hLineColor: function(i, node) {
+            hLineColor: function(i) {
                 return (i === 0 || i === 1) ? '#1F2937' : '#CCCCCC';
             },
-            vLineColor: function(i, node) {
+            vLineColor: function() {
                 return '#CCCCCC';
             },
             fillColor: function(rowIndex, node, columnIndex) {
@@ -82,17 +80,3 @@ export const generarSeccionTrasplantesProgenitores = (trasplanteProgenitores) =>
     };
 };
 
-/**
- * Obtiene los datos de los trasplantes de progenitores del paciente
- * @param {string} token - Token de autenticación
- * @param {string} idPaciente - ID del paciente
- * @returns {Promise<Object>} Datos de los trasplantes de progenitores
- */
-export const obtenerDatosTrasplantesProgenitores = async (token, idPaciente) => {
-    try {
-        return await consultarTransplantesProgenitoresPorPaciente(token, idPaciente);
-    } catch (error) {
-        console.error('Error al obtener datos de trasplantes de progenitores:', error);
-        return null;
-    }
-}; 

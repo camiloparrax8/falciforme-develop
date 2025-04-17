@@ -1,5 +1,3 @@
-import { obtenerSoportesTransfusionalesPorPaciente } from '@/customService/services/soportesTransfusionalesService';
-
 /**
  * Genera la sección de soportes transfusionales para el PDF
  * @param {Object} soportesTransfusionales - Datos de soportes transfusionales del paciente
@@ -43,26 +41,26 @@ export const generarSeccionSoportesTransfusionales = (soportesTransfusionales) =
                     ...(soportesTransfusionales?.data?.length > 0 
                         ? soportesTransfusionales.data.map((soporte, index) => [
                             soportesTransfusionales.data.length - index,
-                            soporte.fecha ? soporte.fecha.split('T')[0].split('-').reverse().join('/') : "N/A",
-                            soporte.soporte_transfusional || "N/A",
-                            soporte.numero_transfusiones || "N/A",
-                            soporte.frecuencia || "N/A"
+                            soporte.fecha ? soporte.fecha.split('T')[0].split('-').reverse().join('/') : "No registrado",
+                            soporte.soporte_transfusional || "No registrado",
+                            soporte.numero_transfusiones || "No registrado",
+                            soporte.frecuencia || "No registrado"
                         ])
                         : [[{ text: 'No hay registros de soportes transfusionales', colSpan: 5, alignment: 'center' }, {}, {}, {}, {}]]
                     )
                 ]
             },
             layout: {
-                hLineWidth: function(i, node) {
+                hLineWidth: function(i) {
                     return (i === 0 || i === 1) ? 1 : 0.5;
                 },
-                vLineWidth: function(i, node) {
+                vLineWidth: function() {
                     return 0.5;
                 },
-                hLineColor: function(i, node) {
+                hLineColor: function(i) {
                     return (i === 0 || i === 1) ? '#1F2937' : '#CCCCCC';
                 },
-                vLineColor: function(i, node) {
+                vLineColor: function() {
                     return '#CCCCCC';
                 },
                 fillColor: function(rowIndex, node, columnIndex) {
@@ -112,26 +110,26 @@ export const generarSeccionSoportesTransfusionales = (soportesTransfusionales) =
                     ...(soportesTransfusionales?.data?.length > 0 
                         ? soportesTransfusionales.data.map((soporte, index) => [
                             soportesTransfusionales.data.length - index,
-                            soporte.fecha_sobrecarga_hierro ? soporte.fecha_sobrecarga_hierro.split('T')[0].split('-').reverse().join('/') : "N/A",
-                            soporte.ferritina || "N/A",
-                            soporte.quelentes || "N/A",
-                            soporte.ferritina_dosis || "N/A"
+                            soporte.fecha_sobrecarga_hierro ? soporte.fecha_sobrecarga_hierro.split('T')[0].split('-').reverse().join('/') : "No registrado",
+                            soporte.ferritina || "No registrado",
+                            soporte.quelentes || "No registrado",
+                            soporte.ferritina_dosis || "No registrado"
                         ])
                         : [[{ text: 'No hay registros de sobrecarga de hierro', colSpan: 5, alignment: 'center' }, {}, {}, {}, {}]]
                     )
                 ]
             },
             layout: {
-                hLineWidth: function(i, node) {
+                hLineWidth: function(i) {
                     return (i === 0 || i === 1) ? 1 : 0.5;
                 },
-                vLineWidth: function(i, node) {
+                vLineWidth: function() {
                     return 0.5;
                 },
-                hLineColor: function(i, node) {
+                hLineColor: function(i) {
                     return (i === 0 || i === 1) ? '#1F2937' : '#CCCCCC';
                 },
-                vLineColor: function(i, node) {
+                vLineColor: function() {
                     return '#CCCCCC';
                 },
                 fillColor: function(rowIndex, node, columnIndex) {
@@ -175,25 +173,25 @@ export const generarSeccionSoportesTransfusionales = (soportesTransfusionales) =
                     ...(soportesTransfusionales?.data?.length > 0 
                         ? soportesTransfusionales.data.map((soporte, index) => [
                             { text: soportesTransfusionales.data.length - index || '' },
-                            { text: soporte.fecha_sobrecarga_organo ? soporte.fecha_sobrecarga_organo.split('T')[0].split('-').reverse().join('/') : "N/A" },
-                            { text: soporte.lic || "N/A" },
-                            { text: soporte.pancreatica || "N/A" }
+                            { text: soporte.fecha_sobrecarga_organo ? soporte.fecha_sobrecarga_organo.split('T')[0].split('-').reverse().join('/') : "No registrado" },
+                            { text: soporte.lic || "No registrado" },
+                            { text: soporte.pancreatica || "No registrado" }
                         ])
                         : [[{ text: 'No hay registros de sobrecarga por órgano', colSpan: 4, alignment: 'center' }, {}, {}, {}]]
                     )
                 ]
             },
             layout: {
-                hLineWidth: function(i, node) {
+                hLineWidth: function(i) {
                     return (i === 0 || i === 1) ? 1 : 0.5;
                 },
-                vLineWidth: function(i, node) {
+                vLineWidth: function() {
                     return 0.5;
                 },
-                hLineColor: function(i, node) {
+                hLineColor: function(i) {
                     return (i === 0 || i === 1) ? '#1F2937' : '#CCCCCC';
                 },
-                vLineColor: function(i, node) {
+                vLineColor: function() {
                     return '#CCCCCC';
                 },
                 fillColor: function(rowIndex, node, columnIndex) {

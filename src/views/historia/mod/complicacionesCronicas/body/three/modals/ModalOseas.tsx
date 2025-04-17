@@ -115,14 +115,13 @@ export default function ModalOseas({ isOpen, onClose, onRequestClose }) {
                 // Establecer valores de los campos select
                 reset({
                     osteonecrosis: complicacionData.osteonecrosis ? 'Si' : 'No',
-                    deformidadesOseas: complicacionData.deformidades_oseas ? 'Si' : 'No',
+                    deformidades_osea: complicacionData.deformidades_osea ? 'Si' : 'No',
                     osteopenia: complicacionData.osteopenia ? 'Si' : 'No',
                 });
 
                 // Establecer valores de los campos de texto usando setValue
                 setValue('huesoComprometido', tieneRegistro ? String(complicacionData.huesos_comprometidos || '') : '');
                 setValue('gradoDiscapacidad', tieneRegistro ? String(complicacionData.grado_discapacidad || '') : '');
-                setValue('huesosComprometidos', tieneRegistro ? String(complicacionData.hueso_comprometidos || '') : '');
             } else {
                 reset(defaultValuesOseas);
             }
@@ -144,24 +143,16 @@ export default function ModalOseas({ isOpen, onClose, onRequestClose }) {
                 throw new Error('No hay token de autenticación. Por favor, inicie sesión nuevamente.');
             }
 
-            console.log('=== DATOS DEL FORMULARIO OSEAS ===');
-            console.log('Datos recibidos del formulario:', data);
-
             const datosFormateados = {
                 osteonecrosis: data.osteonecrosis === 'Si',
-                deformidadesOseas: data.deformidadesOseas === 'Si',
+                deformidadesOsea: data.deformidades_osea === 'Si',
                 osteopenia: data.osteopenia === 'Si',
                 huesoComprometido: data.huesoComprometido || '',
                 gradoDiscapacidad: data.gradoDiscapacidad || '',
                 huesosComprometidos: data.huesoComprometido || '',
-                deformidadesOsea: data.deformidadesOseas === 'Si',
             };
 
-            console.log('=== DATOS ENVIADOS AL BACKEND (ACTUALIZACIÓN) ===');
-            console.log('Datos formateados:', datosFormateados);
-
             const result = await updateOseas(datosFormateados);
-            console.log('Respuesta de actualización:', result);
             
             if (result) {
                 await actualizarContexto();
@@ -269,7 +260,7 @@ export default function ModalOseas({ isOpen, onClose, onRequestClose }) {
 
                         <InputSelect
                             control={control}
-                            name="deformidadesOseas"
+                            name="deformidades_osea"
                             label="Deformidades Óseas"
                             options={options}
                             validation={validationSeccionThreeCronicas.deformidadesOseas}

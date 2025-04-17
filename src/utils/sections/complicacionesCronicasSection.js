@@ -1,5 +1,3 @@
-import { buscarComplicacionesCronicasPorIdPaciente } from '@/customService/services/complicacionesCronicasService';
-
 /**
  * Genera la sección de complicaciones crónicas para el PDF
  * @param {Object} complicacionesCronicas - Datos de las complicaciones crónicas del paciente
@@ -35,13 +33,13 @@ export const generarSeccionComplicacionesCronicas = (complicacionesCronicas) => 
                     {
                         stack: [
                             { text: 'Vasculopatía Cerebral', fontSize: 8 },
-                            { text: complicacionesCronicas?.data?.vasculopatia_cerebral ? 'Sí' : 'No', bold: true }
+                            { text: complicacionesCronicas?.data?.vasculopatia_cerebral === true ? 'Sí' : 'No', bold: true }
                         ]
                     },
                     {
                         stack: [
                             { text: 'Infartos Cerebrales Silentes', fontSize: 8 },
-                            { text: complicacionesCronicas?.data?.infartos_cerebrales_silentes ? 'Sí' : 'No', bold: true }
+                            { text:  complicacionesCronicas?.data?.infartos_cerebrales_silentes === true ? 'Sí' : 'No', bold: true }
                         ]
                     }
                 ],
@@ -49,13 +47,13 @@ export const generarSeccionComplicacionesCronicas = (complicacionesCronicas) => 
                     {
                         stack: [
                             { text: 'Epilepsia/Convulsiones', fontSize: 8 },
-                            { text: complicacionesCronicas?.data?.epilepsia_convulsiones ? 'Sí' : 'No', bold: true }
+                            { text: complicacionesCronicas?.data?.epilepsia_convulsiones === true ? 'Sí' : 'No', bold: true }
                         ]
                     },
                     {
                         stack: [
                             { text: 'Cefaleas Recurrentes', fontSize: 8 },
-                            { text: complicacionesCronicas?.data?.cefaleas_recurrentes ? 'Sí' : 'No', bold: true }
+                            { text: complicacionesCronicas?.data?.cefaleas_recurrentes === true ? 'Sí' : 'No', bold: true }
                         ]
                     }
                 ],
@@ -63,7 +61,7 @@ export const generarSeccionComplicacionesCronicas = (complicacionesCronicas) => 
                     {
                         stack: [
                             { text: 'Déficit Cognitivo', fontSize: 8 },
-                            { text: complicacionesCronicas?.data?.deficit_cognitivo ? 'Sí' : 'No', bold: true }
+                            { text: complicacionesCronicas?.data?.deficit_cognitivo === true ? 'Sí' : 'No', bold: true }
                         ]
                     },
                     { text: '' }
@@ -82,13 +80,13 @@ export const generarSeccionComplicacionesCronicas = (complicacionesCronicas) => 
                     {
                         stack: [
                             { text: 'Retinopatía Drepanocítica', fontSize: 8 },
-                            { text: complicacionesCronicas?.data?.retinopatia_drepanocitica ? 'Sí' : 'No', bold: true }
+                            { text: complicacionesCronicas?.data?.retinopatia_drepanocitica === null ? 'No registrado' : complicacionesCronicas?.data?.retinopatia_drepanocitica === true ? 'Sí' : 'No', bold: true }
                         ]
                     },
                     {
                         stack: [
                             { text: 'Hemorragias Vítreas', fontSize: 8 },
-                            { text: complicacionesCronicas?.data?.hemorragias_vitreas ? 'Sí' : 'No', bold: true }
+                            { text:  complicacionesCronicas?.data?.retinopatia_drepanocitica === null ? 'No registrado' : complicacionesCronicas?.data?.hemorragias_vitreas === true ? 'Sí' : 'No', bold: true }
                         ]
                     }
                 ],
@@ -96,13 +94,13 @@ export const generarSeccionComplicacionesCronicas = (complicacionesCronicas) => 
                     {
                         stack: [
                             { text: 'Neovascularización Retiniana', fontSize: 8 },
-                            { text: complicacionesCronicas?.data?.neovascularizacion_retiniana ? 'Sí' : 'No', bold: true }
+                            { text:  complicacionesCronicas?.data?.neovascularizacion_retiniana === null ? 'No registrado' : complicacionesCronicas?.data?.neovascularizacion_retiniana === true ? 'Sí' : 'No', bold: true }
                         ]
                     },
                     {
                         stack: [
                             { text: 'Iritis o Uveítis', fontSize: 8 },
-                            { text: complicacionesCronicas?.data?.iritis_uveitis ? 'Sí' : 'No', bold: true }
+                            { text:  complicacionesCronicas?.data?.iritis_uveitis === null ? 'No registrado' : complicacionesCronicas?.data?.iritis_uveitis === true ? 'Sí' : 'No', bold: true }
                         ]
                     }
                 ],
@@ -110,7 +108,7 @@ export const generarSeccionComplicacionesCronicas = (complicacionesCronicas) => 
                     {
                         stack: [
                             { text: 'Oclusión de Vasos Retinianos', fontSize: 8 },
-                            { text: complicacionesCronicas?.data?.oclusion_vasos_retinianos ? 'Sí' : 'No', bold: true }
+                            { text:  complicacionesCronicas?.data?.oclusion_vasos_retinianos === null ? 'No registrado' : complicacionesCronicas?.data?.oclusion_vasos_retinianos === true ? 'Sí' : 'No', bold: true }
                         ]
                     },
                     { text: '' }
@@ -129,13 +127,13 @@ export const generarSeccionComplicacionesCronicas = (complicacionesCronicas) => 
                     {
                         stack: [
                             { text: 'Disfunción Diastólica VI', fontSize: 8 },
-                            { text: complicacionesCronicas?.data?.disfuncion_diastolica_vii ? 'Sí' : 'No', bold: true }
+                            { text:  complicacionesCronicas?.data?.disfuncion_diastolica_vii === null ? 'No registrado' : complicacionesCronicas?.data?.disfuncion_diastolica_vii === true ? 'Sí' : 'No', bold: true }
                         ]
                     },
                     {
                         stack: [
                             { text: 'Sobrecarga Férrica', fontSize: 8 },
-                            { text: complicacionesCronicas?.data?.sobrecarga_ferrica ? 'Sí' : 'No', bold: true }
+                            { text:  complicacionesCronicas?.data?.sobrecarga_ferrica === null ? 'No registrado' : complicacionesCronicas?.data?.sobrecarga_ferrica === true ? 'Sí' : 'No', bold: true }
                         ]
                     }
                 ],
@@ -143,7 +141,7 @@ export const generarSeccionComplicacionesCronicas = (complicacionesCronicas) => 
                     {
                         stack: [
                             { text: 'Trombosis', fontSize: 8 },
-                            { text: complicacionesCronicas?.data?.trombosis ? 'Sí' : 'No', bold: true }
+                            { text:  complicacionesCronicas?.data?.trombosis === null ? 'No registrado' : complicacionesCronicas?.data?.trombosis === true ? 'Sí' : 'No', bold: true }
                         ]
                     },
                     { text: '' }
@@ -162,13 +160,13 @@ export const generarSeccionComplicacionesCronicas = (complicacionesCronicas) => 
                     {
                         stack: [
                             { text: 'Hipertensión Pulmonar', fontSize: 8 },
-                            { text: complicacionesCronicas?.data?.hipertension_pulmonar ? 'Sí' : 'No', bold: true }
+                            { text:  complicacionesCronicas?.data?.hipertension_pulmonar === null ? 'No registrado' : complicacionesCronicas?.data?.hipertension_pulmonar === true ? 'Sí' : 'No', bold: true }
                         ]
                     },
                     {
                         stack: [
                             { text: 'VRT', fontSize: 8 },
-                            { text: complicacionesCronicas?.data?.vrt ? 'Sí' : 'No', bold: true }
+                            { text: complicacionesCronicas?.data?.vrt || "No registrado", bold: true }
                         ]
                     }
                 ],
@@ -176,13 +174,13 @@ export const generarSeccionComplicacionesCronicas = (complicacionesCronicas) => 
                     {
                         stack: [
                             { text: 'Número de Crisis Anual (Asma)', fontSize: 8 },
-                            { text: complicacionesCronicas?.data?.numero_crisis || "N/A", bold: true }
+                            { text: complicacionesCronicas?.data?.numero_crisis || "No registrado", bold: true }
                         ]
                     },
                     {
                         stack: [
                             { text: 'Tratamientos (Asma)', fontSize: 8 },
-                            { text: complicacionesCronicas?.data?.tratamientos || "N/A", bold: true }
+                            { text: complicacionesCronicas?.data?.tratamientos || "No registrado", bold: true }
                         ]
                     }
                 ],
@@ -190,13 +188,13 @@ export const generarSeccionComplicacionesCronicas = (complicacionesCronicas) => 
                     {
                         stack: [
                             { text: 'Hipomexia (EPFC)', fontSize: 8 },
-                            { text: complicacionesCronicas?.data?.hipomexia ? 'Sí' : 'No', bold: true }
+                            { text: complicacionesCronicas?.data?.hipomexia === null ? 'No registrado' : complicacionesCronicas?.data?.hipomexia === true ? 'Sí' : 'No', bold: true }
                         ]
                     },
                     {
                         stack: [
                             { text: 'SAOS (EPFC)', fontSize: 8 },
-                            { text: complicacionesCronicas?.data?.saos ? 'Sí' : 'No', bold: true }
+                            { text:  complicacionesCronicas?.data?.saos === null ? 'No registrado' : complicacionesCronicas?.data?.saos === true ? 'Sí' : 'No', bold: true }
                         ]
                     }
                 ],
@@ -204,7 +202,7 @@ export const generarSeccionComplicacionesCronicas = (complicacionesCronicas) => 
                     {
                         stack: [
                             { text: 'Tratamiento (EPFC)', fontSize: 8 },
-                            { text: complicacionesCronicas?.data?.edpfc_tratamiento || "N/A", bold: true }
+                            { text: complicacionesCronicas?.data?.edpfc_tratamiento || "No registrado", bold: true }
                         ]
                     },
                     { text: '' }
@@ -223,13 +221,13 @@ export const generarSeccionComplicacionesCronicas = (complicacionesCronicas) => 
                     {
                         stack: [
                             { text: 'Hepatitis Viral Crónica', fontSize: 8 },
-                            { text: complicacionesCronicas?.data?.hepatitis_viral_cronica ? 'Sí' : 'No', bold: true }
+                            { text:  complicacionesCronicas?.data?.hepatitis_viral_cronica === null ? 'No registrado' : complicacionesCronicas?.data?.hepatitis_viral_cronica === true ? 'Sí' : 'No', bold: true }
                         ]
                     },
                     {
                         stack: [
                             { text: 'Esplenomegalia', fontSize: 8 },
-                            { text: complicacionesCronicas?.data?.esplenomegalia ? 'Sí' : 'No', bold: true }
+                            { text: complicacionesCronicas?.data?.esplenomegalia === null ? 'No registrado' : complicacionesCronicas?.data?.esplenomegalia === true ? 'Sí' : 'No', bold: true }
                         ]
                     }
                 ],
@@ -237,7 +235,7 @@ export const generarSeccionComplicacionesCronicas = (complicacionesCronicas) => 
                     {
                         stack: [
                             { text: 'Hiperesplenismo', fontSize: 8 },
-                            { text: complicacionesCronicas?.data?.hiperesplenismo ? 'Sí' : 'No', bold: true }
+                            { text: complicacionesCronicas?.data?.hiperesplenismo === null ? 'No registrado' : complicacionesCronicas?.data?.hiperesplenismo === true ? 'Sí' : 'No', bold: true }
                         ]
                     },
                     { text: '' }
@@ -256,13 +254,13 @@ export const generarSeccionComplicacionesCronicas = (complicacionesCronicas) => 
                     {
                         stack: [
                             { text: 'Nefropatía', fontSize: 8 },
-                            { text: complicacionesCronicas?.data?.nefropatia ? 'Sí' : 'No', bold: true }
+                            { text: complicacionesCronicas?.data?.nefropatia === null ? 'No registrado' : complicacionesCronicas?.data?.nefropatia === true ? 'Sí' : 'No', bold: true }
                         ]
                     },
                     {
                         stack: [
                             { text: 'Hipostenia', fontSize: 8 },
-                            { text: complicacionesCronicas?.data?.hipotensia ? 'Sí' : 'No', bold: true }
+                            { text: complicacionesCronicas?.data?.hipotensia === null ? 'No registrado' : complicacionesCronicas?.data?.hipotensia === true ? 'Sí' : 'No', bold: true }
                         ]
                     }
                 ],
@@ -276,7 +274,7 @@ export const generarSeccionComplicacionesCronicas = (complicacionesCronicas) => 
                     {
                         stack: [
                             { text: 'Hematuria y Necrosis Renal', fontSize: 8 },
-                            { text: complicacionesCronicas?.data?.hematuria_necrosis_papilar ? 'Sí' : 'No', bold: true }
+                            { text: complicacionesCronicas?.data?.hematuria_necrosis_papilar === null ? 'No registrado' : complicacionesCronicas?.data?.hematuria_necrosis_papilar === true ? 'Sí' : 'No', bold: true }
                         ]
                     }
                 ],
@@ -284,13 +282,13 @@ export const generarSeccionComplicacionesCronicas = (complicacionesCronicas) => 
                     {
                         stack: [
                             { text: 'Priapismo Recurrente', fontSize: 8 },
-                            { text: complicacionesCronicas?.data?.priapismo_recurrente ? 'Sí' : 'No', bold: true }
+                            { text:  complicacionesCronicas?.data?.priapismo_recurrente === null ? 'No registrado' : complicacionesCronicas?.data?.priapismo_recurrente === true ? 'Sí' : 'No', bold: true }
                         ]
                     },
                     {
                         stack: [
                             { text: 'Enfermedad Renal Crónica', fontSize: 8 },
-                            { text: complicacionesCronicas?.data?.enfermedad_renal_cronica ? 'Sí' : 'No', bold: true }
+                            { text: complicacionesCronicas?.data?.enfermedad_renal_cronica === null ? 'No registrado' : complicacionesCronicas?.data?.enfermedad_renal_cronica === true ? 'Sí' : 'No', bold: true }
                         ]
                     }
                 ],
@@ -298,7 +296,7 @@ export const generarSeccionComplicacionesCronicas = (complicacionesCronicas) => 
                     {
                         stack: [
                             { text: 'Proteinuria', fontSize: 8 },
-                            { text: complicacionesCronicas?.data?.proteinuria ? 'Sí' : 'No', bold: true }
+                            { text: complicacionesCronicas?.data?.proteinuria === null ? 'No registrado' : complicacionesCronicas?.data?.proteinuria === true ? 'Sí' : 'No', bold: true }
                         ]
                     },
                     { text: '' }
@@ -317,13 +315,13 @@ export const generarSeccionComplicacionesCronicas = (complicacionesCronicas) => 
                     {
                         stack: [
                             { text: 'Hueso Comprometido', fontSize: 8 },
-                            { text: complicacionesCronicas?.data?.huesos_comprometidos || "N/A", bold: true }
+                            { text: complicacionesCronicas?.data?.huesos_comprometidos || "No registrado", bold: true }
                         ]
                     },
                     {
                         stack: [
                             { text: 'Grado de Discapacidad', fontSize: 8 },
-                            { text: complicacionesCronicas?.data?.grado_discapacidad || "N/A", bold: true }
+                            { text: complicacionesCronicas?.data?.grado_discapacidad || "No registrado", bold: true }
                         ]
                     }
                 ],
@@ -331,13 +329,13 @@ export const generarSeccionComplicacionesCronicas = (complicacionesCronicas) => 
                     {
                         stack: [
                             { text: 'Osteonecrosis', fontSize: 8 },
-                            { text: complicacionesCronicas?.data?.osteonecrosis ? 'Sí' : 'No', bold: true }
+                            { text:  complicacionesCronicas?.data?.osteonecrosis === null ? 'No registrado' : complicacionesCronicas?.data?.osteonecrosis === true ? 'Sí' : 'No', bold: true }
                         ]
                     },
                     {
                         stack: [
                             { text: 'Deformidades Óseas', fontSize: 8 },
-                            { text: complicacionesCronicas?.data?.deformidades_osea ? 'Sí' : 'No', bold: true }
+                            { text:  complicacionesCronicas?.data?.deformidades_osea === null ? 'No registrado' : complicacionesCronicas?.data?.deformidades_osea === true ? 'Sí' : 'No', bold: true }
                         ]
                     }
                 ],
@@ -345,7 +343,7 @@ export const generarSeccionComplicacionesCronicas = (complicacionesCronicas) => 
                     {
                         stack: [
                             { text: 'Osteopenia', fontSize: 8 },
-                            { text: complicacionesCronicas?.data?.osteopenia ? 'Sí' : 'No', bold: true }
+                            { text:  complicacionesCronicas?.data?.osteopenia === null ? 'No registrado' : complicacionesCronicas?.data?.osteopenia === true ? 'Sí' : 'No', bold: true }
                         ]
                     },
                     { text: '' }
@@ -353,16 +351,16 @@ export const generarSeccionComplicacionesCronicas = (complicacionesCronicas) => 
             ]
         },
         layout: {
-            hLineWidth: function(i, node) {
+            hLineWidth: function(i) {
                 return (i === 0 || i === 1) ? 1 : 0.5;
             },
-            vLineWidth: function(i, node) {
+            vLineWidth: function() {
                 return 0.5;
             },
-            hLineColor: function(i, node) {
+            hLineColor: function(i) {
                 return (i === 0 || i === 1) ? '#1F2937' : '#CCCCCC';
             },
-            vLineColor: function(i, node) {
+            vLineColor: function() {
                 return '#CCCCCC';
             },
             fillColor: function(rowIndex, node, columnIndex) {
@@ -373,17 +371,3 @@ export const generarSeccionComplicacionesCronicas = (complicacionesCronicas) => 
     };
 };
 
-/**
- * Obtiene los datos de las complicaciones crónicas del paciente
- * @param {string} token - Token de autenticación
- * @param {string} idPaciente - ID del paciente
- * @returns {Promise<Object>} Datos de las complicaciones crónicas
- */
-export const obtenerDatosComplicacionesCronicas = async (token, idPaciente) => {
-    try {
-        return await buscarComplicacionesCronicasPorIdPaciente(token, idPaciente);
-    } catch (error) {
-        console.error('Error al obtener datos de complicaciones crónicas:', error);
-        return null;
-    }
-}; 

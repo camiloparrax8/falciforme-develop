@@ -1,5 +1,3 @@
-import { obtenerTratamientosPorPaciente } from '@/customService/services/tratamientosService';
-
 export const generarSeccionTratamientos = (tratamientos) => {
     if (!tratamientos || tratamientos.status !== 'success' || !tratamientos.data) {
         return {
@@ -71,10 +69,10 @@ export const generarSeccionTratamientos = (tratamientos) => {
         // Agregar registros de tratamientos individuales
         tratamientosIndividuales.forEach(tratamiento => {
             tableBody.push([
-                { text: tratamiento.Registro || '' },
-                { text: tratamiento.tipo || '' },
-                { text: tratamiento.n_dias || '' },
-                { text: tratamiento.dosis || '' }
+                { text: tratamiento.Registro || 'No registrado' },
+                { text: tratamiento.tipo || 'No registrado' },
+                { text: tratamiento.n_dias || 'No registrado' },
+                { text: tratamiento.dosis || 'No registrado' }
             ]);
         });
     }
@@ -104,10 +102,10 @@ export const generarSeccionTratamientos = (tratamientos) => {
         // Agregar registros de manejo de dolor
         tratamientosManejoDolor.forEach(tratamiento => {
             tableBody.push([
-                { text: tratamiento.Registro || '' },
-                { text: tratamiento.medicamento || '' },
-                { text: tratamiento.n_dias || '' },
-                { text: tratamiento.dosis || '' }
+                { text: tratamiento.Registro || 'No registrado' },
+                { text: tratamiento.medicamento || 'No registrado' },
+                { text: tratamiento.n_dias || 'No registrado' },
+                { text: tratamiento.dosis || 'No registrado' }
             ]);
         });
     }
@@ -127,16 +125,16 @@ export const generarSeccionTratamientos = (tratamientos) => {
                 body: tableBody
             },
             layout: {
-                hLineWidth: function(i, node) {
+                hLineWidth: function(i) {
                     return (i === 0 || i === 1) ? 1 : 0.5;
                 },
-                vLineWidth: function(i, node) {
+                vLineWidth: function() {
                     return 0.5;
                 },
-                hLineColor: function(i, node) {
+                hLineColor: function(i) {
                     return (i === 0 || i === 1) ? '#006064' : '#CCCCCC';
                 },
-                vLineColor: function(i, node) {
+                vLineColor: function() {
                     return '#CCCCCC';
                 },
                 fillColor: function(rowIndex, node, columnIndex) {
@@ -148,12 +146,3 @@ export const generarSeccionTratamientos = (tratamientos) => {
     ];
 };
 
-export const obtenerDatosTratamientos = async (token, pacienteId) => {
-    try {
-        const resultado = await obtenerTratamientosPorPaciente(token, pacienteId);
-        return resultado;
-    } catch (error) {
-        console.error('Error al obtener datos de tratamientos:', error);
-        return { status: 'error', data: null };
-    }
-}; 

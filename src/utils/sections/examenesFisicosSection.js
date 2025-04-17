@@ -1,5 +1,3 @@
-import { consultarExamenFisicoPorPaciente } from '@/customService/services/examenesFisicosService';
-
 /**
  * Genera la sección de exámenes físicos para el PDF
  * @param {Object} examenesFisicos - Datos del examen físico del paciente
@@ -15,7 +13,7 @@ export const generarSeccionExamenesFisicos = (examenesFisicos) => {
             },
             {
                 table: {
-                    widths: ['*', '*', '*'],
+                    widths: ['*', '*'],
                     body: [
                         [
                             {
@@ -24,86 +22,54 @@ export const generarSeccionExamenesFisicos = (examenesFisicos) => {
                                 color: 'white',
                                 bold: true,
                                 fontSize: 12,
-                                colSpan: 3
+                                colSpan: 2
                             },
-                            {}, {}
+                            {}
                         ],
                         [
                             {
                                 stack: [
                                     { text: 'Frecuencia Cardiaca', fontSize: 8 },
-                                    { text: examenesFisicos?.frecuencia_cardiaca || "N/A", bold: true }
+                                    { text: examenesFisicos?.frecuencia_cardiaca || "No Registrado", bold: true }
                                 ]
                             },
                             {
                                 stack: [
                                     { text: 'Frecuencia Respiratoria', fontSize: 8 },
-                                    { text: examenesFisicos?.frecuencia_respiratoria || "N/A", bold: true }
+                                    { text: examenesFisicos?.frecuencia_respiratoria || "No Registrado", bold: true }
                                 ]
-                            },
+                            }
+                        ],
+                        [
                             {
                                 stack: [
                                     { text: 'Saturación de Oxígeno', fontSize: 8 },
-                                    { text: examenesFisicos?.saturacion_oxigeno || "N/A", bold: true }
+                                    { text: examenesFisicos?.saturacion_oxigeno || "No registrado", bold: true }
                                 ]
-                            }
-                        ],
-                        [
+                            },
                             {
                                 stack: [
                                     { text: 'Tensión Arterial', fontSize: 8 },
-                                    { text: examenesFisicos?.tension_arterial || "N/A", bold: true }
-                                ]
-                            },
-                            {
-                                stack: [
-                                    { text: 'Peso', fontSize: 8 },
-                                    { text: examenesFisicos?.peso ? `${examenesFisicos.peso} kg` : "N/A", bold: true }
-                                ]
-                            },
-                            {
-                                stack: [
-                                    { text: 'Talla', fontSize: 8 },
-                                    { text: examenesFisicos?.talla ? `${examenesFisicos.talla} cm` : "N/A", bold: true }
-                                ]
-                            }
-                        ],
-                        [
-                            {
-                                stack: [
-                                    { text: 'IMC', fontSize: 8 },
-                                    { text: examenesFisicos?.imc ? `${examenesFisicos.imc.toFixed(2)}` : "N/A", bold: true }
-                                ]
-                            },
-                            {
-                                stack: [
-                                    { text: 'Percentil', fontSize: 8 },
-                                    { text: examenesFisicos?.percentil || "N/A", bold: true }
-                                ]
-                            },
-                            {
-                                stack: [
-                                    { text: 'Perímetro Cefálico', fontSize: 8 },
-                                    { text: examenesFisicos?.perimetro_cefalico ? `${examenesFisicos.perimetro_cefalico} cm` : "N/A", bold: true }
+                                    { text: examenesFisicos?.tension_arterial || "No registrado", bold: true }
                                 ]
                             }
                         ]
                     ]
                 },
                 layout: {
-                    hLineWidth: function(i, node) {
+                    hLineWidth: function(i) {
                         return (i === 0 || i === 1) ? 1 : 0.5;
                     },
-                    vLineWidth: function(i, node) {
+                    vLineWidth: function() {
                         return 0.5;
                     },
-                    hLineColor: function(i, node) {
+                    hLineColor: function(i) {
                         return (i === 0 || i === 1) ? '#1F2937' : '#CCCCCC';
                     },
-                    vLineColor: function(i, node) {
+                    vLineColor: function() {
                         return '#CCCCCC';
                     },
-                    fillColor: function(rowIndex, node, columnIndex) {
+                    fillColor: function(rowIndex) {
                         return (rowIndex === 0) ? '#1F2937' : null;
                     }
                 },
@@ -111,7 +77,7 @@ export const generarSeccionExamenesFisicos = (examenesFisicos) => {
             },
             {
                 table: {
-                    widths: ['*', '*', '*'],
+                    widths: ['*', '*'],
                     body: [
                         [
                             {
@@ -120,56 +86,54 @@ export const generarSeccionExamenesFisicos = (examenesFisicos) => {
                                 color: 'white',
                                 bold: true,
                                 fontSize: 12,
-                                colSpan: 3
+                                colSpan: 2
                             },
-                            {}, {}
+                            {}
                         ],
                         [
                             {
                                 stack: [
                                     { text: 'Peso', fontSize: 8 },
-                                    { text: examenesFisicos?.peso ? `${examenesFisicos.peso} kg` : "N/A", bold: true }
+                                    { text: examenesFisicos?.peso ? `${examenesFisicos.peso} kg` : "No registrado", bold: true }
                                 ]
                             },
                             {
                                 stack: [
                                     { text: 'Talla', fontSize: 8 },
-                                    { text: examenesFisicos?.talla ? `${examenesFisicos.talla} cm` : "N/A", bold: true }
-                                ]
-                            },
-                            {
-                                stack: [
-                                    { text: 'IMC', fontSize: 8 },
-                                    { text: examenesFisicos?.imc ? `${examenesFisicos.imc.toFixed(2)}` : "N/A", bold: true }
+                                    { text: examenesFisicos?.talla ? `${examenesFisicos.talla} cm` : "No registrado", bold: true }
                                 ]
                             }
                         ],
                         [
                             {
                                 stack: [
-                                    { text: 'Percentil', fontSize: 8 },
-                                    { text: examenesFisicos?.percentil || "N/A", bold: true }
+                                    { text: 'IMC', fontSize: 8 },
+                                    { text: examenesFisicos?.imc ? `${examenesFisicos.imc.toFixed(2)}` : "No registrado", bold: true }
                                 ]
                             },
-                            { text: '' },
-                            { text: '' }
+                            {
+                                stack: [
+                                    { text: 'Percentil', fontSize: 8 },
+                                    { text: examenesFisicos?.percentil || "No registrado", bold: true }
+                                ]
+                            }
                         ]
                     ]
                 },
                 layout: {
-                    hLineWidth: function(i, node) {
+                    hLineWidth: function(i) {
                         return (i === 0 || i === 1) ? 1 : 0.5;
                     },
-                    vLineWidth: function(i, node) {
+                    vLineWidth: function() {
                         return 0.5;
                     },
-                    hLineColor: function(i, node) {
+                    hLineColor: function(i) {
                         return (i === 0 || i === 1) ? '#1F2937' : '#CCCCCC';
                     },
-                    vLineColor: function(i, node) {
+                    vLineColor: function() {
                         return '#CCCCCC';
                     },
-                    fillColor: function(rowIndex, node, columnIndex) {
+                    fillColor: function(rowIndex) {
                         return (rowIndex === 0) ? '#1F2937' : null;
                     }
                 },
@@ -206,7 +170,7 @@ export const generarSeccionExamenesFisicos = (examenesFisicos) => {
                             {
                                 stack: [
                                     { text: 'Déficit de Vitamina D', fontSize: 8 },
-                                    { text: examenesFisicos?.deficit_vitamina_d === true ? 'Sí' : 'No', bold: true }
+                                    { text:  examenesFisicos?.deficit_vitamina_d === true ? 'Sí' : 'No', bold: true }
                                 ]
                             }
                         ],
@@ -214,13 +178,13 @@ export const generarSeccionExamenesFisicos = (examenesFisicos) => {
                             {
                                 stack: [
                                     { text: 'Desnutrición', fontSize: 8 },
-                                    { text: examenesFisicos?.desnutricion === true ? 'Sí' : 'No', bold: true }
+                                    { text:  examenesFisicos?.desnutricion === true ? 'Sí' : 'No', bold: true }
                                 ]
                             },
                             {
                                 stack: [
                                     { text: 'Obesidad', fontSize: 8 },
-                                    { text: examenesFisicos?.obesidad === true ? 'Sí' : 'No', bold: true }
+                                    { text:  examenesFisicos?.obesidad === true ? 'Sí' : 'No', bold: true }
                                 ]
                             },
                             { text: '' }
@@ -228,19 +192,19 @@ export const generarSeccionExamenesFisicos = (examenesFisicos) => {
                     ]
                 },
                 layout: {
-                    hLineWidth: function(i, node) {
+                    hLineWidth: function(i) {
                         return (i === 0 || i === 1) ? 1 : 0.5;
                     },
-                    vLineWidth: function(i, node) {
+                    vLineWidth: function() {
                         return 0.5;
                     },
-                    hLineColor: function(i, node) {
+                    hLineColor: function(i) {
                         return (i === 0 || i === 1) ? '#1F2937' : '#CCCCCC';
                     },
-                    vLineColor: function(i, node) {
+                    vLineColor: function() {
                         return '#CCCCCC';
                     },
-                    fillColor: function(rowIndex, node, columnIndex) {
+                    fillColor: function(rowIndex) {
                         return (rowIndex === 0) ? '#1F2937' : null;
                     }
                 },
@@ -265,19 +229,39 @@ export const generarSeccionExamenesFisicos = (examenesFisicos) => {
                             {
                                 stack: [
                                     { text: 'Perímetro Cefálico', fontSize: 8 },
-                                    { text: examenesFisicos?.perimetro_cefalico ? `${examenesFisicos.perimetro_cefalico} cm` : "N/A", bold: true }
+                                    { text: examenesFisicos?.perimetro_cefalico ? `${examenesFisicos.perimetro_cefalico} cm` : "No registrado", bold: true }
                                 ]
                             },
                             {
                                 stack: [
                                     { text: 'Agudeza Visual', fontSize: 8 },
-                                    { text: examenesFisicos?.vision || "N/A", bold: true }
+                                    { text: examenesFisicos?.vision || "No registrado", bold: true }
+                                ]
+                            },
+                            {
+                                stack: [
+                                    { text: 'Examen Boca', fontSize: 8 },
+                                    { text: examenesFisicos?.examen_boca || "No registrado", bold: true }
+                                ]
+                            }
+                        ],
+                        [
+                            {
+                                stack: [
+                                    { text: 'Examen Nariz', fontSize: 8 },
+                                    { text: examenesFisicos?.examen_nariz || "No registrado", bold: true }
+                                ]
+                            },
+                            {
+                                stack: [
+                                    { text: 'Examen Oídos', fontSize: 8 },
+                                    { text: examenesFisicos?.examen_oidos || "No registrado", bold: true }
                                 ]
                             },
                             {
                                 stack: [
                                     { text: 'Caries', fontSize: 8 },
-                                    { text: examenesFisicos?.caries === true ? 'Sí' : 'No', bold: true }
+                                    { text: examenesFisicos?.caries === null ? 'No registrado' : examenesFisicos?.caries === true ? 'Sí' : 'No', bold: true }
                                 ]
                             }
                         ],
@@ -285,7 +269,7 @@ export const generarSeccionExamenesFisicos = (examenesFisicos) => {
                             {
                                 stack: [
                                     { text: 'Cuello', fontSize: 8 },
-                                    { text: examenesFisicos?.cuello || "N/A", bold: true }
+                                    { text: examenesFisicos?.cuello || "No registrado", bold: true }
                                 ]
                             },
                             { text: '' },
@@ -294,19 +278,19 @@ export const generarSeccionExamenesFisicos = (examenesFisicos) => {
                     ]
                 },
                 layout: {
-                    hLineWidth: function(i, node) {
+                    hLineWidth: function(i) {
                         return (i === 0 || i === 1) ? 1 : 0.5;
                     },
-                    vLineWidth: function(i, node) {
+                    vLineWidth: function() {
                         return 0.5;
                     },
-                    hLineColor: function(i, node) {
+                    hLineColor: function(i) {
                         return (i === 0 || i === 1) ? '#1F2937' : '#CCCCCC';
                     },
-                    vLineColor: function(i, node) {
+                    vLineColor: function() {
                         return '#CCCCCC';
                     },
-                    fillColor: function(rowIndex, node, columnIndex) {
+                    fillColor: function(rowIndex) {
                         return (rowIndex === 0) ? '#1F2937' : null;
                     }
                 },
@@ -331,32 +315,32 @@ export const generarSeccionExamenesFisicos = (examenesFisicos) => {
                             {
                                 stack: [
                                     { text: 'Cardiopulmonar', fontSize: 8 },
-                                    { text: examenesFisicos?.cardio_pulmunar || "N/A", bold: true }
+                                    { text: examenesFisicos?.cardio_pulmunar || "No registrado", bold: true }
                                 ]
                             },
                             {
                                 stack: [
                                     { text: 'Examen Abdominal', fontSize: 8 },
-                                    { text: examenesFisicos?.condicion_abdominal || "N/A", bold: true }
+                                    { text: examenesFisicos?.condicion_abdominal || "No registrado", bold: true }
                                 ]
                             }
                         ]
                     ]
                 },
                 layout: {
-                    hLineWidth: function(i, node) {
+                    hLineWidth: function(i) {
                         return (i === 0 || i === 1) ? 1 : 0.5;
                     },
-                    vLineWidth: function(i, node) {
+                    vLineWidth: function() {
                         return 0.5;
                     },
-                    hLineColor: function(i, node) {
+                    hLineColor: function(i) {
                         return (i === 0 || i === 1) ? '#1F2937' : '#CCCCCC';
                     },
-                    vLineColor: function(i, node) {
+                    vLineColor: function() {
                         return '#CCCCCC';
                     },
-                    fillColor: function(rowIndex, node, columnIndex) {
+                    fillColor: function(rowIndex) {
                         return (rowIndex === 0) ? '#1F2937' : null;
                     }
                 },
@@ -381,13 +365,13 @@ export const generarSeccionExamenesFisicos = (examenesFisicos) => {
                             {
                                 stack: [
                                     { text: 'Tanner', fontSize: 8 },
-                                    { text: examenesFisicos?.tanner || "N/A", bold: true }
+                                    { text: examenesFisicos?.tanner || "No registrado", bold: true }
                                 ]
                             },
                             {
                                 stack: [
                                     { text: 'Estado de Piel', fontSize: 8 },
-                                    { text: examenesFisicos?.extremidades_estado_piel || "N/A", bold: true }
+                                    { text: examenesFisicos?.extremidades_estado_piel || "No registrado", bold: true }
                                 ]
                             }
                         ],
@@ -395,32 +379,32 @@ export const generarSeccionExamenesFisicos = (examenesFisicos) => {
                             {
                                 stack: [
                                     { text: 'Condición', fontSize: 8 },
-                                    { text: examenesFisicos?.extremidades_condicion || "N/A", bold: true }
+                                    { text: examenesFisicos?.extremidades_condicion || "No registrado", bold: true }
                                 ]
                             },
                             {
                                 stack: [
                                     { text: 'Observación', fontSize: 8 },
-                                    { text: examenesFisicos?.extremidades_observacion || "N/A", bold: true }
+                                    { text: examenesFisicos?.extremidades_observacion || "No registrado", bold: true }
                                 ]
                             }
                         ]
                     ]
                 },
                 layout: {
-                    hLineWidth: function(i, node) {
+                    hLineWidth: function(i) {
                         return (i === 0 || i === 1) ? 1 : 0.5;
                     },
-                    vLineWidth: function(i, node) {
+                    vLineWidth: function() {
                         return 0.5;
                     },
-                    hLineColor: function(i, node) {
+                    hLineColor: function(i) {
                         return (i === 0 || i === 1) ? '#1F2937' : '#CCCCCC';
                     },
-                    vLineColor: function(i, node) {
+                    vLineColor: function() {
                         return '#CCCCCC';
                     },
-                    fillColor: function(rowIndex, node, columnIndex) {
+                    fillColor: function(rowIndex) {
                         return (rowIndex === 0) ? '#1F2937' : null;
                     }
                 },
@@ -431,17 +415,3 @@ export const generarSeccionExamenesFisicos = (examenesFisicos) => {
     };
 };
 
-/**
- * Obtiene los datos del examen físico del paciente
- * @param {string} token - Token de autenticación
- * @param {string} idPaciente - ID del paciente
- * @returns {Promise<Object>} Datos del examen físico
- */
-export const obtenerDatosExamenFisico = async (token, idPaciente) => {
-    try {
-        return await consultarExamenFisicoPorPaciente(token, idPaciente);
-    } catch (error) {
-        console.error('Error al obtener datos del examen físico:', error);
-        return null;
-    }
-}; 

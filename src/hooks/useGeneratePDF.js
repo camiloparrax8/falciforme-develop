@@ -1,16 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import pdfMake from 'pdfmake/build/pdfmake';
 import { useToken } from '@/store/authStore';
-import { generarSeccionExamenesFisicos, obtenerDatosExamenFisico } from '@/utils/sections/examenesFisicosSection';
-import { generarSeccionComplicacionesAgudas, obtenerDatosComplicacionesAgudas } from '@/utils/sections/complicacionesAgudasSection';
-import { generarSeccionComplicacionesCronicas, obtenerDatosComplicacionesCronicas } from '@/utils/sections/complicacionesCronicasSection';
-import { generarSeccionTrasplantesProgenitores, obtenerDatosTrasplantesProgenitores } from '@/utils/sections/trasplantesProgenitoresSection';
-import { generarSeccionLaboratorios, obtenerDatosLaboratorios } from '@/utils/sections/laboratoriosSection';
-import { generarSeccionImagenesDiagnosticas, obtenerDatosImagenesDiagnosticas } from '@/utils/sections/imagenesDiagnosticasSection';
-import { generarSeccionSoportesTransfusionales, obtenerDatosSoportesTransfusionales } from '@/utils/sections/soportesTransfusionalesSection';
-import { generarSeccionVacunas, obtenerDatosVacunas } from '@/utils/sections/vacunasSection';
-import { generarSeccionTratamientos, obtenerDatosTratamientos } from '@/utils/sections/tratamientosSection';
+import { generarSeccionExamenesFisicos } from '@/utils/sections/examenesFisicosSection';
+import { generarSeccionComplicacionesAgudas } from '@/utils/sections/complicacionesAgudasSection';
+import { generarSeccionComplicacionesCronicas } from '@/utils/sections/complicacionesCronicasSection';
+import { generarSeccionTrasplantesProgenitores } from '@/utils/sections/trasplantesProgenitoresSection';
+import { generarSeccionLaboratorios } from '@/utils/sections/laboratoriosSection';
+import { generarSeccionImagenesDiagnosticas } from '@/utils/sections/imagenesDiagnosticasSection';
+import { generarSeccionSoportesTransfusionales } from '@/utils/sections/soportesTransfusionalesSection';
+import { generarSeccionVacunas } from '@/utils/sections/vacunasSection';
+import { generarSeccionTratamientos } from '@/utils/sections/tratamientosSection';
 import { obtenerHistoriasClinicasPorPaciente } from '@/customService/services/historiaClinicaService';
+import { obtenerIngresosPorComplicacion } from '@/customService/services/ingresosComplicacionesAgudasService';
+import { obtenerLaboratoriosPorPaciente } from '@/customService/services/laboratorioService';
+import { obtenerImagenesDiagnosticasPorPaciente } from '@/customService/services/imagenDiagnosticaService';
+import { obtenerSoportesTransfusionalesPorPaciente } from '@/customService/services/soportesTransfusionalesService';
 
 
 pdfMake.fonts = {
@@ -70,18 +74,48 @@ export const useGeneratePDF = () => {
             // Preparamos los datos para complicaciones agudas
             const datosComplicacionesAgudas = {
                 complicacionesAgudas: { data: data.complicaciones_agudas?.length > 0 ? data.complicaciones_agudas[0] : null },
-                ingresos: {
-                    data: data.complicaciones_agudas?.length > 0 ?
-                        (data.complicaciones_agudas[0]?.ingresosComplicaciones || []) : []
-                }
+                ingresos: { data: [] }
             };
 
+            // Si existe una complicación aguda, obtenemos sus ingresos
+            if (datosComplicacionesAgudas.complicacionesAgudas.data?.id) {
+                try {
+                    const resultadoIngresos = await obtenerIngresosPorComplicacion(
+                        token,
+                        datosComplicacionesAgudas.complicacionesAgudas.data.id
+                    );
+                    if (resultadoIngresos.status === 'success' && resultadoIngresos.data) {
+                        datosComplicacionesAgudas.ingresos.data = Array.isArray(resultadoIngresos.data) 
+                            ? resultadoIngresos.data 
+                            : [resultadoIngresos.data];
+                    }
+                } catch (error) {
+                    console.error('Error al obtener ingresos:', error);
+                }
+            }
+
             // Datos de laboratorios e imágenes
-            const laboratorios = { data: data.laboratorio ? [data.laboratorio] : [] };
-            const imagenesDiagnosticas = { data: data.imagenes_diagnosticas ? [data.imagenes_diagnosticas] : [] };
+            const resultadoLaboratorios = await obtenerLaboratoriosPorPaciente(token, data.paciente.id);
+            const laboratorios = { 
+                data: resultadoLaboratorios?.status === 'success' 
+                    ? resultadoLaboratorios.data 
+                    : (data.laboratorios || data.laboratorio || [])
+            };
+
+            const resultadoImagenes = await obtenerImagenesDiagnosticasPorPaciente(token, data.paciente.id);
+            const imagenesDiagnosticas = { 
+                data: resultadoImagenes?.status === 'success' 
+                    ? resultadoImagenes.data 
+                    : (data.imagenes_diagnosticas ? [data.imagenes_diagnosticas] : [])
+            };
 
             // Datos de soportes transfusionales
-            const soportesTransfusionales = { data: data.soportes_transfusionales ? [data.soportes_transfusionales] : [] };
+            const resultadoSoportes = await obtenerSoportesTransfusionalesPorPaciente(token, data.paciente.id);
+            const soportesTransfusionales = { 
+                data: resultadoSoportes?.status === 'success' 
+                    ? resultadoSoportes.data 
+                    : (data.soportes_transfusionales || [])
+            };
 
             // Preparamos los datos para vacunas y tratamientos
             const vacunas = { data: data.vacuna || [] };
@@ -246,19 +280,19 @@ export const useGeneratePDF = () => {
                             ]
                         },
                         layout: {
-                            hLineWidth: function (i, node) {
+                            hLineWidth: function (i) {
                                 return (i === 0 || i === 1) ? 1 : 0.5;
                             },
-                            vLineWidth: function (i, node) {
+                            vLineWidth: function () {
                                 return 0.5;
                             },
-                            hLineColor: function (i, node) {
+                            hLineColor: function (i) {
                                 return (i === 0 || i === 1) ? '#1F2937' : '#CCCCCC';
                             },
-                            vLineColor: function (i, node) {
+                            vLineColor: function () {
                                 return '#CCCCCC';
                             },
-                            fillColor: function (rowIndex, node, columnIndex) {
+                            fillColor: function (rowIndex) {
                                 return (rowIndex === 0) ? '#00BCD4' : null;
                             }
                         },
@@ -267,7 +301,9 @@ export const useGeneratePDF = () => {
 
                     // Usamos directamente los datos ya preparados en cada sección
                     examenesFisicos ? generarSeccionExamenesFisicos(examenesFisicos) : { text: 'No hay datos de examen físico', margin: [0, 0, 0, 20] },
-                    generarSeccionComplicacionesAgudas(datosComplicacionesAgudas?.complicacionesAgudas, datosComplicacionesAgudas?.ingresos),
+                    datosComplicacionesAgudas.complicacionesAgudas.data 
+                        ? generarSeccionComplicacionesAgudas(datosComplicacionesAgudas.complicacionesAgudas, datosComplicacionesAgudas.ingresos)
+                        : { text: 'No hay datos de complicaciones agudas registrados', margin: [0, 0, 0, 20] },
                     complicacionesCronicas ? generarSeccionComplicacionesCronicas({ data: complicacionesCronicas }) : { text: 'No hay datos de complicaciones crónicas', margin: [0, 0, 0, 20] },
                     trasplanteProgenitores ? generarSeccionTrasplantesProgenitores({ data: trasplanteProgenitores }) : { text: 'No hay datos de trasplantes de progenitores', margin: [0, 0, 0, 20] },
                     laboratorios.data.length > 0 ? generarSeccionLaboratorios(laboratorios) : { text: 'No hay datos de laboratorios', margin: [0, 0, 0, 20] },

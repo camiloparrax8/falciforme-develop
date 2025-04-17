@@ -53,12 +53,12 @@ export default function ModalPulmonares({ isOpen, onClose, onRequestClose }) {
             complicacionData.tratamiento_asma !== null;
 
         const tieneHipomexia = 
-            complicacionData.hipomexia_epfc !== undefined && 
-            complicacionData.hipomexia_epfc !== null;
+            complicacionData.hipomexia !== undefined && 
+            complicacionData.hipomexia !== null;
 
         const tieneSaos = 
-            complicacionData.saos_epfc !== undefined && 
-            complicacionData.saos_epfc !== null;
+            complicacionData.saos !== undefined && 
+            complicacionData.saos !== null;
 
         const tieneTratamientoEpfc = 
             complicacionData.tratamiento_epfc !== undefined && 
@@ -123,8 +123,8 @@ export default function ModalPulmonares({ isOpen, onClose, onRequestClose }) {
                 // Establecer valores de los campos select
                 reset({
                     hipertensionPulmonar: complicacionData.hipertension_pulmonar ? 'Si' : 'No',
-                    hipomexiaEPFC: complicacionData.hipomexia_epfc ? 'Si' : 'No',
-                    saosEPFC: complicacionData.saos_epfc ? 'Si' : 'No',
+                    hipomexia: complicacionData.hipomexia ? 'Si' : 'No',
+                    saos: complicacionData.saos ? 'Si' : 'No',
                 });
 
                 // Establecer valores de los campos de texto usando setValue
@@ -158,8 +158,8 @@ export default function ModalPulmonares({ isOpen, onClose, onRequestClose }) {
                 vrt: data.vrt || '',
                 numeroCrisis: data.crisisAsma || '',
                 tratamientos: data.tratamientoAsma || '',
-                hipomexia: data.hipomexiaEPFC === 'Si',
-                saos: data.saosEPFC === 'Si',
+                hipomexia: data.hipomexia === 'Si',
+                saos: data.saos === 'Si',
                 edpfcTratamiento: data.tratamientoEPFC || '',
             };
 
@@ -287,7 +287,7 @@ export default function ModalPulmonares({ isOpen, onClose, onRequestClose }) {
                     <div className="grid grid-cols-3 gap-4">
                         <InputSelect
                             control={control}
-                            name="hipomexiaEPFC"
+                            name="hipomexia"
                             label="Hipomexia"
                             options={options}
                             validation={validationSeccionTwoCronicas.hipomexiaEPFC}
@@ -299,7 +299,7 @@ export default function ModalPulmonares({ isOpen, onClose, onRequestClose }) {
 
                         <InputSelect
                             control={control}
-                            name="saosEPFC"
+                            name="saos"
                             label="SAOS"
                             options={options}
                             validation={validationSeccionTwoCronicas.saosEPFC}

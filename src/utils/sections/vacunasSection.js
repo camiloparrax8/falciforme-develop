@@ -1,5 +1,3 @@
-import { obtenerVacunasPorPaciente } from '@/customService/services/vacunas_hcService';
-
 /**
  * Genera la sección de vacunas para el PDF
  * @param {Object} vacunas - Datos de vacunas del paciente
@@ -39,24 +37,24 @@ export const generarSeccionVacunas = (vacunas) => {
                 ...(vacunas?.data?.length > 0 
                     ? vacunas.data.map((vac, index) => [
                         { text: vacunas.data.length - index || '' },
-                        { text: vac.nombre_vacuna || '' },
-                        { text: vac.fecha ? vac.fecha.split('T')[0].split('-').reverse().join('/') : '' }
+                        { text: vac.nombre_vacuna || 'No registrado' },
+                        { text: vac.fecha ? vac.fecha.split('T')[0].split('-').reverse().join('/') : 'No registrado' }
                     ])
                     : [[{ text: 'No hay registros de vacunas', colSpan: 3, alignment: 'center' }, {}, {}]]
                 )
             ],
         },
         layout: {
-            hLineWidth: function(i, node) {
+            hLineWidth: function(i) {
                 return (i === 0 || i === 1) ? 1 : 0.5;
             },
-            vLineWidth: function(i, node) {
+            vLineWidth: function() {
                 return 0.5;
             },
-            hLineColor: function(i, node) {
+            hLineColor: function(i) {
                 return (i === 0 || i === 1) ? '#1F2937' : '#CCCCCC';
             },
-            vLineColor: function(i, node) {
+            vLineColor: function() {
                 return '#CCCCCC';
             },
             fillColor: function(rowIndex, node, columnIndex) {
@@ -67,17 +65,3 @@ export const generarSeccionVacunas = (vacunas) => {
     };
 };
 
-/**
- * Obtiene los datos de vacunas del paciente
- * @param {string} token - Token de autenticación
- * @param {string} idPaciente - ID del paciente
- * @returns {Promise<Object>} Datos de vacunas
- */
-export const obtenerDatosVacunas = async (token, idPaciente) => {
-    try {
-        return await obtenerVacunasPorPaciente(token, idPaciente);
-    } catch (error) {
-        console.error('Error al obtener datos de vacunas:', error);
-        return null;
-    }
-}; 

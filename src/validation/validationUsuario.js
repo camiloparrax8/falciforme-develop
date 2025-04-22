@@ -22,6 +22,10 @@ const validationUsuario = {
     },
     cedula: {
         required: "La cedula es requerida",
+        pattern: {
+            value: /^[0-9]+$/,
+            message: "La cedula no es válida",
+        },
         minLength: {
             value: 10,
             message: "La cedula debe tener al menos 10 caracteres",

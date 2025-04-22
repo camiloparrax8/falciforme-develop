@@ -55,3 +55,24 @@ export const eliminarUsuario = async (token, id_usuario) => {
         throw error;
     }
 };
+
+/**
+ * Cambia el estado de un usuario (activa/desactiva)
+ * @async
+ * @function cambiarEstado
+ * @param {string} token - Token de autenticación
+ * @param {number} id_usuario - ID del usuario a cambiar estado
+ * @returns {Promise<Object>} Respuesta con el resultado de la operación
+ */
+export const cambiarEstado = async (token, id_usuario) => {
+    try {
+        const response = await axiosInstance.put(`/usuario/cambiar-estado/${id_usuario}`, 
+            {}, 
+            { headers: { Authorization: token } }
+        );
+        return response.data;
+    } catch (error) {
+        console.error("Error al cambiar estado del usuario:", error.response?.data || error.message);
+        throw error;
+    }
+};

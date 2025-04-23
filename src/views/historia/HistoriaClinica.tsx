@@ -409,7 +409,9 @@ const HistoriaClinica = () => {
     return (
         <Container>
             <AdaptiveCard>
-                <BackButton variant="default" />
+                <div className="mb-4">
+                    <BackButton variant="default" to="/paciente" />
+                </div>
                 <div className="flex justify-between items-center mb-4">
                     <div className="flex items-center gap-4">
                         <SectionTitle

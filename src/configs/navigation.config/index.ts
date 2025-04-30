@@ -36,7 +36,7 @@ const navigationConfig: NavigationTree[] = [
         translateKey: '',
         icon: 'seguridad',
         type: NAV_ITEM_TYPE_ITEM,
-        authority: [],
+        authority: ['1'],
         subMenu: [],
     },
     {

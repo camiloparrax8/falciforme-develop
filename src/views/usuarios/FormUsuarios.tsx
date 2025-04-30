@@ -117,7 +117,7 @@ function FormUsuarios({ isOpen, onClose, onRequestClose, setMensaje, actualizarU
             onRequestClose={onRequestClose}
         >
            <form
-           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full"
+           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full max-h-[600px] overflow-y-auto pr-2"
            onSubmit={handleSubmit(onSubmit)}>
                 <SectionTitle text="Información Básica del Usuario" className="col-span-1 md:col-span-2 lg:col-span-4" />
                 
@@ -205,14 +205,6 @@ function FormUsuarios({ isOpen, onClose, onRequestClose, setMensaje, actualizarU
                     className="col-span-2"
                 />
                 <div className="col-span-4 flex justify-between mt-2">
-                    <Button 
-                        type="button"
-                        variant={estado ? "outline" : "solid"}
-                        onClick={handleCambiarEstado}
-                        disabled={loading}
-                    >
-                        {estado ? 'Desactivar Usuario' : 'Activar Usuario'}
-                    </Button>
                     <Button type="submit" disabled={loading}>Guardar</Button>
                 </div>            
            </form>

@@ -299,19 +299,331 @@ export const useGeneratePDF = () => {
                         margin: [0, 0, 0, 20]
                     },
 
-                    // Usamos directamente los datos ya preparados en cada sección
-                    examenesFisicos ? generarSeccionExamenesFisicos(examenesFisicos) : { text: 'No hay datos de examen físico', margin: [0, 0, 0, 20] },
+                    // Secciones condicionales
+                    examenesFisicos 
+                        ? generarSeccionExamenesFisicos(examenesFisicos)
+                        : {
+                            table: {
+                                widths: ['*'],
+                                body: [
+                                    [
+                                        {
+                                            text: 'Examenes Fisicos',
+                                            fillColor: '#1F2937',
+                                            color: 'white',
+                                            bold: true,
+                                            fontSize: 12
+                                        }
+                                    ],
+                                    [
+                                        { text: 'No hay datos de examen físico', alignment: 'center', margin: [0, 10, 0, 10] }
+                                    ]
+                                ]
+                            },
+                            layout: {
+                                hLineWidth: function (i) {
+                                    return 1;
+                                },
+                                vLineWidth: function () {
+                                    return 1;
+                                },
+                                hLineColor: function () {
+                                    return '#CCCCCC';
+                                },
+                                vLineColor: function () {
+                                    return '#CCCCCC';
+                                }
+                            },
+                            margin: [0, 0, 0, 20]
+                        },
                     datosComplicacionesAgudas.complicacionesAgudas.data 
                         ? generarSeccionComplicacionesAgudas(datosComplicacionesAgudas.complicacionesAgudas, datosComplicacionesAgudas.ingresos)
-                        : { text: 'No hay datos de complicaciones agudas registrados', margin: [0, 0, 0, 20] },
-                    complicacionesCronicas ? generarSeccionComplicacionesCronicas({ data: complicacionesCronicas }) : { text: 'No hay datos de complicaciones crónicas', margin: [0, 0, 0, 20] },
-                    trasplanteProgenitores ? generarSeccionTrasplantesProgenitores({ data: trasplanteProgenitores }) : { text: 'No hay datos de trasplantes de progenitores', margin: [0, 0, 0, 20] },
-                    laboratorios.data.length > 0 ? generarSeccionLaboratorios(laboratorios) : { text: 'No hay datos de laboratorios', margin: [0, 0, 0, 20] },
-                    imagenesDiagnosticas.data.length > 0 ? generarSeccionImagenesDiagnosticas(imagenesDiagnosticas) : { text: 'No hay datos de imágenes diagnósticas', margin: [0, 0, 0, 20] },
-                    soportesTransfusionales.data.length > 0 ? generarSeccionSoportesTransfusionales(soportesTransfusionales) : { text: 'No hay datos de soportes transfusionales', margin: [0, 0, 0, 20] },
-                    vacunas.data.length > 0 ? generarSeccionVacunas(vacunas) : { text: 'No hay datos de vacunas', margin: [0, 0, 0, 20] },
-                    resultadoTratamientos.data.length > 0 ? generarSeccionTratamientos(resultadoTratamientos) : { text: 'No hay datos de tratamientos', margin: [0, 0, 0, 20] },
-
+                        : {
+                            table: {
+                                widths: ['*'],
+                                body: [
+                                    [
+                                        {
+                                            text: 'Complicaciones Agudas',
+                                            fillColor: '#1F2937',
+                                            color: 'white',
+                                            bold: true,
+                                            fontSize: 12
+                                        }
+                                    ],
+                                    [
+                                        { text: 'No hay datos de complicaciones agudas registrados', alignment: 'center', margin: [0, 10, 0, 10] }
+                                    ]
+                                ]
+                            },
+                            layout: {
+                                hLineWidth: function (i) {
+                                    return 1;
+                                },
+                                vLineWidth: function () {
+                                    return 1;
+                                },
+                                hLineColor: function () {
+                                    return '#CCCCCC';
+                                },
+                                vLineColor: function () {
+                                    return '#CCCCCC';
+                                }
+                            },
+                            margin: [0, 0, 0, 20]
+                        },
+                    complicacionesCronicas 
+                        ? generarSeccionComplicacionesCronicas({ data: complicacionesCronicas })
+                        : {
+                            table: {
+                                widths: ['*'],
+                                body: [
+                                    [
+                                        {
+                                            text: 'Complicaciones Crónicas',
+                                            fillColor: '#1F2937',
+                                            color: 'white',
+                                            bold: true,
+                                            fontSize: 12
+                                        }
+                                    ],
+                                    [
+                                        { text: 'No hay datos de complicaciones crónicas', alignment: 'center', margin: [0, 10, 0, 10] }
+                                    ]
+                                ]
+                            },
+                            layout: {
+                                hLineWidth: function (i) {
+                                    return 1;
+                                },
+                                vLineWidth: function () {
+                                    return 1;
+                                },
+                                hLineColor: function () {
+                                    return '#CCCCCC';
+                                },
+                                vLineColor: function () {
+                                    return '#CCCCCC';
+                                }
+                            },
+                            margin: [0, 0, 0, 20]
+                        },
+                    trasplanteProgenitores 
+                        ? generarSeccionTrasplantesProgenitores({ data: trasplanteProgenitores })
+                        : {
+                            table: {
+                                widths: ['*'],
+                                body: [
+                                    [
+                                        {
+                                            text: 'Trasplantes de Progenitores',
+                                            fillColor: '#1F2937',
+                                            color: 'white',
+                                            bold: true,
+                                            fontSize: 12
+                                        }
+                                    ],
+                                    [
+                                        { text: 'No hay datos de trasplantes de progenitores', alignment: 'center', margin: [0, 10, 0, 10] }
+                                    ]
+                                ]
+                            },
+                            layout: {
+                                hLineWidth: function (i) {
+                                    return 1;
+                                },
+                                vLineWidth: function () {
+                                    return 1;
+                                },
+                                hLineColor: function () {
+                                    return '#CCCCCC';
+                                },
+                                vLineColor: function () {
+                                    return '#CCCCCC';
+                                }
+                            },
+                            margin: [0, 0, 0, 20]
+                        },
+                    laboratorios.data.length > 0 
+                        ? generarSeccionLaboratorios(laboratorios)
+                        : {
+                            table: {
+                                widths: ['*'],
+                                body: [
+                                    [
+                                        {
+                                            text: 'Laboratorios',
+                                            fillColor: '#1F2937',
+                                            color: 'white',
+                                            bold: true,
+                                            fontSize: 12
+                                        }
+                                    ],
+                                    [
+                                        { text: 'No hay datos de laboratorios', alignment: 'center', margin: [0, 10, 0, 10] }
+                                    ]
+                                ]
+                            },
+                            layout: {
+                                hLineWidth: function (i) {
+                                    return 1;
+                                },
+                                vLineWidth: function () {
+                                    return 1;
+                                },
+                                hLineColor: function () {
+                                    return '#CCCCCC';
+                                },
+                                vLineColor: function () {
+                                    return '#CCCCCC';
+                                }
+                            },
+                            margin: [0, 0, 0, 20]
+                        },
+                    imagenesDiagnosticas.data.length > 0 
+                        ? generarSeccionImagenesDiagnosticas(imagenesDiagnosticas)
+                        : {
+                            table: {
+                                widths: ['*'],
+                                body: [
+                                    [
+                                        {
+                                            text: 'Imágenes Diagnósticas',
+                                            fillColor: '#1F2937',
+                                            color: 'white',
+                                            bold: true,
+                                            fontSize: 12
+                                        }
+                                    ],
+                                    [
+                                        { text: 'No hay datos de imágenes diagnósticas', alignment: 'center', margin: [0, 10, 0, 10] }
+                                    ]
+                                ]
+                            },
+                            layout: {
+                                hLineWidth: function (i) {
+                                    return 1;
+                                },
+                                vLineWidth: function () {
+                                    return 1;
+                                },
+                                hLineColor: function () {
+                                    return '#CCCCCC';
+                                },
+                                vLineColor: function () {
+                                    return '#CCCCCC';
+                                }
+                            },
+                            margin: [0, 0, 0, 20]
+                        },
+                    soportesTransfusionales.data.length > 0 
+                        ? generarSeccionSoportesTransfusionales(soportesTransfusionales)
+                        : {
+                            table: {
+                                widths: ['*'],
+                                body: [
+                                    [
+                                        {
+                                            text: 'Soportes Transfusionales',
+                                            fillColor: '#1F2937',
+                                            color: 'white',
+                                            bold: true,
+                                            fontSize: 12
+                                        }
+                                    ],
+                                    [
+                                        { text: 'No hay datos de soportes transfusionales', alignment: 'center', margin: [0, 10, 0, 10] }
+                                    ]
+                                ]
+                            },
+                            layout: {
+                                hLineWidth: function (i) {
+                                    return 1;
+                                },
+                                vLineWidth: function () {
+                                    return 1;
+                                },
+                                hLineColor: function () {
+                                    return '#CCCCCC';
+                                },
+                                vLineColor: function () {
+                                    return '#CCCCCC';
+                                }
+                            },
+                            margin: [0, 0, 0, 20]
+                        },
+                    vacunas.data.length > 0 
+                        ? generarSeccionVacunas(vacunas)
+                        : {
+                            table: {
+                                widths: ['*'],
+                                body: [
+                                    [
+                                        {
+                                            text: 'Vacunas',
+                                            fillColor: '#1F2937',
+                                            color: 'white',
+                                            bold: true,
+                                            fontSize: 12
+                                        }
+                                    ],
+                                    [
+                                        { text: 'No hay datos de vacunas', alignment: 'center', margin: [0, 10, 0, 10] }
+                                    ]
+                                ]
+                            },
+                            layout: {
+                                hLineWidth: function (i) {
+                                    return 1;
+                                },
+                                vLineWidth: function () {
+                                    return 1;
+                                },
+                                hLineColor: function () {
+                                    return '#CCCCCC';
+                                },
+                                vLineColor: function () {
+                                    return '#CCCCCC';
+                                }
+                            },
+                            margin: [0, 0, 0, 20]
+                        },
+                    resultadoTratamientos.data.length > 0 
+                        ? generarSeccionTratamientos(resultadoTratamientos)
+                        : {
+                            table: {
+                                widths: ['*'],
+                                body: [
+                                    [
+                                        {
+                                            text: 'Tratamientos',
+                                            fillColor: '#1F2937',
+                                            color: 'white',
+                                            bold: true,
+                                            fontSize: 12
+                                        }
+                                    ],
+                                    [
+                                        { text: 'No hay datos de tratamientos', alignment: 'center', margin: [0, 10, 0, 10] }
+                                    ]
+                                ]
+                            },
+                            layout: {
+                                hLineWidth: function (i) {
+                                    return 1;
+                                },
+                                vLineWidth: function () {
+                                    return 1;
+                                },
+                                hLineColor: function () {
+                                    return '#CCCCCC';
+                                },
+                                vLineColor: function () {
+                                    return '#CCCCCC';
+                                }
+                            },
+                            margin: [0, 0, 0, 20]
+                        }
                 ],
                 footer: (currentPage, pageCount) => ({
                     columns: [

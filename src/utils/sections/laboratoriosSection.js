@@ -13,7 +13,7 @@ export const generarSeccionLaboratorios = (laboratorios) => {
             body: [
                 [
                     {
-                        text: 'LABORATORIOS',
+                        text: 'Laboratorios',
                         fillColor: '#1F2937',
                         color: 'white',
                         bold: true,

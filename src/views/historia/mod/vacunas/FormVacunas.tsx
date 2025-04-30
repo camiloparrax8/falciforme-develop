@@ -1,100 +1,84 @@
+import { Button } from '@/components/ui'
 import { useForm } from 'react-hook-form'
 import SectionTitle from '@/views/common/form/SectionTitle'
-import InputSelect from '@/views/common/form/InputSelect'
-import Button from '@/components/ui/Button'
 import validationTratamientos from '../../../../validation/validationTratamientos'
 import InputDatePickerForm from '@/views/common/form/InputDate'
+import InputForm from '@/views/common/form/InputForm'
+import defaultValuesVacunas_hc from './defaultValuesVacunas_hc'
+import { useEffect, useState } from 'react'
 
-function FormVacunas() {
+interface FormVacunasProps {
+    loading: boolean
+    onSubmit: (data: FormData) => Promise<void>
+}
+
+interface FormData {
+    nombre_vacuna: string
+    fecha: string
+}
+
+function FormVacunas({ onSubmit, loading }: FormVacunasProps) {
+    const [resetKey, setResetKey] = useState(0)
+
     const {
         control,
         handleSubmit,
-        formState: { errors },
+        reset,
+        formState: { errors, isSubmitSuccessful },
     } = useForm({
-        defaultValues: {
-            tipo: '',
-            vacuna: '',
-          
-        },
+        defaultValues: defaultValuesVacunas_hc,
     })
 
-    const onSubmit = (data) => {
-        console.log('Datos enviados del tratamiento:', data)
+    useEffect(() => {
+        if (isSubmitSuccessful) {
+            reset(defaultValuesVacunas_hc)
+            setResetKey((prev) => prev + 1)
+        }
+    }, [isSubmitSuccessful, reset])
+
+    const handleFormSubmit = (data: FormData) => {
+        onSubmit(data)
     }
 
-    const options = [
-        {
-            value: 'vacuna_neumococica',
-            label: 'Vacuna neumocócica (PCV13 y PPSV23)',
-        },
-        {
-            value: 'vacuna_meningococica',
-            label: 'Vacuna meningocócica conjugada (MenACWY y MenB)',
-        },
-        {
-            value: 'vacuna_haemophilus_influenzae',
-            label: 'Vacuna contra Haemophilus influenzae tipo b (Hib)',
-        },
-        {
-            value: 'vacuna_influenza',
-            label: 'Vacuna contra la influenza (anual)',
-        },
-        {
-            value: 'vacuna_hepatitis_b',
-            label: 'Vacuna contra la hepatitis B',
-        },
-        {
-            value: 'vacuna_varicela',
-            label: 'Vacuna contra la varicela (si no está inmunizado)',
-        },
-        {
-            value: 'vacuna_tdap',
-            label: 'Vacuna contra el tétanos, difteria y tos ferina (Tdap)',
-        },
-        {
-            value: 'vacuna_covid19',
-            label: 'Vacuna contra COVID-19',
-        },
-    ]
-
     return (
-        <>
-            <form
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full"
-                onSubmit={handleSubmit(onSubmit)}
-            >
-                {/* Sección Tratamiento individual */}
-                <SectionTitle
-                    text="Vacunas aplicadas"
-                    className="col-span-1 md:col-span-2 lg:col-span-4"
-                />
-                <InputSelect
-                    control={control}
-                    name="vacuna"
-                    validation={validationTratamientos.tipo}
-                    label="Nombre de la vacuna"
-                    options={options}
-                    errors={errors}
-                    className="col-span-1"
-                    placeholder="Seleccione la vacuna"
-                />
-                <InputDatePickerForm
-                    control={control}
-                    name="date"
-                    rules={validationTratamientos.tipo}
-                    errors={errors}
-                    label="Fecha de vacunacion"
-                    placeholder="Seleccione una fecha"
-                    className="col-span-1"
-                />
+        <form
+            key={resetKey}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full"
+            onSubmit={handleSubmit(handleFormSubmit)}
+        >
+            <SectionTitle
+                text="Vacunas aplicadas"
+                className="col-span-1 md:col-span-2 lg:col-span-4"
+            />
+            <InputForm
+                control={control}
+                name="nombre_vacuna"
+                rules={validationTratamientos.tipo}
+                label="Nombre de la vacuna"
+                errors={errors}
+                className="col-span-1"
+                inputPlaceholder="Seleccione la vacuna"
+            />
+            <InputDatePickerForm
+                control={control}
+                name="fecha"
+                rules={validationTratamientos.tipo}
+                errors={errors}
+                label="Fecha de vacunacion"
+                placeholder="Seleccione una fecha"
+                className="col-span-1"
+            />
 
-                <div className="flex items-center justify-end col-span-4 md:col-span-1 mt-7">
-                    <Button type="submit" className="w-full md:w-auto">
-                        Guardar
-                    </Button>
-                </div>
-            </form>
-        </>
+            <div className="flex items-center justify-end col-span-4 md:col-span-1 mt-7">
+                <Button
+                    type="submit"
+                    loading={loading}
+                    className="w-full md:w-auto"
+                >
+                    Guardar
+                </Button>
+            </div>
+        </form>
     )
 }
 

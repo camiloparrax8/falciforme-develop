@@ -9,7 +9,10 @@ import validationUsuario from "@/validation/validationUsuario";
 import {crearUsuario} from '@/customService/services/usuariosService'
 import SelectRoles from "../common/form/SelectRoles";
 import Button from "@/components/ui/Button";
-function FormUsuarios({ isOpen, onClose, onRequestClose, setMensaje }) {
+import { useEffect } from "react";
+import Alert from "@/components/ui/Alert";
+
+function FormUsuarios({ isOpen, onClose, onRequestClose, setMensaje, actualizarUsuarios }) {
     const {
         control,
         handleSubmit,
@@ -31,25 +34,78 @@ function FormUsuarios({ isOpen, onClose, onRequestClose, setMensaje }) {
     const { token } = useToken();
     const { user } = useSessionUser();
     const [loading, setLoading] = useState(false);
+    const [mensaje, setMensajeLocal] = useState(null);
+    const [estado, setEstado] = useState(true);
+
+    // Función para manejar el mensaje local y propagarlo al componente padre
+    const handleSetMensaje = (msg) => {
+        setMensajeLocal(msg);
+        setMensaje(msg);
+    };
 
     const onSubmit = async (data) => {
-        console.log(data);
         try {
             setLoading(true);
-            setMensaje([]);
+            handleSetMensaje(null);
             const response = await crearUsuario(token, data);
-            setMensaje({ status: 'success', message: response.message || 'Usuario creado con éxito.' })
-            onClose() 
+            await actualizarUsuarios(); // <--- actualizar la tabla
+            handleSetMensaje({ status: 'success', message: response.message || 'Usuario creado con éxito.' });
+            onClose();
         } catch (error) {
-            setMensaje({
-                status: 'error',
-                message: error.response?.data?.message || 'Error al crear el usuario.',
-            })
-            console.log(data)
+            // Manejo detallado de errores de la API
+            if (error.response?.data?.errors) {
+                // Si hay errores de validación múltiples
+                const errores = error.response.data.errors.map(err => ({
+                    status: 'error',
+                    message: `${err.msg}${err.path ? ` (Campo: ${err.path})` : ''}`
+                }));
+                handleSetMensaje(errores[0]); // Mostramos el primer error
+            } else {
+                // Si es un error general
+                handleSetMensaje({
+                    status: 'error',
+                    message: error.response?.data?.message || 'Error al crear el usuario.',
+                });
+            }
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
-    }
+    };    
+
+    const handleCambiarEstado = async () => {
+        try {
+            setLoading(true);
+            handleSetMensaje(null);
+            const response = await crearUsuario(token, { estado: !estado });
+            await actualizarUsuarios(); // <--- actualizar la tabla
+            setEstado(!estado);
+            handleSetMensaje({ status: 'success', message: response.message || 'Estado del usuario actualizado con éxito.' });
+        } catch (error) {
+            // Manejo detallado de errores de la API
+            if (error.response?.data?.errors) {
+                // Si hay errores de validación múltiples
+                const errores = error.response.data.errors.map(err => ({
+                    status: 'error',
+                    message: `${err.msg}${err.path ? ` (Campo: ${err.path})` : ''}`
+                }));
+                handleSetMensaje(errores[0]); // Mostramos el primer error
+            } else {
+                // Si es un error general
+                handleSetMensaje({
+                    status: 'error',
+                    message: error.response?.data?.message || 'Error al actualizar el estado del usuario.',
+                });
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (!isOpen) {
+          reset(); // limpia todos los campos cuando el modal se cierra
+        }
+      }, [isOpen, reset]);
 
 
 
@@ -61,9 +117,26 @@ function FormUsuarios({ isOpen, onClose, onRequestClose, setMensaje }) {
             onRequestClose={onRequestClose}
         >
            <form
-           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full"
+           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full max-h-[600px] overflow-y-auto pr-2"
            onSubmit={handleSubmit(onSubmit)}>
                 <SectionTitle text="Información Básica del Usuario" className="col-span-1 md:col-span-2 lg:col-span-4" />
+                
+                {/* Mostrar mensaje de error/éxito */}
+                {mensaje && (
+                    <div className="col-span-1 md:col-span-2 lg:col-span-4 mb-4">
+                        <Alert
+                            title={mensaje.status === 'error' ? 'Atención' : 'Correcto'}
+                            showIcon
+                            type={mensaje.status === 'error' ? 'danger' : 'success'}
+                            closable
+                            duration={5000}
+                            onClose={() => handleSetMensaje(null)}
+                        >
+                            {mensaje.message}
+                        </Alert>
+                    </div>
+                )}
+                
                 <InputForm
                     control={control}
                     name="nombres"
@@ -131,9 +204,8 @@ function FormUsuarios({ isOpen, onClose, onRequestClose, setMensaje }) {
                     errors={errors}
                     className="col-span-2"
                 />
-                {/* Botón */}
-                <div className="col-span-4 flex justify-start mt-2">
-                    <Button type="submit">Guardar</Button>
+                <div className="col-span-4 flex justify-between mt-2">
+                    <Button type="submit" disabled={loading}>Guardar</Button>
                 </div>            
            </form>
         </Dialog>

@@ -42,7 +42,7 @@ export const crearComplicacionesCronicas = async (token, formData) => {
             estado: true,
             id_user_create: formData.id_user_create,
         };
- 
+
 
         const result = await axiosInstance.post(
             '/historia-clinica/complicaciones-cronicas',
@@ -67,7 +67,7 @@ export const actualizarComplicacionesCronicas = async (token, id, camposActualiz
             throw new Error("ID de complicación no proporcionado");
         }
 
-      
+
         const result = await axiosInstance.put(
             `/historia-clinica/complicaciones-cronicas/${id}`,
             camposActualizar,
@@ -102,14 +102,29 @@ export const buscarComplicacionesCronicasPorIdPaciente = async (token, idPacient
 
         return result.data;
     } catch (error) {
+        if (error.response &&
+            error.response.data &&
+            error.response.data.message === "No hay una historia clínica activa para este paciente") {
+            return {
+                status: 'success',
+                message: "No hay complicaciones crónicas disponibles",
+                data: null
+            };
+        }
+
         if (error.response && error.response.status === 404) {
             return {
-                status: 'error',
+                status: 'success',
                 message: "No se encontraron complicaciones crónicas para el paciente",
                 data: null
             };
         }
+
         console.error("Error al consultar complicaciones crónicas:", error.response?.data || error.message);
-        throw error;
+        return {
+            status: 'success',
+            message: error.response?.data?.message || error.message,
+            data: null
+        };
     }
 }; 

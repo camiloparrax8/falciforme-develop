@@ -56,7 +56,7 @@ function DialogDelete({
                     <br />
                     <strong>Identificación:</strong> {selectedRow.Cedula}
                     <br />
-                    <strong>Nombre:</strong> {selectedRow.Nombre}
+                    <strong>Nombre:</strong> {selectedRow.nombreCompleto}
                 </p>
             )}
             <div className="text-right mt-6">

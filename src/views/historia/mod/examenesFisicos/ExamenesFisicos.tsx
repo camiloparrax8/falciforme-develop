@@ -1,4 +1,5 @@
 import { Card } from '@/components/ui'
+import { BackButton } from '@/components/shared'
 import FormExamenesFisicos from './FormExamenesFisicos'
 import ImgNino from './body/ImgNino'
 import SeccionOne from './body/one/SeccionOne'
@@ -53,6 +54,9 @@ function ExamenesFisicos() {
     return (
         <ExamenFisicoProvider initialExamen={examenExistente}>
             <Card>
+                <div className="mb-4">
+                    <BackButton variant="default" />
+                </div>
                 {loading ? (
                     <div className="p-4 text-center">
                         <p>Cargando información del examen físico...</p>

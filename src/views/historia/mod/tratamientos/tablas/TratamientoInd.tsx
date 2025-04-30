@@ -1,29 +1,37 @@
 import TableCustom from '@/views/common/TableCustom'
 
+interface Tratamiento {
+    id: number
+    Registro?: number
+    titulo: string
+    n_dias: number
+    dosis: string
+    tipo: string
+}
 
-function TableTi() {
+interface TableTiProps {
+    tratamientos: Tratamiento[]
+    onDelete?: (tratamiento: Tratamiento) => void
+}
 
-    const header = ['tipo', 'dias', 'dosis']
+function TableTi({ tratamientos = [], onDelete }: TableTiProps) {
+    const header = ['Registro', 'tipo', 'n_dias', 'dosis']
 
-    const data = [
-        {
-            id: 1,
-            tipo: 'Profilaxis antibiótica con penicilina',
-            dias: 31,
-            dosis: 3
-        },
-        {
-            id: 2,
-            tipo: 'Manejo del dolor',
-            dias: 15,
-            dosis: 15
-        },
-    ]
+    // Generamos los datos con Registro calculado de forma independiente
+    const dataWithIndex = tratamientos.map((tratamiento, index) => ({
+        ...tratamiento,
+        Registro: tratamientos.length - index,
+    }))
 
-    return(
-        <TableCustom data={data} header={header} className={'compact'}/>
+    return (
+        <TableCustom
+            data={dataWithIndex}
+            header={header}
+            className={'compact'}
+            showDeleteOption={!!onDelete}
+            onDelete={onDelete}
+        />
     )
 }
 
-export default TableTi;
-
+export default TableTi

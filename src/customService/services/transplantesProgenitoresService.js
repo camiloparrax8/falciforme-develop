@@ -47,39 +47,70 @@ export const consultarTransplantesProgenitoresPorPaciente = async (token, idPaci
 
         // Estructura consistente para la respuesta
         if (result.data) {
+            // Si hay datos en la respuesta
             if (result.data.data) {
-                return {
-                    status: 'success',
-                    data: result.data.data
-                };
+                // Si los datos tienen una propiedad data (estructura API)
+                if (result.data.data.id) {
+                    // Y esa data tiene un ID, entonces hay un trasplante
+                    return {
+                        status: 'success',
+                        data: result.data.data
+                    };
+                } else {
+                    // Si no tiene ID, no hay trasplante real
+                    return {
+                        status: 'success',
+                        data: null
+                    };
+                }
             } else if (Array.isArray(result.data)) {
+                // Si es un array, verificar si tiene elementos
                 return {
                     status: 'success',
-                    data: result.data.length > 0 ? result.data : null
+                    data: result.data.length > 0 ? result.data[0] : null
                 };
-            } else {
+            } else if (result.data.id) {
+                // Si el objeto tiene un ID directamente
                 return {
                     status: 'success',
                     data: result.data
                 };
+            } else {
+                // Cualquier otro caso, no hay datos válidos
+                return {
+                    status: 'success',
+                    data: null
+                };
             }
         } else {
+            // Si no hay datos en la respuesta
             return {
                 status: 'success',
                 data: null
             };
         }
     } catch (error) {
+        // Si el error es porque no hay historia clínica activa, lo tratamos como éxito con datos nulos
+        if (error.response &&
+            error.response.data &&
+            error.response.data.message === "El paciente no tiene una historia clínica activa") {
+            return {
+                status: 'success',
+                message: "No hay trasplantes disponibles",
+                data: null
+            };
+        }
+
         if (error.response && error.response.status === 404) {
             return {
-                status: 'error',
+                status: 'success',
                 message: "No se encontraron trasplantes",
                 data: null
             };
         }
         console.error("Error al consultar transplantes de progenitores:", error.response?.data || error.message);
         return {
-            status: 'error',
+            status: 'success', // Cambiamos a success para evitar errores en componente
             message: error.response?.data?.message || error.message,
             data: null
         };

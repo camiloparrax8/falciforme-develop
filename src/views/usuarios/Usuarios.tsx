@@ -10,41 +10,32 @@ function Usuarios() {
     const { token } = useToken();
     const [usuarios, setUsuarios] = useState([]);
     const [mensaje, setMensaje] = useState(null)
+    const actualizarUsuarios = async () => {
+        try {
+            if (!token) return;
+            const respuesta = await getUsuarios(token);
+            if (respuesta?.data) {
+                const usuariosTransformados = respuesta.data.map((usuario) => ({
+                    nombreCompleto: `${usuario.nombres} ${usuario.apellidos}`,
+                    id: usuario.id,
+                    Nombres: usuario.nombres,
+                    Apellidos: usuario.apellidos,
+                    Cedula: usuario.cedula,
+                    Correo: usuario.correo,
+                    User: usuario.user,
+                    Celular: usuario.celular,
+                    Rol: usuario.rol?.nombre || 'Sin rol',
+                    Estado: usuario.estado ? 'Activo' : 'Inactivo',
+                }));
+                setUsuarios(usuariosTransformados);
+            }
+        } catch (error) {
+            console.error("Error al actualizar usuarios:", error);
+        }
+    };    
 
     useEffect(() => {
-        const cargarUsuarios = async () => {
-            try {
-                if (!token) {
-                    console.error("Token no disponible");
-                    return;
-                }
-
-                const respuesta = await getUsuarios(token);
-
-                if (respuesta?.data) {
-                    // Transformar los datos para que coincidan con el formato esperado
-                    const usuariosTransformados = respuesta.data.map((usuario) => ({
-                        nombreCompleto: `${usuario.nombres} ${usuario.apellidos}`,
-                        id: usuario.id,
-                        Nombres: usuario.nombres,
-                        Apellidos: usuario.apellidos, // Combina nombres y apellidos
-                        Cedula: usuario.cedula,
-                        Correo: usuario.correo,
-                        User: usuario.user,
-                        Celular: usuario.celular,
-                        Rol: usuario.rol?.nombre || 'Sin rol', // Verifica si existe el rol
-                        Estado: usuario.estado ? 'Activo' : 'Inactivo', // Estado como texto
-                    }));
-                    setUsuarios(usuariosTransformados);
-                } else {
-                    console.error("Respuesta inesperada:", respuesta);
-                }
-            } catch (error) {
-                console.error("Error al cargar usuarios:", error);
-            }
-        };
-
-        cargarUsuarios();
+        actualizarUsuarios();
     }, [token]);
     // Encabezados de la tabla
     const header = ['nombreCompleto', 'Cedula', 'Correo', 'Celular', 'Rol', 'Estado'];
@@ -53,9 +44,16 @@ function Usuarios() {
     const openDialog = () => setIsOpen(true)
     const closeDialog = () => setIsOpen(false)
 
+    useEffect(() => {
+        if (mensaje) {
+            const timeout = setTimeout(() => setMensaje(null), 5000);
+            return () => clearTimeout(timeout);
+        }
+    }, [mensaje]);
+
     return (
         <div>
-            <FormUsuarios isOpen={isOpen} onClose={() => setIsOpen(false)} onRequestClose={() => setIsOpen(false)} setMensaje={setMensaje}/>
+            <FormUsuarios isOpen={isOpen} onClose={() => setIsOpen(false)} onRequestClose={() => setIsOpen(false)} setMensaje={setMensaje} actualizarUsuarios={actualizarUsuarios}/>
             <Card>
                 <div className="flex justify-between items-center mb-4">
                     <h4 className="text-lg font-semibold">Usuarios</h4>
@@ -71,7 +69,12 @@ function Usuarios() {
                     </Button>
                 </div>
                 {/* Pasamos los usuarios dinámicos a la tabla */}
-                <TableUsuario data={usuarios} header={header} className={null}></TableUsuario>
+                {mensaje && (
+                    <div className={`mb-4 p-2 rounded ${mensaje.status === 'success' ? 'bg-green-200' : 'bg-red-200'}`}>
+                        {mensaje.message}
+                    </div>
+                )}
+                <TableUsuario data={usuarios} header={header} className={null} actualizarUsuarios={actualizarUsuarios} setMensaje={setMensaje}></TableUsuario>
             </Card>
         </div>
     );

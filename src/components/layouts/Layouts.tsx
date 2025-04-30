@@ -5,7 +5,7 @@ import { useAuth } from '@/auth'
 import { useThemeStore } from '@/store/themeStore'
 import PostLoginLayout from './PostLoginLayout'
 import PreLoginLayout from './PreLoginLayout'
-import Breadcrumb from './Breadcrumbs'
+// import Breadcrumb from './Breadcrumbs'
 
 const Layout = ({ children }: CommonProps) => {
     const layoutType = useThemeStore((state) => state.layout.type)
@@ -22,7 +22,7 @@ const Layout = ({ children }: CommonProps) => {
         >
             {authenticated ? (
                 <PostLoginLayout layoutType={layoutType}>
-                    <Breadcrumb/>
+                    {/* <Breadcrumb/> */}
                     {children}
                 </PostLoginLayout>
             ) : (

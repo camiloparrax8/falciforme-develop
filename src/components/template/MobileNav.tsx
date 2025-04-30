@@ -38,7 +38,7 @@ const MobileNav = () => {
     )
     const currentRouteKey = useRouteKeyStore((state) => state.currentRouteKey)
 
-    const userAuthority = useSessionUser((state) => state.user.authority)
+    const userAuthority = useSessionUser((state) => [state.user.id_rol?.toString()])
 
     return (
         <>

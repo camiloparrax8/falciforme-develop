@@ -3,18 +3,18 @@ import Table from '@/components/ui/Table'
 import Button from '@/components/ui/Button'
 import Dialog from '@/components/ui/Dialog'
 import { Dropdown } from '@/components/ui/Dropdown'
-import { FiSettings, FiPlus, FiEdit, FiTrash2, FiShieldOff } from 'react-icons/fi'
+import { FiSettings, FiPlus, FiEdit, FiTrash2, FiShieldOff, FiShield } from 'react-icons/fi'
 import DialogDelete from './DialogDelete'
 import DialogDesactivar from './DialogDesactivar'
 import DialogEdit from './DialogEdit'
 const { Tr, Th, Td, THead, TBody } = Table
 
-const TableUsuario = ({ data, header, className}) => {
+const TableUsuario = ({ data, header, className, actualizarUsuarios, setMensaje}) => {
     const [dialogIsOpenDelete, setIsOpenDelete] = useState(false)
     const [dialogIsOpenDesactivar, setIsOpenDesactivar] = useState(false)
     const [dialogIsOpenEdit, setIsOpenEdit] = useState(false)
     const [selectedRow, setSelectedRow] = useState(null)
-    const [mensaje, setMensaje] = useState(null)
+
 
     const openDialogDelete = (row) => {
         setSelectedRow(row)
@@ -27,6 +27,7 @@ const TableUsuario = ({ data, header, className}) => {
 
     const onDialogOkDelete = async (row) => {
         console.log(row);
+        await actualizarUsuarios();
         setIsOpenDelete(false)
     }
 
@@ -55,6 +56,7 @@ const TableUsuario = ({ data, header, className}) => {
 
     const onDialogOkEdit = async (row) => {
         console.log(row);
+        await actualizarUsuarios();
         setIsOpenEdit(false)
     }
 
@@ -102,8 +104,8 @@ const TableUsuario = ({ data, header, className}) => {
                                     </Dropdown.Item>
                                     <Dropdown.Item onClick={() => openDialogDesactivar(row)}>
                                         <span className="flex items-center gap-2">
-                                            <FiShieldOff className="text-lg" />
-                                            Desactivar
+                                            {row.Estado === "Activo" ? <FiShieldOff className="text-lg" /> : <FiShield className="text-lg" />}
+                                            {row.Estado === "Activo" ? 'Desactivar' : 'Activar'}
                                         </span>
                                     </Dropdown.Item>
                                 </Dropdown>
@@ -128,6 +130,8 @@ const TableUsuario = ({ data, header, className}) => {
                 selectedRow={selectedRow}
                 onDialogCloseDelete={onDialogCloseDesactivar}
                 onDialogOkDelete={onDialogOkDesactivar}
+                actualizarUsuarios={actualizarUsuarios}
+                setMensaje={setMensaje}
             />
             <DialogEdit
                 isOpen={dialogIsOpenEdit}
@@ -136,6 +140,7 @@ const TableUsuario = ({ data, header, className}) => {
                 selectedRow={selectedRow}
                 onDialogCloseEdit={onDialogCloseEdit}
                 onDialogOkEdit={onDialogOkEdit}
+                setMensaje={setMensaje}
             />
         </div>
     )

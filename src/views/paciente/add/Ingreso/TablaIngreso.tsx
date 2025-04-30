@@ -75,7 +75,9 @@ const TablaIngreso = ({ refresh }) => {
                                     ).toLocaleDateString()}
                                 </td>
                                 <td className="py-2 px-4">
-                                    {item.parentescos_multiples?.length > 0
+                                    {Array.isArray(
+                                        item.parentescos_multiples,
+                                    ) && item.parentescos_multiples.length > 0
                                         ? item.parentescos_multiples.join(', ')
                                         : 'Sin datos'}
                                 </td>

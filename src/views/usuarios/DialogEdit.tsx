@@ -1,6 +1,5 @@
 import Dialog from '@/components/ui/Dialog'
 import { useToken } from '@/store/authStore'
-import { useSessionUser } from '@/store/authStore'
 import { useState, useEffect } from 'react'
 import Button from '@/components/ui/Button'
 import InputForm from '../common/form/InputForm'
@@ -8,19 +7,17 @@ import SelectRoles from '../common/form/SelectRoles'
 import SectionTitle from '../common/form/SectionTitle'
 import validationUsuario from '@/validation/validationUsuario'
 import { useForm } from 'react-hook-form'
-import { editarUsuario } from '@/customService/services/UsuariosService'
+import { editarUsuario } from '@/customService/services/usuariosService'
 
 function DialogEdit({
     isOpen,
     onClose,
     onRequestClose,
     selectedRow,
-    onDialogCloseEdit,
     onDialogOkEdit,
-    setMensaje
+    setMensaje,
 }) {
     const { token } = useToken()
-    const { user } = useSessionUser()
     const [loading, setLoading] = useState(false)
 
     // Configuración del formulario con react-hook-form
@@ -63,25 +60,33 @@ function DialogEdit({
             // Llamar la función de callback para actualizar la UI
             onDialogOkEdit(usuarioActualizado)
             onClose()
-            setMensaje({ 
-                status: 'success', 
-                message: 'Usuario actualizado con éxito.' 
-            });
+            setMensaje({
+                status: 'success',
+                message: 'Usuario actualizado con éxito.',
+            })
         } catch (error) {
-            console.error("Error al actualizar usuario:", error)
-            alert("Error al actualizar usuario. Inténtalo nuevamente.")
+            console.error('Error al actualizar usuario:', error)
+            alert('Error al actualizar usuario. Inténtalo nuevamente.')
         } finally {
             setLoading(false)
         }
     }
 
     return (
-        <Dialog width={1800} isOpen={isOpen} onClose={onClose} onRequestClose={onRequestClose}>
+        <Dialog
+            width={1800}
+            isOpen={isOpen}
+            onClose={onClose}
+            onRequestClose={onRequestClose}
+        >
             <form
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full"
                 onSubmit={handleSubmit(handleFormSubmit)}
             >
-                <SectionTitle text="Editar información del Usuario" className="col-span-1 md:col-span-2 lg:col-span-4" />
+                <SectionTitle
+                    text="Editar información del Usuario"
+                    className="col-span-1 md:col-span-2 lg:col-span-4"
+                />
 
                 <InputForm
                     control={control}
@@ -102,6 +107,7 @@ function DialogEdit({
                     className="col-span-2"
                 />
                 <InputForm
+                    disabled // Bloquear edición de cédula
                     control={control}
                     name="cedula"
                     rules={validationUsuario.cedula}
@@ -109,7 +115,6 @@ function DialogEdit({
                     label="Cédula"
                     inputPlaceholder="Cédula del usuario"
                     className="col-span-2"
-                    disabled // Bloquear edición de cédula
                 />
                 <InputForm
                     control={control}
@@ -149,13 +154,12 @@ function DialogEdit({
                 {/* Botón */}
                 <div className="col-span-4 flex justify-start mt-2">
                     <Button type="submit" disabled={loading}>
-                        {loading ? "Guardando..." : "Guardar"}
+                        {loading ? 'Guardando...' : 'Guardar'}
                     </Button>
-                </div>  
+                </div>
             </form>
         </Dialog>
     )
 }
 
 export default DialogEdit
-

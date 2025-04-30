@@ -7,7 +7,9 @@ function useAuthority(
     emptyCheck = false,
 ) {
     const roleMatched = useMemo(() => {
-        return authority.some((role) => userAuthority.includes(role))
+        // Si el usuario tiene un id_rol, lo convertimos a string para compararlo
+        const userRole = userAuthority[0]?.toString()
+        return authority.some((role) => role === userRole)
     }, [authority, userAuthority])
 
     if (

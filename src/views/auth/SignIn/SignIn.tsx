@@ -19,7 +19,7 @@ export const SignInBase = ({ disableSubmit }: SignInProps) => {
         <>
             <div className="mb-8">
                 <Logo
-                    type="streamline"
+                    type="full"
                     mode={mode}
                     imgClass="mx-auto"
                     logoWidth={60}
@@ -27,7 +27,7 @@ export const SignInBase = ({ disableSubmit }: SignInProps) => {
             </div>
             <div className="mb-10">
                 <p className="font-semibold heading-text">
-                    Porfavor ingrese sus credenciales
+                    Por favor ingrese sus credenciales
                 </p>
             </div>
             {message && (

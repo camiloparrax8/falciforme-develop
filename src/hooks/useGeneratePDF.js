@@ -11,10 +11,6 @@ import { generarSeccionSoportesTransfusionales } from '@/utils/sections/soportes
 import { generarSeccionVacunas } from '@/utils/sections/vacunasSection';
 import { generarSeccionTratamientos } from '@/utils/sections/tratamientosSection';
 import { obtenerHistoriasClinicasPorPaciente } from '@/customService/services/historiaClinicaService';
-import { obtenerIngresosPorComplicacion } from '@/customService/services/ingresosComplicacionesAgudasService';
-import { obtenerLaboratoriosPorPaciente } from '@/customService/services/laboratorioService';
-import { obtenerImagenesDiagnosticasPorPaciente } from '@/customService/services/imagenDiagnosticaService';
-import { obtenerSoportesTransfusionalesPorPaciente } from '@/customService/services/soportesTransfusionalesService';
 
 
 pdfMake.fonts = {
@@ -74,48 +70,18 @@ export const useGeneratePDF = () => {
             // Preparamos los datos para complicaciones agudas
             const datosComplicacionesAgudas = {
                 complicacionesAgudas: { data: data.complicaciones_agudas?.length > 0 ? data.complicaciones_agudas[0] : null },
-                ingresos: { data: [] }
-            };
-
-            // Si existe una complicación aguda, obtenemos sus ingresos
-            if (datosComplicacionesAgudas.complicacionesAgudas.data?.id) {
-                try {
-                    const resultadoIngresos = await obtenerIngresosPorComplicacion(
-                        token,
-                        datosComplicacionesAgudas.complicacionesAgudas.data.id
-                    );
-                    if (resultadoIngresos.status === 'success' && resultadoIngresos.data) {
-                        datosComplicacionesAgudas.ingresos.data = Array.isArray(resultadoIngresos.data) 
-                            ? resultadoIngresos.data 
-                            : [resultadoIngresos.data];
-                    }
-                } catch (error) {
-                    console.error('Error al obtener ingresos:', error);
+                ingresos: {
+                    data: data.complicaciones_agudas?.length > 0 ?
+                        (data.complicaciones_agudas[0]?.ingresosComplicaciones || []) : []
                 }
-            }
+            };
 
             // Datos de laboratorios e imágenes
-            const resultadoLaboratorios = await obtenerLaboratoriosPorPaciente(token, data.paciente.id);
-            const laboratorios = { 
-                data: resultadoLaboratorios?.status === 'success' 
-                    ? resultadoLaboratorios.data 
-                    : (data.laboratorios || data.laboratorio || [])
-            };
-
-            const resultadoImagenes = await obtenerImagenesDiagnosticasPorPaciente(token, data.paciente.id);
-            const imagenesDiagnosticas = { 
-                data: resultadoImagenes?.status === 'success' 
-                    ? resultadoImagenes.data 
-                    : (data.imagenes_diagnosticas ? [data.imagenes_diagnosticas] : [])
-            };
+            const laboratorios = { data: data.laboratorio ? [data.laboratorio] : [] };
+            const imagenesDiagnosticas = { data: data.imagenes_diagnosticas ? [data.imagenes_diagnosticas] : [] };
 
             // Datos de soportes transfusionales
-            const resultadoSoportes = await obtenerSoportesTransfusionalesPorPaciente(token, data.paciente.id);
-            const soportesTransfusionales = { 
-                data: resultadoSoportes?.status === 'success' 
-                    ? resultadoSoportes.data 
-                    : (data.soportes_transfusionales || [])
-            };
+            const soportesTransfusionales = { data: data.soportes_transfusionales ? [data.soportes_transfusionales] : [] };
 
             // Preparamos los datos para vacunas y tratamientos
             const vacunas = { data: data.vacuna || [] };
@@ -300,7 +266,7 @@ export const useGeneratePDF = () => {
                     },
 
                     // Secciones condicionales
-                    examenesFisicos 
+                    examenesFisicos
                         ? generarSeccionExamenesFisicos(examenesFisicos)
                         : {
                             table: {
@@ -336,7 +302,7 @@ export const useGeneratePDF = () => {
                             },
                             margin: [0, 0, 0, 20]
                         },
-                    datosComplicacionesAgudas.complicacionesAgudas.data 
+                    datosComplicacionesAgudas.complicacionesAgudas.data
                         ? generarSeccionComplicacionesAgudas(datosComplicacionesAgudas.complicacionesAgudas, datosComplicacionesAgudas.ingresos)
                         : {
                             table: {
@@ -372,7 +338,7 @@ export const useGeneratePDF = () => {
                             },
                             margin: [0, 0, 0, 20]
                         },
-                    complicacionesCronicas 
+                    complicacionesCronicas
                         ? generarSeccionComplicacionesCronicas({ data: complicacionesCronicas })
                         : {
                             table: {
@@ -408,7 +374,7 @@ export const useGeneratePDF = () => {
                             },
                             margin: [0, 0, 0, 20]
                         },
-                    trasplanteProgenitores 
+                    trasplanteProgenitores
                         ? generarSeccionTrasplantesProgenitores({ data: trasplanteProgenitores })
                         : {
                             table: {
@@ -444,7 +410,7 @@ export const useGeneratePDF = () => {
                             },
                             margin: [0, 0, 0, 20]
                         },
-                    laboratorios.data.length > 0 
+                    laboratorios.data.length > 0
                         ? generarSeccionLaboratorios(laboratorios)
                         : {
                             table: {
@@ -480,7 +446,7 @@ export const useGeneratePDF = () => {
                             },
                             margin: [0, 0, 0, 20]
                         },
-                    imagenesDiagnosticas.data.length > 0 
+                    imagenesDiagnosticas.data.length > 0
                         ? generarSeccionImagenesDiagnosticas(imagenesDiagnosticas)
                         : {
                             table: {
@@ -516,7 +482,7 @@ export const useGeneratePDF = () => {
                             },
                             margin: [0, 0, 0, 20]
                         },
-                    soportesTransfusionales.data.length > 0 
+                    soportesTransfusionales.data.length > 0
                         ? generarSeccionSoportesTransfusionales(soportesTransfusionales)
                         : {
                             table: {
@@ -552,7 +518,7 @@ export const useGeneratePDF = () => {
                             },
                             margin: [0, 0, 0, 20]
                         },
-                    vacunas.data.length > 0 
+                    vacunas.data.length > 0
                         ? generarSeccionVacunas(vacunas)
                         : {
                             table: {
@@ -588,7 +554,7 @@ export const useGeneratePDF = () => {
                             },
                             margin: [0, 0, 0, 20]
                         },
-                    resultadoTratamientos.data.length > 0 
+                    resultadoTratamientos.data.length > 0
                         ? generarSeccionTratamientos(resultadoTratamientos)
                         : {
                             table: {

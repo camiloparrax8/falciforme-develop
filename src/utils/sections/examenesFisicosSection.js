@@ -7,21 +7,26 @@ export const generarSeccionExamenesFisicos = (examenesFisicos) => {
     return {
         stack: [
             {
-                text: 'EXÁMEN FÍSICO',
-                style: 'subheader',
-                margin: [0, 0, 0, 10]
-            },
-            {
                 table: {
                     widths: ['*', '*'],
                     body: [
                         [
                             {
-                                text: 'Signos Vitales',
+                                text: 'Exámenes Físicos',
                                 fillColor: '#1F2937',
                                 color: 'white',
                                 bold: true,
                                 fontSize: 12,
+                                colSpan: 2
+                            },
+                            {}
+                        ],
+                        [
+                            {
+                                text: 'Signos Vitales',
+                                fillColor: '#E3F2FD',
+                                bold: true,
+                                fontSize: 10,
                                 colSpan: 2
                             },
                             {}
@@ -57,23 +62,22 @@ export const generarSeccionExamenesFisicos = (examenesFisicos) => {
                     ]
                 },
                 layout: {
-                    hLineWidth: function(i) {
-                        return (i === 0 || i === 1) ? 1 : 0.5;
+                    hLineWidth: function() {
+                        return 0.5;
                     },
                     vLineWidth: function() {
                         return 0.5;
                     },
-                    hLineColor: function(i) {
-                        return (i === 0 || i === 1) ? '#1F2937' : '#CCCCCC';
+                    hLineColor: function() {
+                        return '#CCCCCC';
                     },
                     vLineColor: function() {
                         return '#CCCCCC';
                     },
                     fillColor: function(rowIndex) {
-                        return (rowIndex === 0) ? '#1F2937' : null;
+                        return (rowIndex === 0) ? '#E3F2FD' : null;
                     }
                 },
-                margin: [0, 0, 0, 20]
             },
             {
                 table: {
@@ -82,10 +86,9 @@ export const generarSeccionExamenesFisicos = (examenesFisicos) => {
                         [
                             {
                                 text: 'Antropometría',
-                                fillColor: '#1F2937',
-                                color: 'white',
+                                fillColor: '#E3F2FD',
                                 bold: true,
-                                fontSize: 12,
+                                fontSize: 10,
                                 colSpan: 2
                             },
                             {}
@@ -121,23 +124,22 @@ export const generarSeccionExamenesFisicos = (examenesFisicos) => {
                     ]
                 },
                 layout: {
-                    hLineWidth: function(i) {
-                        return (i === 0 || i === 1) ? 1 : 0.5;
+                    hLineWidth: function() {
+                        return 0.5;
                     },
                     vLineWidth: function() {
                         return 0.5;
                     },
-                    hLineColor: function(i) {
-                        return (i === 0 || i === 1) ? '#1F2937' : '#CCCCCC';
+                    hLineColor: function() {
+                        return '#CCCCCC';
                     },
                     vLineColor: function() {
                         return '#CCCCCC';
                     },
-                    fillColor: function(rowIndex) {
-                        return (rowIndex === 0) ? '#1F2937' : null;
+                    fillColor: function(rowIndex, node, columnIndex) {
+                        return node.table.body[rowIndex][columnIndex].fillColor;
                     }
                 },
-                margin: [0, 0, 0, 20]
             },
             {
                 table: {
@@ -146,10 +148,9 @@ export const generarSeccionExamenesFisicos = (examenesFisicos) => {
                         [
                             {
                                 text: 'Estado Nutricional',
-                                fillColor: '#1F2937',
-                                color: 'white',
+                                fillColor: '#E3F2FD',
                                 bold: true,
-                                fontSize: 12,
+                                fontSize: 10,
                                 colSpan: 3
                             },
                             {}, {}
@@ -192,23 +193,22 @@ export const generarSeccionExamenesFisicos = (examenesFisicos) => {
                     ]
                 },
                 layout: {
-                    hLineWidth: function(i) {
-                        return (i === 0 || i === 1) ? 1 : 0.5;
+                    hLineWidth: function() {
+                        return 0.5;
                     },
                     vLineWidth: function() {
                         return 0.5;
                     },
-                    hLineColor: function(i) {
-                        return (i === 0 || i === 1) ? '#1F2937' : '#CCCCCC';
+                    hLineColor: function() {
+                        return '#CCCCCC';
                     },
                     vLineColor: function() {
                         return '#CCCCCC';
                     },
                     fillColor: function(rowIndex) {
-                        return (rowIndex === 0) ? '#1F2937' : null;
+                        return (rowIndex === 0) ? '#E3F2FD' : null;
                     }
                 },
-                margin: [0, 0, 0, 20]
             },
             {
                 table: {
@@ -217,10 +217,9 @@ export const generarSeccionExamenesFisicos = (examenesFisicos) => {
                         [
                             {
                                 text: 'Región Cefálica',
-                                fillColor: '#1F2937',
-                                color: 'white',
+                                fillColor: '#E3F2FD',
                                 bold: true,
-                                fontSize: 12,
+                                fontSize: 10,
                                 colSpan: 3
                             },
                             {}, {}
@@ -278,23 +277,22 @@ export const generarSeccionExamenesFisicos = (examenesFisicos) => {
                     ]
                 },
                 layout: {
-                    hLineWidth: function(i) {
-                        return (i === 0 || i === 1) ? 1 : 0.5;
+                    hLineWidth: function() {
+                        return 0.5;
                     },
                     vLineWidth: function() {
                         return 0.5;
                     },
-                    hLineColor: function(i) {
-                        return (i === 0 || i === 1) ? '#1F2937' : '#CCCCCC';
+                    hLineColor: function() {
+                        return '#CCCCCC';
                     },
                     vLineColor: function() {
                         return '#CCCCCC';
                     },
                     fillColor: function(rowIndex) {
-                        return (rowIndex === 0) ? '#1F2937' : null;
+                        return (rowIndex === 0) ? '#CCCCCC' : null;
                     }
                 },
-                margin: [0, 0, 0, 20]
             },
             {
                 table: {
@@ -303,10 +301,9 @@ export const generarSeccionExamenesFisicos = (examenesFisicos) => {
                         [
                             {
                                 text: 'Región Toracoabdominal',
-                                fillColor: '#1F2937',
-                                color: 'white',
+                                fillColor: '#E3F2FD',
                                 bold: true,
-                                fontSize: 12,
+                                fontSize: 10,
                                 colSpan: 2
                             },
                             {}
@@ -328,23 +325,22 @@ export const generarSeccionExamenesFisicos = (examenesFisicos) => {
                     ]
                 },
                 layout: {
-                    hLineWidth: function(i) {
-                        return (i === 0 || i === 1) ? 1 : 0.5;
+                    hLineWidth: function() {
+                        return 0.5;
                     },
                     vLineWidth: function() {
                         return 0.5;
                     },
-                    hLineColor: function(i) {
-                        return (i === 0 || i === 1) ? '#1F2937' : '#CCCCCC';
+                    hLineColor: function() {
+                        return '#CCCCCC';
                     },
                     vLineColor: function() {
                         return '#CCCCCC';
                     },
                     fillColor: function(rowIndex) {
-                        return (rowIndex === 0) ? '#1F2937' : null;
+                        return (rowIndex === 0) ? '#CCCCCC' : null;
                     }
                 },
-                margin: [0, 0, 0, 20]
             },
             {
                 table: {
@@ -353,10 +349,9 @@ export const generarSeccionExamenesFisicos = (examenesFisicos) => {
                         [
                             {
                                 text: 'Región Pélvica',
-                                fillColor: '#1F2937',
-                                color: 'white',
+                                fillColor: '#E3F2FD',
                                 bold: true,
-                                fontSize: 12,
+                                fontSize: 10,
                                 colSpan: 2
                             },
                             {}
@@ -392,14 +387,14 @@ export const generarSeccionExamenesFisicos = (examenesFisicos) => {
                     ]
                 },
                 layout: {
-                    hLineWidth: function(i) {
-                        return (i === 0 || i === 1) ? 1 : 0.5;
+                    hLineWidth: function() {
+                        return 0.5;
                     },
                     vLineWidth: function() {
                         return 0.5;
                     },
-                    hLineColor: function(i) {
-                        return (i === 0 || i === 1) ? '#1F2937' : '#CCCCCC';
+                    hLineColor: function() {
+                        return '#CCCCCC';
                     },
                     vLineColor: function() {
                         return '#CCCCCC';
@@ -411,7 +406,7 @@ export const generarSeccionExamenesFisicos = (examenesFisicos) => {
                 margin: [0, 0, 0, 20]
             }
         ],
-        margin: [0, 0, 0, 20]
+        margin: [0, 0, 0, 150]
     };
 };
 

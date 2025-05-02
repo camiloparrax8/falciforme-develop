@@ -1,7 +1,6 @@
 import Dialog from "@/components/ui/Dialog";
-import { useToken } from "@/store/authStore";
-import { useSessionUser } from "@/store/authStore";
-import { useState } from "react";
+import { useToken, useSessionUser } from "@/store/authStore";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form"
 import SectionTitle from "../common/form/SectionTitle";
 import InputForm from "../common/form/InputForm";
@@ -9,7 +8,6 @@ import validationUsuario from "@/validation/validationUsuario";
 import {crearUsuario} from '@/customService/services/usuariosService'
 import SelectRoles from "../common/form/SelectRoles";
 import Button from "@/components/ui/Button";
-import { useEffect } from "react";
 import Alert from "@/components/ui/Alert";
 
 function FormUsuarios({ isOpen, onClose, onRequestClose, setMensaje, actualizarUsuarios }) {
@@ -49,7 +47,8 @@ function FormUsuarios({ isOpen, onClose, onRequestClose, setMensaje, actualizarU
             handleSetMensaje(null);
             const response = await crearUsuario(token, data);
             await actualizarUsuarios(); // <--- actualizar la tabla
-            handleSetMensaje({ status: 'success', message: response.message || 'Usuario creado con éxito.' });
+            // Pasamos el mensaje de éxito al componente padre antes de cerrar
+            setMensaje({ status: 'success', message: response.message || 'Usuario creado con éxito.' });
             onClose();
         } catch (error) {
             // Manejo detallado de errores de la API

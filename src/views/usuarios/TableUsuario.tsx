@@ -1,9 +1,8 @@
 import { useState } from 'react'
 import Table from '@/components/ui/Table'
 import Button from '@/components/ui/Button'
-import Dialog from '@/components/ui/Dialog'
 import { Dropdown } from '@/components/ui/Dropdown'
-import { FiSettings, FiPlus, FiEdit, FiTrash2, FiShieldOff, FiShield } from 'react-icons/fi'
+import { FiSettings, FiEdit, FiTrash2, FiShieldOff, FiShield } from 'react-icons/fi'
 import DialogDelete from './DialogDelete'
 import DialogDesactivar from './DialogDesactivar'
 import DialogEdit from './DialogEdit'
@@ -58,11 +57,6 @@ const TableUsuario = ({ data, header, className, actualizarUsuarios, setMensaje}
         console.log(row);
         await actualizarUsuarios();
         setIsOpenEdit(false)
-    }
-
-            const handleEdit = (row) => {
-        // Implementar lógica para editar
-        console.log('Editar', row)
     }
 
     return (
@@ -138,7 +132,6 @@ const TableUsuario = ({ data, header, className, actualizarUsuarios, setMensaje}
                 onClose={onDialogCloseEdit}
                 onRequestClose={onDialogCloseEdit}
                 selectedRow={selectedRow}
-                onDialogCloseEdit={onDialogCloseEdit}
                 onDialogOkEdit={onDialogOkEdit}
                 setMensaje={setMensaje}
             />

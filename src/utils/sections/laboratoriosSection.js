@@ -24,7 +24,7 @@ export const generarSeccionLaboratorios = (laboratorios) => {
                 ],
                 [
                     {
-                        text: 'HEMATOLOGÍA',
+                        text: 'Hematología',
                         fillColor: '#E3F2FD',
                         bold: true,
                         fontSize: 10,

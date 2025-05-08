@@ -184,21 +184,26 @@ export const useGeneratePDF = () => {
                 }),
                 content: [
                     {
-                        text: 'DATOS DEL PACIENTE',
-                        style: 'subheader',
-                        margin: [0, 30, 0, 10]
-                    },
-                    {
                         table: {
                             widths: ['*', '*', '*'],
                             body: [
                                 [
                                     {
-                                        text: 'Información básica del paciente y la atención',
+                                        text: 'Datos del paciente',
                                         fillColor: '#1F2937',
                                         color: 'white',
                                         bold: true,
                                         fontSize: 12,
+                                        colSpan: 3
+                                    },
+                                    {}, {}
+                                ],
+                                [
+                                    {
+                                        text: 'Información básica del paciente',
+                                        fillColor: '#E3F2FD',
+                                        bold: true,
+                                        fontSize: 10,
                                         colSpan: 3
                                     },
                                     {}, {}

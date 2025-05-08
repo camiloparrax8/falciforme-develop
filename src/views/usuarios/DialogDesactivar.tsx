@@ -1,6 +1,5 @@
 import Dialog from "@/components/ui/Dialog";
-import { useToken } from "@/store/authStore";
-import { useSessionUser } from "@/store/authStore";
+import { useToken, useSessionUser } from "@/store/authStore";
 import { useState } from "react";
 import Button from "@/components/ui/Button";
 import { cambiarEstado } from "@/customService/services/usuariosService";

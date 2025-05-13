@@ -23,7 +23,7 @@ export const generarSeccionSoportesTransfusionales = (soportesTransfusionales) =
                     ],
                     [
                         {
-                            text: 'Información General',
+                            text: 'Soporte Transfucional',
                             fillColor: '#E3F2FD',
                             bold: true,
                             fontSize: 10,
@@ -51,14 +51,14 @@ export const generarSeccionSoportesTransfusionales = (soportesTransfusionales) =
                 ]
             },
             layout: {
-                hLineWidth: function(i) {
-                    return (i === 0 || i === 1) ? 1 : 0.5;
+                hLineWidth: function() {
+                    return 0.5;
                 },
                 vLineWidth: function() {
                     return 0.5;
                 },
-                hLineColor: function(i) {
-                    return (i === 0 || i === 1) ? '#1F2937' : '#CCCCCC';
+                hLineColor: function() {
+                    return '#CCCCCC';
                 },
                 vLineColor: function() {
                     return '#CCCCCC';
@@ -67,14 +67,7 @@ export const generarSeccionSoportesTransfusionales = (soportesTransfusionales) =
                     return node.table.body[rowIndex][columnIndex].fillColor;
                 }
             },
-            margin: [0, 0, 0, 20]
         },
-        // Espacio adicional entre secciones
-        {
-            text: '',
-            margin: [0, 0, 0, 40]
-        },
-        // Sección de Sobrecarga de Hierro
         {
             table: {
                 widths: ['auto', '*', '*', '*', '*'],
@@ -82,17 +75,6 @@ export const generarSeccionSoportesTransfusionales = (soportesTransfusionales) =
                     [
                         {
                             text: 'Sobrecarga de Hierro',
-                            fillColor: '#1F2937',
-                            color: 'white',
-                            bold: true,
-                            fontSize: 12,
-                            colSpan: 5
-                        },
-                        {}, {}, {}, {}
-                    ],
-                    [
-                        {
-                            text: 'Información General',
                             fillColor: '#E3F2FD',
                             bold: true,
                             fontSize: 10,
@@ -120,14 +102,14 @@ export const generarSeccionSoportesTransfusionales = (soportesTransfusionales) =
                 ]
             },
             layout: {
-                hLineWidth: function(i) {
-                    return (i === 0 || i === 1) ? 1 : 0.5;
+                hLineWidth: function() {
+                    return 0.5;
                 },
                 vLineWidth: function() {
                     return 0.5;
                 },
-                hLineColor: function(i) {
-                    return (i === 0 || i === 1) ? '#1F2937' : '#CCCCCC';
+                hLineColor: function() {
+                    return '#CCCCCC';
                 },
                 vLineColor: function() {
                     return '#CCCCCC';
@@ -136,27 +118,16 @@ export const generarSeccionSoportesTransfusionales = (soportesTransfusionales) =
                     return node.table.body[rowIndex][columnIndex].fillColor;
                 }
             },
-            margin: [0, 0, 0, 20]
         },
         // Sección de Sobrecarga por Órgano
         {
             table: {
                 widths: ['auto', '*', '*', '*'],
                 body: [
+                    
                     [
                         {
                             text: 'Sobrecarga por Órgano',
-                            fillColor: '#1F2937',
-                            color: 'white',
-                            bold: true,
-                            fontSize: 12,
-                            colSpan: 4
-                        },
-                        {}, {}, {}
-                    ],
-                    [
-                        {
-                            text: 'Información General',
                             fillColor: '#E3F2FD',
                             bold: true,
                             fontSize: 10,
@@ -182,14 +153,14 @@ export const generarSeccionSoportesTransfusionales = (soportesTransfusionales) =
                 ]
             },
             layout: {
-                hLineWidth: function(i) {
-                    return (i === 0 || i === 1) ? 1 : 0.5;
+                hLineWidth: function() {
+                    return 0.5;
                 },
                 vLineWidth: function() {
                     return 0.5;
                 },
-                hLineColor: function(i) {
-                    return (i === 0 || i === 1) ? '#1F2937' : '#CCCCCC';
+                hLineColor: function() {
+                    return '#CCCCCC';
                 },
                 vLineColor: function() {
                     return '#CCCCCC';
@@ -198,22 +169,9 @@ export const generarSeccionSoportesTransfusionales = (soportesTransfusionales) =
                     return node.table.body[rowIndex][columnIndex].fillColor;
                 }
             },
-            margin: [0, 0, 0, 20]
+            margin: [0, 0, 0, 40]
         }
+        
     ];
 };
 
-/**
- * Obtiene los datos de soportes transfusionales del paciente
- * @param {string} token - Token de autenticación
- * @param {string} idPaciente - ID del paciente
- * @returns {Promise<Object>} Datos de soportes transfusionales
- */
-export const obtenerDatosSoportesTransfusionales = async (token, idPaciente) => {
-    try {
-        return await obtenerSoportesTransfusionalesPorPaciente(token, idPaciente);
-    } catch (error) {
-        console.error('Error al obtener datos de soportes transfusionales:', error);
-        return null;
-    }
-}; 

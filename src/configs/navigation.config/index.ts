@@ -51,7 +51,7 @@ const navigationConfig: NavigationTree[] = [
             {
                 key: 'gadgets.anemia',
                 path: `/gadgets/anemia`,
-                title: 'Anemia',
+                title: 'Tipos de Anemia',
                 translateKey: '',
                 icon: '',
                 type: NAV_ITEM_TYPE_ITEM,
@@ -61,7 +61,7 @@ const navigationConfig: NavigationTree[] = [
             {
                 key: 'gadgets.anemia-type',
                 path: `/gadgets/anemia/type`,
-                title: 'Tipos de Anemia',
+                title: 'Anemia',
                 translateKey: '',
                 icon: '',
                 type: NAV_ITEM_TYPE_ITEM,

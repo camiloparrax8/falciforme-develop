@@ -13,7 +13,7 @@ export const generarSeccionLaboratorios = (laboratorios) => {
             body: [
                 [
                     {
-                        text: 'LABORATORIOS',
+                        text: 'Laboratorios',
                         fillColor: '#1F2937',
                         color: 'white',
                         bold: true,
@@ -24,7 +24,7 @@ export const generarSeccionLaboratorios = (laboratorios) => {
                 ],
                 [
                     {
-                        text: 'HEMATOLOGÍA',
+                        text: 'Hematología',
                         fillColor: '#E3F2FD',
                         bold: true,
                         fontSize: 10,

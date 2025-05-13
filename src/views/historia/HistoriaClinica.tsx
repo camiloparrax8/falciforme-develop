@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { useToken } from '@/store/authStore'
 import { usePatient, PatientProvider } from '@/context/PatientContext'
@@ -47,6 +47,7 @@ const HistoriaClinica = () => {
     const [finalizandoConsulta, setFinalizandoConsulta] = useState(false)
     const { generatePDF } = useGeneratePDF()
     const [historiasClinicas, setHistoriasClinicas] = useState([])
+    const navigate = useNavigate()
 
     useEffect(() => {
         if (id) {
@@ -343,6 +344,8 @@ const HistoriaClinica = () => {
 
                 // Actualizar el estado de la historia clínica
                 setHistoriaClinica(null)
+                // Navegamos a la página anterior
+                navigate(-1)
 
                 // Generar el PDF automáticamente después de finalizar la consulta
                 try {

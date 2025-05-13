@@ -1,4 +1,4 @@
-import { Button, Card } from '@/components/ui';
+import { Button, Card, Alert } from '@/components/ui';
 import { useEffect, useState } from "react";
 import { getUsuarios } from "../../customService/services/usuariosService.js";
 import { useToken } from "@/store/authStore";
@@ -45,11 +45,11 @@ function Usuarios() {
     const closeDialog = () => setIsOpen(false)
 
     useEffect(() => {
-        if (mensaje) {
+        if (mensaje && !isOpen) {
             const timeout = setTimeout(() => setMensaje(null), 5000);
             return () => clearTimeout(timeout);
         }
-    }, [mensaje]);
+    }, [mensaje, isOpen]);
 
     return (
         <div>
@@ -69,9 +69,18 @@ function Usuarios() {
                     </Button>
                 </div>
                 {/* Pasamos los usuarios dinámicos a la tabla */}
-                {mensaje && (
-                    <div className={`mb-4 p-2 rounded ${mensaje.status === 'success' ? 'bg-green-200' : 'bg-red-200'}`}>
-                        {mensaje.message}
+                {mensaje && !isOpen && (
+                    <div className="mb-4">
+                        <Alert
+                            title={mensaje.status === 'error' ? 'Atención' : 'Correcto'}
+                            showIcon
+                            type={mensaje.status === 'error' ? 'danger' : 'success'}
+                            closable
+                            duration={5000}
+                            onClose={() => setMensaje(null)}
+                        >
+                            {mensaje.message}
+                        </Alert>
                     </div>
                 )}
                 <TableUsuario data={usuarios} header={header} className={null} actualizarUsuarios={actualizarUsuarios} setMensaje={setMensaje}></TableUsuario>

@@ -27,8 +27,12 @@ const validationUsuario = {
             message: "La cedula no es válida",
         },
         minLength: {
+            value: 7,
+            message: "La cedula debe tener al menos 7 caracteres",
+        },
+        maxLength: {
             value: 10,
-            message: "La cedula debe tener al menos 10 caracteres",
+            message: "La cedula no puede tener más de 10 caracteres",
         },
     },
     correo: {

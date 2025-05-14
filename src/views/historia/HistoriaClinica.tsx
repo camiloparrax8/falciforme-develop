@@ -457,7 +457,7 @@ const HistoriaClinica = () => {
                                     {finalizandoConsulta && (
                                         <Spinner size={24} className="mr-2" />
                                     )}
-                                    Finalizar consulta
+                                    Cerrar historia clínica
                                 </Button>
                             </div>
                         )}

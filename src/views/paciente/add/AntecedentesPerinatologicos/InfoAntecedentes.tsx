@@ -26,8 +26,10 @@ function InfoAntecedentes({ idPaciente }: { idPaciente: string }) {
           linea: item.linea_parentesco,
           estado: item.estado,
           estadoColor:
-            item.estado === "Positivo"
+            item.estado === "Positivo" || item.estado === "portador"
               ? "red"
+              : item.estado === "desconocido"
+              ? "yellow"
               : item.estado === "Negativo"
               ? "emerald"
               : "indigo",

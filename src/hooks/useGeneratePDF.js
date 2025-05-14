@@ -11,6 +11,7 @@ import { generarSeccionSoportesTransfusionales } from '@/utils/sections/soportes
 import { generarSeccionVacunas } from '@/utils/sections/vacunasSection';
 import { generarSeccionTratamientos } from '@/utils/sections/tratamientosSection';
 import { obtenerHistoriasClinicasPorPaciente } from '@/customService/services/historiaClinicaService';
+import { useCalculateAge } from '@/hooks/useCalculateAge';
 
 
 pdfMake.fonts = {
@@ -35,6 +36,7 @@ const toBase64 = async (url) => {
 
 export const useGeneratePDF = () => {
     const { token } = useToken();
+    const { calculateAge } = useCalculateAge();
 
     const generatePDF = async (data, window) => {
         try {
@@ -218,7 +220,7 @@ export const useGeneratePDF = () => {
                                     {
                                         stack: [
                                             { text: 'Edad', fontSize: 8 },
-                                            { text: `${data.paciente?.edad || 'N/A'} años`, bold: true }
+                                            { text: calculateAge(data.paciente?.fecha_nacimiento) || 'N/A', bold: true }
                                         ]
                                     },
                                     {

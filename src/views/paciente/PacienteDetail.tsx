@@ -191,7 +191,7 @@ export const PacienteDetail = ({ item }) => {
                   <Input
                     disabled
                     size="sm"
-                    value={`${calculateAge(item.data.fecha_nacimiento)} Años`}
+                    value={`${calculateAge(item.data.fecha_nacimiento)}`}
                   />
                 </div>
               </div>

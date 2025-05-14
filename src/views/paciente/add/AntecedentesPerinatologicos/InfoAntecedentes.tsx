@@ -20,7 +20,8 @@ function InfoAntecedentes({ idPaciente }: { idPaciente: string }) {
       setLoading(true);
       try {
         const data = await BuscarEstadosHBS(token, idPaciente);
-        const mapeados = data.map((item) => ({
+        const array = data.data || [];
+        const mapeados = array.map((item) => ({
           parentesco: item.parentesco,
           linea: item.linea_parentesco,
           estado: item.estado,
@@ -46,17 +47,14 @@ function InfoAntecedentes({ idPaciente }: { idPaciente: string }) {
       setLoadingEnfermedades(true);
       try {
         const data = await BuscarEnfermedadCronica(token, idPaciente);
-        // Mapea los datos al formato esperado por el componente
-        // Suponiendo que data es un array, si no, ajusta a [data]
-        const mapeados = (Array.isArray(data) ? data : [data]).map((item) => ({
+        const array = data.data || [];
+        const mapeados = array.map((item) => ({
           enfermedad: item.enfermedad,
-          especifica: item.enfermedad_especifica,
-          portadores: (item.linea_parentesco_portador || []).map(
-            (portador) => ({
-              nombre: portador,
-              color: "indigo", // Puedes ajustar el color según la lógica que desees
-            })
-          ),
+          especifica: item.especifica,
+          portadores: (item.portadores || []).map((portador) => ({
+            nombre: portador.nombre,
+            color: portador.color || "indigo",
+          })),
         }));
         setEnfermedades(mapeados);
       } catch (error) {

@@ -8,16 +8,28 @@ export const useCalculateAge = () => {
       const birth = new Date(birthDate);
       const today = new Date();
 
-      let age = today.getFullYear() - birth.getFullYear();
-      const monthDiff = today.getMonth() - birth.getMonth();
-      const dayDiff = today.getDate() - birth.getDate();
+      let years = today.getFullYear() - birth.getFullYear();
+      let months = today.getMonth() - birth.getMonth();
+      let days = today.getDate() - birth.getDate();
 
-      // Ajuste si no ha pasado el cumpleaños este año
-      if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
-        age--;
+      if (days < 0) {
+        months--;
+        // Ajustar los días sumando los días del mes anterior
+        const prevMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+        days += prevMonth.getDate();
       }
 
-      return age;
+      if (months < 0) {
+        years--;
+        months += 12;
+      }
+
+      if (years < 1) {
+        // Si es menor a 1 año, mostrar meses (y opcionalmente días)
+        return `${months} meses${days > 0 ? ` y ${days} días` : ''}`;
+      }
+
+      return `${years} años`;
     };
   }, []);
 

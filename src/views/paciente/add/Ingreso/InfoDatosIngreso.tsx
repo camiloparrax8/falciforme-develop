@@ -5,6 +5,15 @@ import { useState, useEffect } from "react";
 import { BuscarIngreso } from "@/customService/services/ingresoService";
 import { useToken } from "@/store/authStore";
 
+const sintomasConfig = {
+  anemia: { nombre: "Anemia", color: "indigo" },
+  palidez: { nombre: "Palidez", color: "gray" },
+  dolor_oseo: { nombre: "Dolor óseo", color: "indigo" },
+  dactilitis: { nombre: "Dactilitis", color: "indigo" },
+  infecciones: { nombre: "Infecciones", color: "red" },
+  ictericia_osea: { nombre: "Ictericia ósea", color: "red" },
+};
+
 const InfoDatosIngreso = ({ idPaciente }) => {
   const { token } = useToken();
   const [ingreso, setIngreso] = useState(null);
@@ -48,6 +57,15 @@ const InfoDatosIngreso = ({ idPaciente }) => {
         No hay información de ingreso registrada.
       </p>
     );
+  }
+
+  let sintomas = [];
+  if (ingreso.parentescos_multiples) {
+    try {
+      sintomas = JSON.parse(ingreso.parentescos_multiples);
+    } catch {
+      sintomas = [];
+    }
   }
 
   return (
@@ -101,16 +119,21 @@ const InfoDatosIngreso = ({ idPaciente }) => {
           className="col-span-1 md:col-span-2 lg:col-span-4"
         />
         <div className="flex flex-wrap gap-2">
-          {Array.isArray(ingreso.parentescos_multiples) &&
-          ingreso.parentescos_multiples.length > 0 ? (
-            ingreso.parentescos_multiples.map((sintoma, index) => (
-              <Tag
-                key={index}
-                className="text-indigo-600 bg-indigo-100 dark:text-indigo-100 dark:bg-indigo-500/20 border-0"
-              >
-                {sintoma}
-              </Tag>
-            ))
+          {sintomas.length > 0 ? (
+            sintomas.map((key, index) => {
+              const config = sintomasConfig[key] || {
+                nombre: key,
+                color: "indigo",
+              };
+              return (
+                <Tag
+                  key={index}
+                  className={`text-${config.color}-600 bg-${config.color}-100 dark:text-${config.color}-100 dark:bg-${config.color}-500/20 border-0`}
+                >
+                  {config.nombre}
+                </Tag>
+              );
+            })
           ) : (
             <span className="text-gray-500">Sin datos</span>
           )}

@@ -5,16 +5,6 @@ import { useState, useEffect } from "react";
 import { BuscarIngreso } from "@/customService/services/ingresoService";
 import { useToken } from "@/store/authStore";
 
-const colorSintoma = {
-  anemia: "indigo",
-  palidez: "gray",
-  dolor_oseo: "indigo",
-  dactilitis: "indigo",
-  fatiga: "indigo",
-  infecciones: "red",
-  ictericia: "red",
-};
-
 const InfoDatosIngreso = ({ idPaciente }) => {
   const { token } = useToken();
   const [ingreso, setIngreso] = useState(null);
@@ -113,17 +103,14 @@ const InfoDatosIngreso = ({ idPaciente }) => {
         <div className="flex flex-wrap gap-2">
           {Array.isArray(ingreso.parentescos_multiples) &&
           ingreso.parentescos_multiples.length > 0 ? (
-            ingreso.parentescos_multiples.map((sintoma, index) => {
-              const color = colorSintoma[sintoma] || "indigo";
-              return (
-                <Tag
-                  key={index}
-                  className={`text-${color}-600 bg-${color}-100 dark:text-${color}-100 dark:bg-${color}-500/20 border-0`}
-                >
-                  {sintoma}
-                </Tag>
-              );
-            })
+            ingreso.parentescos_multiples.map((sintoma, index) => (
+              <Tag
+                key={index}
+                className="text-indigo-600 bg-indigo-100 dark:text-indigo-100 dark:bg-indigo-500/20 border-0"
+              >
+                {sintoma}
+              </Tag>
+            ))
           ) : (
             <span className="text-gray-500">Sin datos</span>
           )}

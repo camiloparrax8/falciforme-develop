@@ -7,10 +7,13 @@ import { useToken } from "@/store/authStore";
 
 const sintomasConfig = {
   anemia: { nombre: "Anemia", color: "indigo" },
+  fatiga: { nombre: "Fatiga", color: "gray" },
   palidez: { nombre: "Palidez", color: "gray" },
   dolor_oseo: { nombre: "Dolor óseo", color: "indigo" },
   dactilitis: { nombre: "Dactilitis", color: "indigo" },
   infecciones: { nombre: "Infecciones", color: "red" },
+  dificultad_respiratoria: { nombre: "Dificultad respiratoria", color: "yellow" },
+  ictericia: { nombre: "Ictericia", color: "red" },
   ictericia_osea: { nombre: "Ictericia ósea", color: "red" },
 };
 

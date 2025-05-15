@@ -17,12 +17,31 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   const authenticated = Boolean(useToken().token);
 
   const expiresIn = useSessionUser((state) => state.expiresIn);
+
+  // Restaurar expiresIn desde localStorage al montar la app
+  useEffect(() => {
+    const expiration = localStorage.getItem("sessionExpiration");
+    if (expiration) {
+      const expirationTime = parseInt(expiration, 10);
+      const now = Date.now();
+      const remaining = Math.floor((expirationTime - now) / 1000);
+      if (remaining > 0) {
+        useSessionUser.setState({ expiresIn: remaining });
+      } else {
+        // Si ya expiró, cerrar sesión
+        signOut();
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Obtiene el expiresIn
   const signOut = useCallback(() => {
     setToken("");
     setUser(null);
     setSessionSignedIn(false);
     localStorage.removeItem("ultimoPacienteConsultado");
+    localStorage.removeItem("sessionExpiration");
     navigate("/login");
   }, [setToken, setUser, setSessionSignedIn, navigate]);
 
@@ -70,6 +89,13 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         });
 
         useSessionUser.setState({ expiresIn: resp.expiresIn });
+
+        // NUEVO: guardar la fecha/hora absoluta de expiración
+        const expirationTimestamp = Date.now() + resp.expiresIn * 1000;
+        localStorage.setItem(
+          "sessionExpiration",
+          expirationTimestamp.toString()
+        );
 
         // Redirige al usuario a la ruta predeterminada
         navigate("/home");

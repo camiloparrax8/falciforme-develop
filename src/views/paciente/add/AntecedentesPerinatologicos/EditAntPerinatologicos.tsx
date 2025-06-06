@@ -1,8 +1,6 @@
-/* eslint-disable no-empty-pattern */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useForm } from 'react-hook-form'
 import Button from '@/components/ui/Button'
-import validationAntecedentesPerinatologicos from '../../../../validation/validationAntecedentesPerinatologicos'
+import validationAntecedentesPerinatologicos from '@/validation/validationAntecedentesPerinatologicos'
 import SectionTitle from '@/views/common/form/SectionTitle'
 import InputForm from '@/views/common/form/InputForm'
 import InputSelect from '@/views/common/form/InputSelect'
@@ -11,68 +9,110 @@ import {
     BuscarPerinatologicos,
 } from '@/customService/services/perinatologicasService'
 import { useToken, useSessionUser } from '@/store/authStore'
-import { usePatient } from '@/context/PatientContext'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import Alert from '@/components/ui/Alert'
+import { useUpdateAntecedentesPerinatologicos } from '@/hooks/useUpdateAntecedentesPerinatologicos'
 
-function FormAntPerinatologicos({}) {
+interface EditAntPerinatologicosProps {
+    idPaciente: number
+    onClose?: () => void
+}
+
+function EditAntPerinatologicos({
+    idPaciente,
+    onClose,
+}: EditAntPerinatologicosProps) {
+    const { token } = useToken()
+    const { user } = useSessionUser()
+    const [loading, setLoading] = useState(false)
+    const [mensajes, setMensajes] = useState([])
+    const [existeAntecedente, setExisteAntecedente] = useState(false)
+    const [antecedenteData, setAntecedenteData] = useState(null)
+
+    const { actualizarAntecedente } = useUpdateAntecedentesPerinatologicos({
+        onSuccess: () => {
+            cargarAntecedentePerinatologico()
+            if (onClose) {
+                setTimeout(() => onClose(), 1500)
+            }
+        },
+    })
+
     const {
         control,
         handleSubmit,
+        reset,
         formState: { errors },
     } = useForm({
         defaultValues: {
             peso_al_nacer: '',
             talla_al_nacer: '',
             nota: '',
-            condicion: '',
-            cuidado: '',
-            ictericia: '',
+            condicion_al_nacer: '',
+            cuidado_neonatal: '',
+            etirico_neonatal: '',
         },
     })
 
-    const { paciente } = usePatient()
-    const { token } = useToken()
-    const { user } = useSessionUser()
-    const [actualizar, setActualizar] = useState(false)
-    const [loading, setLoading] = useState(false)
-    const [mensajes, setMensajes] = useState([])
-    const [dialogIsOpen, setIsOpen] = useState(false)
-
-    const VerificarPerinatologico = async (idPaciente) => {
+    const cargarAntecedentePerinatologico = useCallback(async () => {
         try {
+            setLoading(true)
             const response = await BuscarPerinatologicos(token, idPaciente)
-            return response && response.data ? true : false
-        } catch (error) {
-            console.error('Error verificando antecedente:', error)
-            return false
+
+            if (response && response.data && response.data.length > 0) {
+                setExisteAntecedente(true)
+                setAntecedenteData(response.data[0])
+
+                reset({
+                    peso_al_nacer: response.data[0].peso_al_nacer || '',
+                    talla_al_nacer: response.data[0].talla_al_nacer || '',
+                    nota: response.data[0].nota || '',
+                    condicion_al_nacer:
+                        response.data[0].condicion_al_nacer || '',
+                    cuidado_neonatal: response.data[0].cuidado_neonatal || '',
+                    etirico_neonatal: response.data[0].etirico_neonatal || '',
+                })
+            } else {
+                setExisteAntecedente(false)
+                setAntecedenteData(null)
+            }
+        } catch (e) {
+            console.error('Error al cargar antecedente perinatológico:', e)
+            setMensajes([
+                {
+                    status: 'error',
+                    message:
+                        'No existe un antecedente perinatológico para este paciente',
+                },
+            ])
+
+            setTimeout(() => {
+                setMensajes([])
+            }, 2000)
+        } finally {
+            setLoading(false)
         }
-    }
+    }, [idPaciente, token, reset])
+
+    useEffect(() => {
+        if (idPaciente) {
+            cargarAntecedentePerinatologico()
+        }
+    }, [idPaciente, token, cargarAntecedentePerinatologico])
 
     const onSubmit = async (data) => {
         try {
             setLoading(true)
             setMensajes([])
 
-            if (!paciente.id) {
+            if (!idPaciente) {
                 setMensajes([
-                    { status: 'error', message: 'Seleccione un paciente' },
+                    { status: 'error', message: 'ID de paciente no válido' },
                 ])
-                setLoading(false)
-                return
-            }
 
-            // Verificar si ya existe un antecedente para el paciente
-            const existeAntecedente = await VerificarPerinatologico(paciente.id)
-            if (existeAntecedente) {
-                setMensajes([
-                    {
-                        status: 'error',
-                        message:
-                            'Ya existe un antecedente perinatológico para este paciente',
-                    },
-                ])
-                setLoading(false)
+                setTimeout(() => {
+                    setMensajes([])
+                }, 2000)
                 return
             }
 
@@ -83,38 +123,69 @@ function FormAntPerinatologicos({}) {
                 condicion_al_nacer: data.condicion_al_nacer?.trim() || '',
                 cuidado_neonatal: data.cuidado_neonatal?.trim() || '',
                 etirico_neonatal: data.etirico_neonatal?.trim() || '',
-                id_paciente: paciente.id,
-                id_user_create: user.id,
             }
 
-            console.log('Datos antes de enviar:', datos)
-            const response = await CrearPerinatologico(
-                token,
-                user.id,
-                paciente.id,
-                datos,
-            )
+            let response
 
-            if (response.status === 'success') {
-                setMensajes([
-                    {
-                        status: 'success',
-                        message:
-                            'Antecedente perinatológico agregado con éxito',
-                    },
-                ])
-                setActualizar((prev) => !prev)
-                setTimeout(() => setIsOpen(false), 500)
+            if (existeAntecedente && antecedenteData) {
+                response = await actualizarAntecedente({
+                    id: antecedenteData.id,
+                    ...datos,
+                })
+
             } else {
-                setMensajes([{ status: 'error', message: response.message }])
+                response = await CrearPerinatologico(
+                    token,
+                    user.id,
+                    idPaciente,
+                    datos,
+                )
+
+                if (response.status === 'success') {
+                    setMensajes([
+                        {
+                            status: 'success',
+                            message:
+                                'Antecedente perinatológico agregado con éxito',
+                        },
+                    ])
+
+                    setTimeout(() => {
+                        setMensajes([])
+                    }, 2000)
+
+                    cargarAntecedentePerinatologico()
+
+                    if (onClose) {
+                        setTimeout(() => onClose(), 1500)
+                    }
+                } else {
+                    setMensajes([
+                        {
+                            status: 'error',
+                            message:
+                                response.message ||
+                                'Error al guardar el antecedente perinatológico',
+                        },
+                    ])
+
+                    setTimeout(() => {
+                        setMensajes([])
+                    }, 2000)
+                }
             }
-        } catch (error) {
+        } catch (e) {
+            console.error('Error en el proceso:', e)
             setMensajes([
                 {
                     status: 'error',
-                    message: 'Error al guardar el antecedente perinatológico',
+                    message: 'Error al procesar el antecedente perinatológico',
                 },
             ])
+
+            setTimeout(() => {
+                setMensajes([])
+            }, 2000)
         } finally {
             setLoading(false)
         }
@@ -157,7 +228,11 @@ function FormAntPerinatologicos({}) {
         >
             {/* Sección Información Básica */}
             <SectionTitle
-                text="Antecedentes Perinatologicos"
+                text={
+                    existeAntecedente
+                        ? 'Actualizar Antecedentes Perinatológicos'
+                        : 'Registrar Antecedentes Perinatológicos'
+                }
                 className="col-span-1 md:col-span-2 lg:col-span-4"
             />
 
@@ -173,7 +248,7 @@ function FormAntPerinatologicos({}) {
                                 msg.status === 'error' ? 'Atención' : 'Correcto'
                             }
                             type={msg.status === 'error' ? 'danger' : 'success'}
-                            duration={60000}
+                            duration={3000}
                         >
                             {msg.message}
                         </Alert>
@@ -256,11 +331,15 @@ function FormAntPerinatologicos({}) {
             {/* Botón */}
             <div className="col-span-4 flex justify-end mt-6">
                 <Button type="submit" disabled={loading}>
-                    {loading ? 'Guardando...' : 'Guardar'}
+                    {loading
+                        ? 'Procesando...'
+                        : existeAntecedente
+                          ? 'Actualizar'
+                          : 'Guardar'}
                 </Button>
             </div>
         </form>
     )
 }
 
-export default FormAntPerinatologicos
+export default EditAntPerinatologicos

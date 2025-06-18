@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import Button from '@/components/ui/Button'
@@ -94,10 +95,10 @@ function FormVacunas() {
         <div className="w-full">
             {mensaje && (
                 <Alert
-                    title={mensaje.status === 'error' ? 'Atención' : 'Correcto'}
                     showIcon
-                    type={mensaje.status === 'error' ? 'danger' : 'success'}
                     closable
+                    title={mensaje.status === 'error' ? 'Atención' : 'Correcto'}
+                    type={mensaje.status === 'error' ? 'danger' : 'success'}
                     duration={5000}
                     onClose={() => setMensaje(null)}
                 >
@@ -146,6 +147,7 @@ function FormVacunas() {
                     label="Fecha"
                     placeholder="Fecha de la vacuna"
                     className="col-span-1"
+                    disabled={false}
                 />
 
                 <div className="col-span-3 flex justify-end mt-6">

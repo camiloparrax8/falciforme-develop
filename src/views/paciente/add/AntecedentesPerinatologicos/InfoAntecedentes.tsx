@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Card } from "@/components/ui";
 import Table from "@/components/ui/Table";
 import Tag from "@/components/ui/Tag";

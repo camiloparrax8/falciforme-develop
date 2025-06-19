@@ -202,7 +202,7 @@ const Formulario = () => {
 
         try {
             const response = await axios.post(
-                'https://web-production-d069.up.railway.app/api/v1/predict-type',
+                'https://anemia-classifier-back-production.up.railway.app/api/v1/predict-type',
                 formattedData,
             )
             setDiagnostico(response.data)

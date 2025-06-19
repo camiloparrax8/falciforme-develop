@@ -10,7 +10,7 @@ function List() {
 
     useEffect(() => {
         axios
-            .get('https://web-production-d069.up.railway.app/api/v1/patients')
+            .get('https://anemia-classifier-back-production.up.railway.app/api/v1/patients')
             .then((response) => {
                 setData(response.data)
                 setLoading(false)

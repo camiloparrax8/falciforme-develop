@@ -87,7 +87,6 @@ function FormAntPerinatologicos({}) {
                 id_user_create: user.id,
             }
 
-            console.log('Datos antes de enviar:', datos)
             const response = await CrearPerinatologico(
                 token,
                 user.id,

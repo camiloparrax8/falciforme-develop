@@ -190,7 +190,7 @@ function _Select<
       }}
       {...field}
       {...rest}
-      isDisabled={props.disabled ?? rest.isDisabled}
+      isDisabled={props.isDisabled ?? rest.isDisabled}
     />
   );
 }

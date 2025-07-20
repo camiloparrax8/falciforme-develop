@@ -11,32 +11,32 @@ function SelectSpecificDisease({
     name,
 }) {
     const specificDiseases = [
-        { id: 1, diseaseId: 1, value: 'tipo1', label: 'Diabetes Tipo 1' },
-        { id: 2, diseaseId: 1, value: 'tipo2', label: 'Diabetes Tipo 2' },
+        { id: 1, diseaseId: 1, value: 'Diabetes Tipo 1', label: 'Diabetes Tipo 1' },
+        { id: 2, diseaseId: 1, value: 'Diabetes Tipo 2', label: 'Diabetes Tipo 2' },
         {
             id: 3,
             diseaseId: 2,
-            value: 'sistolica',
+            value: 'Hipertensión Sistólica',
             label: 'Hipertensión Sistólica',
         },
         {
             id: 4,
             diseaseId: 2,
-            value: 'diastolica',
+            value: 'Hipertensión Diastólica',
             label: 'Hipertensión Diastólica',
         },
-        { id: 5, diseaseId: 3, value: 'alergica', label: 'Asma Alérgica' },
-        { id: 6, diseaseId: 3, value: 'noAlergica', label: 'Asma No Alérgica' },
+        { id: 5, diseaseId: 3, value: 'Asma Alérgica', label: 'Asma Alérgica' },
+        { id: 6, diseaseId: 3, value: 'Asma No Alérgica', label: 'Asma No Alérgica' },
         {
             id: 7,
             diseaseId: 4,
-            value: 'reumatoide',
+            value: 'Artritis Reumatoide',
             label: 'Artritis Reumatoide',
         },
         {
             id: 8,
             diseaseId: 4,
-            value: 'psoriasica',
+            value: 'Artritis Psoriásica',
             label: 'Artritis Psoriásica',
         },
     ]

@@ -174,7 +174,6 @@ const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>((props, ref) => {
     const suffixSlot =
         clearable && _value ? <CloseButton onClick={handleClear} /> : suffix
 
-    console.log('isTimeInputInvalid', isTimeInputInvalid)
 
     return (
         <Input

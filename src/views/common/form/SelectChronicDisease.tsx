@@ -4,10 +4,10 @@ import { Controller } from 'react-hook-form';
 
 function SelectChronicDisease({ control, errors, validation, onDiseaseChange, className, name }) {
     const chronicDiseases = [
-        { id: 1, value: 'diabetes', label: 'Diabetes' },
-        { id: 2, value: 'hipertension', label: 'Hipertensión' },
-        { id: 3, value: 'asma', label: 'Asma' },
-        { id: 4, value: 'artritis', label: 'Artritis' },
+        { id: 1, value: 'Diabetes', label: 'Diabetes' },
+        { id: 2, value: 'Hipertensión', label: 'Hipertensión' },
+        { id: 3, value: 'Asma', label: 'Asma' },
+        { id: 4, value: 'Artritis', label: 'Artritis' },
     ];
 
     return (

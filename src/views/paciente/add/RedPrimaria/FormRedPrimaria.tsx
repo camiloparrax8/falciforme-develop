@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useForm } from 'react-hook-form'
 import Button from '@/components/ui/Button'
 import { useState } from 'react'
@@ -79,6 +80,7 @@ function FormRedPrimaria({ isOpen, onClose, onRequestClose, setMensajes }) {
                     label="Fecha"
                     placeholder="Seleccione una fecha"
                     className="col-span-1"
+                    disabled={false}
                 />
                 <InputForm
                     control={control}
@@ -95,8 +97,9 @@ function FormRedPrimaria({ isOpen, onClose, onRequestClose, setMensajes }) {
                     control={control}
                     errors={errors}
                     validation={validationRedPrimaria.department}
-                    onDepartmentChange={setSelectedDepartment}
                     className="col-span-1"
+                    disabled={false}
+                    onDepartmentChange={setSelectedDepartment}
                 />
                 <SelectCity
                     control={control}
@@ -104,6 +107,7 @@ function FormRedPrimaria({ isOpen, onClose, onRequestClose, setMensajes }) {
                     errors={errors}
                     validation={validationRedPrimaria.city}
                     className="col-span-1"
+                    disabled={false}
                 />
 
                 {/* Sección Contacto */}

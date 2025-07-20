@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useForm } from 'react-hook-form';
 import Button from '@/components/ui/Button';
 import validationAcompañante from '../../../../validation/validationAcompañante';
@@ -112,6 +113,7 @@ function FormAcompañante({ isOpen, onClose, onRequestClose, setMensaje }) {
                         rules={validationAcompañante.tipo_identificacion}
                         errors={errors}
                         className="col-span-1"
+                        disabled={false}
                     />
                     <InputForm
                         control={control}
@@ -155,6 +157,7 @@ function FormAcompañante({ isOpen, onClose, onRequestClose, setMensaje }) {
                         validation={validationAcompañante.departamento}
                         onDepartmentChange={setSelectedDepartment}
                         className="col-span-1"
+                        disabled={false}
                         />
                     <SelectCity
                         control={control}
@@ -162,6 +165,7 @@ function FormAcompañante({ isOpen, onClose, onRequestClose, setMensaje }) {
                         errors={errors}
                         validation={validationAcompañante.municipio}
                         className="col-span-1"
+                        disabled={false}
                         />
                     <InputForm
                             control={control}

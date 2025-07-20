@@ -4,8 +4,8 @@ import { Controller } from 'react-hook-form';
 
 function SelectLinea({ control, errors, validation, selectedParentesco, className }) {
     const lineas = [
-        { id: 1, value: 'paterno', label: 'Paterno' },
-        { id: 2, value: 'materno', label: 'Materno' },
+        { id: 1, value: 'Paterno', label: 'Paterno' },
+        { id: 2, value: 'Materno', label: 'Materno' },
     ];
 
     const isDisabled = !selectedParentesco; // Deshabilita si no hay parentesco seleccionado

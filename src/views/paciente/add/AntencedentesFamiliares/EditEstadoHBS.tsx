@@ -1,14 +1,18 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react/jsx-sort-props */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useForm } from 'react-hook-form'
 import Button from '@/components/ui/Button'
-import validationEstadoHBS from '@/validation/validationAntecedentesFamiliares'
+import validationAntecedentesFamiliares from '@/validation/validationAntecedentesFamiliares'
 import SectionTitle from '@/views/common/form/SectionTitle'
 import InputSelect from '@/views/common/form/InputSelect'
+import SelectParentesco from '@/views/common/form/SelectParentesco'
+import SelectLinea from '@/views/common/form/SelectLinea'
 import {
     crearEstadoHBS,
     BuscarEstadosHBS,
-    actualizarEstadoHBS,
 } from '@/customService/services/estadoHbsService'
-import { useToken } from '@/store/authStore'
+import { useSessionUser, useToken } from '@/store/authStore'
 import { useEffect, useState } from 'react'
 import Alert from '@/components/ui/Alert'
 import { useUpdateEstadoHBS } from '@/hooks/useUpdateEstadoHBS'
@@ -26,26 +30,28 @@ function EditEstadoHBS({ idPaciente, onClose }: EditEstadoHBSProps) {
     const [existeEstadoHBS, setExisteEstadoHBS] = useState(false)
     const [estadoHBSData, setEstadoHBSData] = useState(null)
 
-    const { actualizarEstadoHbs } = useUpdateEstadoHBS({
-        onSuccess: () => {
-            // Recargar datos después de actualizar
-            cargarEstadoHBS()
-            if (onClose) {
-                setTimeout(() => onClose(), 1500)
-            }
-        },
-    })
-
     const {
         control,
         handleSubmit,
         reset,
+        watch,
         formState: { errors },
     } = useForm({
         defaultValues: {
             parentesco: '',
             linea_parentesco: '',
             estado: '',
+        },
+    })
+
+    const selectedParentesco = watch('parentesco')
+
+    const { actualizarEstadoHbs } = useUpdateEstadoHBS({
+        onSuccess: () => {
+            cargarEstadoHBS()
+            if (onClose) {
+                setTimeout(() => onClose(), 1500)
+            }
         },
     })
 
@@ -111,8 +117,6 @@ function EditEstadoHBS({ idPaciente, onClose }: EditEstadoHBSProps) {
                     id: estadoHBSData.id,
                     ...datos,
                 })
-
-                // El manejo de mensajes lo hace el hook useUpdateEstadoHBS
             } else {
                 // Crear nuevo estado HBS
                 response = await crearEstadoHBS(
@@ -129,7 +133,7 @@ function EditEstadoHBS({ idPaciente, onClose }: EditEstadoHBSProps) {
                             message: 'Estado HBS agregado con éxito',
                         },
                     ])
-                    cargarEstadoHBS() // Recargar datos
+                    cargarEstadoHBS()
 
                     if (onClose) {
                         setTimeout(() => onClose(), 1500)
@@ -146,6 +150,7 @@ function EditEstadoHBS({ idPaciente, onClose }: EditEstadoHBSProps) {
                 }
             }
         } catch (error) {
+            console.error('Error al procesar el estado HBS:', error)
             setMensajes([
                 { status: 'error', message: 'Error al procesar el estado HBS' },
             ])
@@ -154,25 +159,10 @@ function EditEstadoHBS({ idPaciente, onClose }: EditEstadoHBSProps) {
         }
     }
 
-    const optionsParentesco = [
-        { value: 'Padre', label: 'Padre' },
-        { value: 'Madre', label: 'Madre' },
-        { value: 'Hermano/a', label: 'Hermano/a' },
-        { value: 'Abuelo/a', label: 'Abuelo/a' },
-        { value: 'Tío/a', label: 'Tío/a' },
-        { value: 'Primo/a', label: 'Primo/a' },
-    ]
-
-    const optionsLineaParentesco = [
-        { value: 'Paterno', label: 'Paterno' },
-        { value: 'Materno', label: 'Materno' },
-    ]
-
     const optionsEstado = [
+        { value: 'Portador', label: 'Portador' },
+        { value: 'No portador', label: 'No Portador' },
         { value: 'Desconocido', label: 'Desconocido' },
-        { value: 'AA', label: 'AA' },
-        { value: 'AS', label: 'AS' },
-        { value: 'SS', label: 'SS' },
     ]
 
     return (
@@ -198,10 +188,10 @@ function EditEstadoHBS({ idPaciente, onClose }: EditEstadoHBSProps) {
                             title={
                                 msg.status === 'error' ? 'Atención' : 'Correcto'
                             }
-                            showIcon
                             type={msg.status === 'error' ? 'danger' : 'success'}
-                            closable
                             duration={60000}
+                            closable
+                            showIcon
                         >
                             {msg.message}
                         </Alert>
@@ -209,32 +199,27 @@ function EditEstadoHBS({ idPaciente, onClose }: EditEstadoHBSProps) {
                 </div>
             )}
 
-            <InputSelect
+            <SelectParentesco
                 control={control}
-                name="parentesco"
-                validation={validationEstadoHBS?.parentesco}
                 errors={errors}
-                label="Parentesco"
-                placeholder="Seleccione parentesco"
+                validation={
+                    validationAntecedentesFamiliares.estadoHBS.parentesco
+                }
                 className="col-span-1"
-                options={optionsParentesco}
             />
 
-            <InputSelect
+            <SelectLinea
                 control={control}
-                name="linea_parentesco"
-                validation={validationEstadoHBS?.lineaParentesco}
                 errors={errors}
-                label="Línea de parentesco"
-                placeholder="Seleccione línea"
+                validation={validationAntecedentesFamiliares.estadoHBS.linea}
+                selectedParentesco={selectedParentesco}
                 className="col-span-1"
-                options={optionsLineaParentesco}
             />
 
             <InputSelect
                 control={control}
                 name="estado"
-                validation={validationEstadoHBS?.estado}
+                validation={validationAntecedentesFamiliares.estadoHBS.estado}
                 errors={errors}
                 label="Estado"
                 placeholder="Seleccione estado"

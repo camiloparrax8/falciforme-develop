@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useEffect, useState } from 'react'
 import { Table } from '@/components/ui'
 import Tag from '@/components/ui/Tag'
@@ -9,17 +10,17 @@ import { useForm } from 'react-hook-form'
 import InputSelect from '@/views/common/form/InputSelect'
 import SelectChronicDisease from '@/views/common/form/SelectChronicDisease'
 import SelectSpecificDisease from '@/views/common/form/SelectSpecificDisease'
-import classNames from 'classnames'
-import { useToken } from '@/store/authStore'
-import { crearEnfermedadCronica, BuscarEnfermedadCronica } from '@/customService/services/enfermedadesCronicasService'  // Asegúrate de tener la función de obtener enfermedades crónicas
-import validationAntecedentesFamiliares from '../../../../validation/validationAntecedentesFamiliares'
-import { useSessionUser } from '@/store/authStore'
+import {
+    crearEnfermedadCronica,
+    BuscarEnfermedadCronica,
+} from '@/customService/services/enfermedadesCronicasService'
+import validationAntecedentesFamiliares from '@/validation/validationAntecedentesFamiliares'
+import { useSessionUser, useToken } from '@/store/authStore'
 import { usePatient } from '@/context/PatientContext'
-
 
 const { Tr, Th, Td, THead, TBody } = Table
 
-function EnfermedadesCronicas({setMensaje}) {
+function EnfermedadesCronicas({ setMensaje }) {
     const hc = <TbLayoutGridAdd />
 
     const {
@@ -44,65 +45,86 @@ function EnfermedadesCronicas({setMensaje}) {
     const { user } = useSessionUser()
     const [dialogIsOpen, setIsOpen] = useState(false)
     const { paciente } = usePatient()
-    const [actualizar, setActualizar] = useState(false);
+    const [actualizar, setActualizar] = useState(false)
     // Cambiar a id de paciente dinámicamente si es necesario
 
     // Función para obtener enfermedades crónicas del backend
     useEffect(() => {
         const obtenerEnfermedades = async () => {
-            const id = paciente.id;
+            const id = paciente.id
             try {
-                const response = await BuscarEnfermedadCronica(token, id);
+                const response = await BuscarEnfermedadCronica(token, id)
                 if (response.status === 'success') {
-                    const datos = response.data.map(enf => ({
+                    const datos = response.data.map((enf) => ({
                         enfermedad: enf.enfermedad,
                         especifica: enf.especifica,
-                        parentescos: enf.portadores.map(p => p.nombre) 
-                    }));
-                    setEnfermedades(datos);
+                        parentescos: enf.portadores.map((p) => p.nombre),
+                    }))
+                    setEnfermedades(datos)
                 } else {
-                    setMensaje([{ status: 'error', message: 'Error al obtener las enfermedades' }]);
+                    setMensaje([
+                        {
+                            status: 'error',
+                            message: 'Error al obtener las enfermedades',
+                        },
+                    ])
                 }
             } catch (error) {
-                setMensaje([{ status: 'error', message: 'Error al obtener las enfermedades' }]);
+                setMensaje([
+                    {
+                        status: 'error',
+                        message: 'Error al obtener las enfermedades',
+                    },
+                ])
             }
-        };
-    
-        obtenerEnfermedades();
-    }, [paciente.id, token, actualizar]);
-    
+        }
+
+        obtenerEnfermedades()
+    }, [paciente.id, token, actualizar, setMensaje])
 
     const onSubmit = async (data) => {
         try {
-            setLoading(true);
-            setMensaje([]);
-    
+            setLoading(true)
+            setMensaje([])
+
             if (!paciente.id) {
-                setMensaje([{ status: 'error', message: 'Seleccione un paciente' }]);
-                setLoading(false);
-                return;
+                setMensaje([
+                    { status: 'error', message: 'Seleccione un paciente' },
+                ])
+                setLoading(false)
+                return
             }
-    
-            const usuarioId = user.id;
-            const response = await crearEnfermedadCronica(token, usuarioId, paciente.id, {
-                enfermedad: data.enfermedad,
-                enfermedad_especifica: data.enfermedad_especifica,
-                parentescos: data.parentescos,
-            });
-    
-                setMensaje({ status: 'success', message: response.message || 'Enfermedad Cronica creada con éxito.' })
-                setTimeout(() => setIsOpen(false), 500);
-                setActualizar(prev => !prev);
-                } catch (error) {
-                    setMensaje({
-                        status: 'error',
-                        message: error.response?.data?.message || 'Error al asignar el acompañante.',
-                    })
-                } finally {
-                    setLoading(false)
-                }
-                };
-    
+
+            const usuarioId = user.id
+            const response = await crearEnfermedadCronica(
+                token,
+                usuarioId,
+                paciente.id,
+                {
+                    enfermedad: data.enfermedad,
+                    enfermedad_especifica: data.enfermedad_especifica,
+                    linea_parentesco_portador: data.linea_parentesco_portador,
+                },
+            )
+
+            setMensaje({
+                status: 'success',
+                message:
+                    response.message || 'Enfermedad Cronica creada con éxito.',
+            })
+            setTimeout(() => setIsOpen(false), 500)
+            setActualizar((prev) => !prev)
+        } catch (error) {
+            setMensaje({
+                status: 'error',
+                message:
+                    error.response?.data?.message ||
+                    'Error al asignar el acompañante.',
+            })
+        } finally {
+            setLoading(false)
+        }
+    }
 
     const openDialog = () => {
         setIsOpen(true)
@@ -115,7 +137,6 @@ function EnfermedadesCronicas({setMensaje}) {
     const parentescoOptions = [
         { value: 'padre', label: 'Padre' },
         { value: 'madre', label: 'Madre' },
-       
     ]
 
     return (
@@ -123,10 +144,10 @@ function EnfermedadesCronicas({setMensaje}) {
             <div className="mx-4">
                 <Button
                     variant="default"
-                    onClick={() => openDialog()}
                     iconAlignment="end"
                     size="xs"
                     icon={hc}
+                    onClick={() => openDialog()}
                 >
                     Agregar
                 </Button>
@@ -139,45 +160,53 @@ function EnfermedadesCronicas({setMensaje}) {
                         </Tr>
                     </THead>
                     <TBody>
-    {enfermedades.length > 0 ? (
-        enfermedades.map((row, index) => (
-            <Tr key={index}>
-                {/* Enfermedad Crónica */}
-                <Td>{row.enfermedad || 'No especificado'}</Td>
+                        {enfermedades.length > 0 ? (
+                            enfermedades.map((row, index) => (
+                                <Tr key={index}>
+                                    {/* Enfermedad Crónica */}
+                                    <Td>
+                                        {row.enfermedad || 'No especificado'}
+                                    </Td>
 
-                {/* Enfermedad Específica */}
-                <Td>{row.especifica || 'No especificado'}</Td>
+                                    {/* Enfermedad Específica */}
+                                    <Td>
+                                        {row.especifica || 'No especificado'}
+                                    </Td>
 
-                {/* Parentesco */}
-                <Td>
-                    {row.parentescos && row.parentescos.length > 0 ? (
-                        row.parentescos.map((parentesco, idx) => (
-                            <Tag
-                                key={idx}
-                                className="border-0 mr-2 mt-2 text-blue-600 bg-blue-100 dark:text-blue-100 dark:bg-blue-500/20"
-                            >
-                                {parentesco}
-                            </Tag>
-                        ))
-                    ) : (
-                        <Tag className="border-0 mr-2 mt-2 text-gray-600 bg-gray-100 dark:text-gray-300 dark:bg-gray-700/20">
-                            No registrado
-                        </Tag>
-                    )}
-                </Td>
-
-
-            </Tr>
-        ))
-    ) : (
-        <Tr>
-            <Td colSpan={3} className="text-center text-gray-500">
-                No hay enfermedades registradas para este paciente.
-            </Td>
-        </Tr>
-    )}
-</TBody>
-
+                                    {/* Parentesco */}
+                                    <Td>
+                                        {row.parentescos &&
+                                        row.parentescos.length > 0 ? (
+                                            row.parentescos.map(
+                                                (parentesco, idx) => (
+                                                    <Tag
+                                                        key={idx}
+                                                        className="border-0 mr-2 mt-2 text-blue-600 bg-blue-100 dark:text-blue-100 dark:bg-blue-500/20"
+                                                    >
+                                                        {parentesco}
+                                                    </Tag>
+                                                ),
+                                            )
+                                        ) : (
+                                            <Tag className="border-0 mr-2 mt-2 text-gray-600 bg-gray-100 dark:text-gray-300 dark:bg-gray-700/20">
+                                                No registrado
+                                            </Tag>
+                                        )}
+                                    </Td>
+                                </Tr>
+                            ))
+                        ) : (
+                            <Tr>
+                                <Td
+                                    colSpan={3}
+                                    className="text-center text-gray-500"
+                                >
+                                    No hay enfermedades registradas para este
+                                    paciente.
+                                </Td>
+                            </Tr>
+                        )}
+                    </TBody>
                 </Table>
             </div>
             <Dialog
@@ -201,7 +230,10 @@ function EnfermedadesCronicas({setMensaje}) {
                             name="enfermedad"
                             control={control}
                             errors={errors}
-                            validation={validationAntecedentesFamiliares.enfermedadesCronicas.enfermedad}
+                            validation={
+                                validationAntecedentesFamiliares
+                                    .enfermedadesCronicas.enfermedad
+                            }
                             onDiseaseChange={handleDiseaseChange}
                         />
                         <SelectSpecificDisease
@@ -209,7 +241,10 @@ function EnfermedadesCronicas({setMensaje}) {
                             name="enfermedad_especifica"
                             control={control}
                             errors={errors}
-                            validation={validationAntecedentesFamiliares.enfermedadesCronicas.enfermedad_especifica}
+                            validation={
+                                validationAntecedentesFamiliares
+                                    .enfermedadesCronicas.enfermedad_especifica
+                            }
                             selectedDisease={selectedDisease}
                         />
 
@@ -225,7 +260,10 @@ function EnfermedadesCronicas({setMensaje}) {
                             options={parentescoOptions}
                             placeholder="Seleccione parentescos"
                             errors={errors}
-                            validation={validationAntecedentesFamiliares.enfermedadesCronicas.parentescos}
+                            validation={
+                                validationAntecedentesFamiliares
+                                    .enfermedadesCronicas.linea_parentesco_portador
+                            }
                             label="Parentescos"
                         />
 

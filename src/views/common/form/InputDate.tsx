@@ -24,10 +24,10 @@ const InputDatePickerForm = ({
           <DatePicker
             {...field}
             placeholder={placeholder}
-            onChange={(date) => field.onChange(date)}
             className={errors[name] ? "border-red-500" : ""}
             maxDate={new Date()}
             disabled={disabled}
+            onChange={(date) => field.onChange(date)}
           />
         )}
       />

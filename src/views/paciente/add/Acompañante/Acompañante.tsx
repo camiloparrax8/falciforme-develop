@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-sort-props */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState } from 'react'
 import { Container } from '@/components/shared'
 import { Alert, Button, Input, Table } from '@/components/ui'
@@ -24,7 +26,6 @@ const Acompañante = () => {
     const [refresh, setRefresh] = useState(false) // Estado para forzar actualización
 
     const { token } = useToken()
-    console.log(acompañantes)
 
     const fetchAcompañantes = async (identificacion = '') => {
         setLoading(true)
@@ -64,10 +65,10 @@ const Acompañante = () => {
                         title={
                             mensaje.status === 'error' ? 'Atención' : 'Correcto'
                         }
-                        showIcon
                         type={mensaje.status === 'error' ? 'danger' : 'success'}
-                        closable
                         duration={5000}
+                        closable
+                        showIcon
                         onClose={() => setMensaje(null)}
                     >
                         {mensaje.message}

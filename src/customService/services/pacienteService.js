@@ -60,3 +60,39 @@ export const crearPaciente = async (token, idUsuario, formData) => {
         throw error;
     }
 };
+
+export const actualizarPaciente = async (token, idUsuario, idPaciente, formData) => {
+    try {
+        const data = {
+            id: idPaciente,
+            nombre: formData.nombre,
+            apellido: formData.apellido,
+            tipo_identificacion: formData.tipo_identificacion,
+            identificacion: formData.identificacion,
+            fecha_nacimiento: formData.fecha_nacimiento,
+            sexo: formData.sexo,
+            identidad_genero: formData.identidad_genero,
+            identidad_sexual: formData.identidad_sexual,
+            estrato: formData.estrato,
+            ocupacion: formData.ocupacion,
+            residente: formData.residente,
+            direccion: formData.direccion,
+            procedente: formData.procedente,
+            regimen: formData.regimen,
+            celular: formData.celular,
+            correo: formData.correo,
+            municipio: formData.municipio,
+            departamento: formData.departamento,
+            id_user_update: idUsuario
+        };
+
+        const result = await axiosInstance.put(`/paciente/actualizar`, data, {
+            headers: { Authorization: token }
+        });
+
+        return result.data;
+    } catch (error) {
+        console.error("Error al actualizar paciente:", error.response?.data || error.message);
+        throw error;
+    }
+};

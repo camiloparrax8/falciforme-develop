@@ -24,7 +24,6 @@ const MenuAddPaciente = () => {
     ]
     const { currentTab, goToTab } = useTabsFlow(tabs)
 
-    console.log(paciente)
 
     return (
 

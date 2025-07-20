@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useForm } from 'react-hook-form';
 import { Dialog } from '@/components/ui';
 import SelectMultiple from '@/views/common/form/SelectMultiple';
@@ -99,7 +101,6 @@ export default function ModalCardiacas({ isOpen, onClose, onRequestClose }) {
             };
 
             const result = await updateCardiacas(datosFormateados);
-            console.log('Respuesta de actualización:', result);
             
             // Si tenemos una respuesta del servidor, consideramos que la operación fue exitosa
             if (result) {
@@ -161,8 +162,8 @@ export default function ModalCardiacas({ isOpen, onClose, onRequestClose }) {
                 )}
 
                 <form
-                    onSubmit={handleSubmit(onSubmit)}
                     className="grid grid-cols-1 md:grid-cols-6 gap-2"
+                    onSubmit={handleSubmit(onSubmit)}
                 >
                     <InputSelect
                         control={control}

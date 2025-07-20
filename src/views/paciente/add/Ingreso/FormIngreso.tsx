@@ -124,6 +124,7 @@ function FormIngreso() {
                 label="Fecha 1ra consulta hematología"
                 placeholder="Fecha"
                 className="col-span-1"
+                disabled={false}
             />
 
             <InputForm
@@ -145,6 +146,7 @@ function FormIngreso() {
                 label="Fecha inicio síntomas"
                 placeholder="Fecha"
                 className="col-span-1"
+                disabled={false}
             />
 
             <SelectMultiple

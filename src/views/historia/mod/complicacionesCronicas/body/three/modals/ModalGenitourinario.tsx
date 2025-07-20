@@ -106,7 +106,6 @@ export default function ModalGenitourinario({ isOpen, onClose, onRequestClose })
             };
 
             const result = await updateGenitourinario(datosFormateados);
-            console.log('Respuesta de actualización:', result);
             
             if (result) {
                 await actualizarContexto();

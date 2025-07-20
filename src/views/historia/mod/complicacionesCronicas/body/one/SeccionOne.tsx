@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Button } from '@/components/ui';
 import { useEffect, useState } from 'react';
 import { FaUpload, FaEye } from 'react-icons/fa'
@@ -21,7 +22,6 @@ function SeccionOne (){
     // Métodos para abrir y cerrar modales
     const openDialog = (setDialog) => setDialog(true);
     const closeDialog = (setDialog) => {
-        console.log('Modal closed');
         setDialog(false);
     };
     const closeModal = () => {

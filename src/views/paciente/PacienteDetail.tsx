@@ -32,9 +32,12 @@ import { Spinner } from '@/components/ui/Spinner'
 import { Badge } from '@/components/ui/Badge'
 import { useGeneratePDF } from '@/hooks/useGeneratePDF'
 import EditAntPerinatologicos from './add/AntecedentesPerinatologicos/EditAntPerinatologicos'
-import EditEstadoHBS from './add/AntencedentesFamiliares/EditEstadoHBS'
+import EditFormAntFamiliares from './add/AntencedentesFamiliares/EditFormAntFamiliares'
 import EditEsquemaVacunacion from './add/Vacunas/EditEsquemaVacunacion'
 import EditPrimeraConsulta from './add/Ingreso/EditPrimeraConsulta'
+import EditFormAcompañante from './add/Acompañante/EditFormAcompañante'
+import EditFormRedPrimaria from './add/RedPrimaria/EditFormRedPrimaria'
+import EditFormPaciente from './add/EditFormPaciente'
 
 const { TabNav, TabList, TabContent } = Tabs
 
@@ -506,7 +509,7 @@ export const PacienteDetail = ({ item }) => {
                                 onClose={closeDialogEditar}
                                 onRequestClose={closeDialogEditar}
                             >
-                                <div className="flex flex-col h-full">
+                                <div className="flex flex-col h-full overflow-y-auto">
                                     <h5 className="mb-4">
                                         Editar información del paciente
                                     </h5>
@@ -561,25 +564,31 @@ export const PacienteDetail = ({ item }) => {
                                         <div className="overflow-y-auto p-4 flex-1">
                                             {/* Contenido de cada pestaña para edición */}
                                             <TabContent value="datosBasicos">
-                                                {/* Aquí se incluirá el formulario de edición de datos básicos */}
-                                                <p>
-                                                    Formulario de edición de
-                                                    datos básicos del paciente
-                                                </p>
+                                                {/* Formulario de edición de datos básicos */}
+                                                <EditFormPaciente
+                                                    pacienteData={item.data}
+                                                    onClose={closeDialogEditar}
+                                                />
                                             </TabContent>
                                             <TabContent value="redPrimaria">
                                                 {/* Formulario de red primaria */}
-                                                <p>
-                                                    Formulario de edición de red
-                                                    primaria
-                                                </p>
+                                                <EditFormRedPrimaria
+                                                    idPaciente={item.data.id}
+                                                    redPrimariaData={
+                                                        item.data.redPrimaria
+                                                    }
+                                                    onClose={closeDialogEditar}
+                                                />
                                             </TabContent>
                                             <TabContent value="acompañante">
                                                 {/* Formulario de acompañante */}
-                                                <p>
-                                                    Formulario de edición de
-                                                    acompañante
-                                                </p>
+                                                <EditFormAcompañante
+                                                    idPaciente={item.data.id}
+                                                    acompañanteData={
+                                                        item.data.acompaniante
+                                                    }
+                                                    onClose={closeDialogEditar}
+                                                />
                                             </TabContent>
                                             <TabContent value="antPerinatologicos">
                                                 {/* Formulario de antecedentes perinatológicos */}
@@ -589,8 +598,8 @@ export const PacienteDetail = ({ item }) => {
                                                 />
                                             </TabContent>
                                             <TabContent value="estadoHbs">
-                                                {/* Formulario de estado HBS */}
-                                                <EditEstadoHBS
+                                                {/* Formulario de estado HBS y enfermedades crónicas */}
+                                                <EditFormAntFamiliares
                                                     idPaciente={item.data.id}
                                                     onClose={closeDialogEditar}
                                                 />
@@ -660,16 +669,10 @@ export const PacienteDetail = ({ item }) => {
                                 </TabList>
                                 <div className="p-4">
                                     <TabContent value="redPrimaria">
-                                        {item.data.redPrimaria ? (
-                                            <InfoRedPrimaria
-                                                data={item.data.redPrimaria}
-                                            />
-                                        ) : (
-                                            <div className="text-gray-500 italic">
-                                                No hay información de red
-                                                primaria registrada.
-                                            </div>
-                                        )}
+                                        <InfoRedPrimaria
+                                            data={item.data.redPrimaria}
+                                            idPaciente={item.data.id}
+                                        />
                                     </TabContent>
                                     <TabContent value="acompañante">
                                         {item.data.acompaniante ? (

@@ -95,7 +95,6 @@ function FormComplicacionesAgudas() {
     useEffect(() => {
         const verificarComplicacionExistente = async () => {
             if (!id_paciente) {
-                console.log('No hay ID de paciente disponible')
                 setCargando(false)
                 return
             }
@@ -129,13 +128,9 @@ function FormComplicacionesAgudas() {
 
                         await cargarIngresos(datosComplicacion.id)
                     } else {
-                        console.log('Datos de complicación vacíos o inválidos')
                         setFormularioDeshabilitado(false)
                     }
                 } else {
-                    console.log(
-                        'No se encontraron complicaciones agudas para este paciente',
-                    )
                     setComplicacionExistente(null)
                     setFormularioDeshabilitado(false)
                 }
@@ -337,6 +332,7 @@ function FormComplicacionesAgudas() {
                         placeholder="Ingrese la fecha"
                         errors={errors}
                         className="col-span-1"
+                        disabled={false}
                     />
                     <InputForm
                         control={control}

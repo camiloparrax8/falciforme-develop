@@ -1,24 +1,26 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Table } from '@/components/ui'
 import Tag from '@/components/ui/Tag'
 import Button from '@/components/ui/Button'
 import Dialog from '@/components/ui/Dialog'
-import {useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { TbLayoutGridAdd } from 'react-icons/tb'
 import SectionTitle from '@/views/common/form/SectionTitle'
 import { useForm } from 'react-hook-form'
 import SelectParentesco from '@/views/common/form/SelectParentesco'
 import SelectLinea from '@/views/common/form/SelectLinea'
 import InputSelect from '@/views/common/form/InputSelect'
-import validationAntecedentesFamiliares from '../../../../validation/validationAntecedentesFamiliares';
+import validationAntecedentesFamiliares from '@/validation/validationAntecedentesFamiliares'
 import { usePatient } from '@/context/PatientContext'
-import { useSessionUser } from '@/store/authStore'
-import { useToken } from '@/store/authStore'
-import { BuscarEstadosHBS, crearEstadoHBS } from '@/customService/services/estadoHbsService'
-
+import { useSessionUser, useToken } from '@/store/authStore'
+import {
+    BuscarEstadosHBS,
+    crearEstadoHBS,
+} from '@/customService/services/estadoHbsService'
 
 const { Tr, Th, Td, THead, TBody } = Table
 
-function EstadoHBS({setMensaje}) {
+function EstadoHBS({ setMensaje }) {
     const hc = <TbLayoutGridAdd />
 
     const {
@@ -38,84 +40,86 @@ function EstadoHBS({setMensaje}) {
     const { user } = useSessionUser()
     const { paciente } = usePatient()
     const selectedParentesco = watch('parentesco')
-    const [actualizar, setActualizar] = useState(false);
+    const [actualizar, setActualizar] = useState(false)
     const [loading, setLoading] = useState(false)
-   
 
     useEffect(() => {
         const obtenerHBS = async () => {
             if (!paciente?.id) {
-                console.error("No hay paciente seleccionado.");
-                return;
+                console.error('No hay paciente seleccionado.')
+                return
             }
-    
-           
-    
+
             try {
-                const response = await BuscarEstadosHBS(token, paciente.id);
-              
-    
+                const response = await BuscarEstadosHBS(token, paciente.id)
+
                 // Asegurar que status es correcto
-                if (response.status === 200 || response.status === "200") {
-                    const datos = response.data.map(estado => ({
+                if (response.status === 200 || response.status === '200') {
+                    const datos = response.data.map((estado) => ({
                         parentesco: estado.parentesco,
                         linea_parentesco: estado.linea_parentesco,
-                        estado: estado.estado
-                    }));
-                    setEstadoHBS(datos);
+                        estado: estado.estado,
+                    }))
+                    setEstadoHBS(datos)
                 } else {
-                    console.error("Error en la respuesta:", response);
-                    setEstadoHBS([]);
+                    console.error('Error en la respuesta:', response)
+                    setEstadoHBS([])
                 }
             } catch (error) {
-                console.error("Error al obtener estados HBS:", error);
-                setEstadoHBS([]);
+                console.error('Error al obtener estados HBS:', error)
+                setEstadoHBS([])
             }
-        };
-    
-        obtenerHBS();
-    }, [paciente?.id, token, actualizar]);
-    
-    
-        const onSubmit = async (data) => {
-            try {
-                setLoading(true);
-                setMensaje([]);
-        
-                if (!paciente.id) {
-                    setMensaje([{ status: 'error', message: 'Seleccione un paciente' }]);
-                    setLoading(false);
-                    return;
-                }
-                 
-                
-                const datos = {
-                    parentesco: data.parentesco || "", 
-                    linea_parentesco: data.linea_parentesco || "",  
-                    estado: data.estado?.trim() || "",  
-                    id_paciente: paciente.id,
-                    id_user_create: user.id
-                };
-                
-                console.log("Datos antes de enviar:", datos);
-                const response = await crearEstadoHBS(token, user.id, paciente.id, datos);
-                
-                setMensaje({ status: 'success', message: response.message || 'Estado HBS creado con éxito.' })
-                setTimeout(() => setIsOpen(false), 500);
-                setActualizar(prev => !prev);
-                } catch (error) {
-                    setMensaje({
-                        status: 'error',
-                        message: error.response?.data?.message || 'Error al asignar el acompañante.',
-                    })
-                } finally {
-                    setLoading(false)
-                }
-                };
-        
-        
-        
-        
+        }
+
+        obtenerHBS()
+    }, [paciente?.id, token, actualizar])
+
+    const onSubmit = async (data) => {
+        try {
+            setLoading(true)
+            setMensaje([])
+
+            if (!paciente.id) {
+                setMensaje([
+                    { status: 'error', message: 'Seleccione un paciente' },
+                ])
+                setLoading(false)
+                return
+            }
+
+            const datos = {
+                parentesco: data.parentesco || '',
+                linea_parentesco: data.linea_parentesco || '',
+                estado: data.estado?.trim() || '',
+                id_paciente: paciente.id,
+                id_user_create: user.id,
+            }
+
+            const response = await crearEstadoHBS(
+                token,
+                user.id,
+                paciente.id,
+                datos,
+            )
+
+            setMensaje({
+                status: 'success',
+                message: response.message || 'Estado HBS creado con éxito.',
+            })
+            setTimeout(() => setIsOpen(false), 500)
+            setActualizar((prev) => !prev)
+        } catch (error) {
+            setMensaje({
+                status: 'error',
+                message:
+                    error.response?.data?.message ||
+                    'Error al asignar el acompañante.',
+            })
+        } finally {
+            setLoading(false)
+        }
+    }
+
     const [dialogIsOpen, setIsOpen] = useState(false)
 
     const openDialog = () => {
@@ -123,7 +127,6 @@ function EstadoHBS({setMensaje}) {
     }
 
     const onDialogClose = (e: React.MouseEvent | React.KeyboardEvent) => {
-        console.log('onDialogClose', e)
         setIsOpen(false)
     }
 
@@ -136,10 +139,10 @@ function EstadoHBS({setMensaje}) {
             <div className="mx-4">
                 <Button
                     variant="default"
-                    onClick={() => openDialog()}
                     iconAlignment="end"
                     size="xs"
                     icon={hc}
+                    onClick={() => openDialog()}
                 >
                     Agregar
                 </Button>
@@ -155,12 +158,15 @@ function EstadoHBS({setMensaje}) {
                         {estadoHBS.length > 0 ? (
                             estadoHBS.map((row, index) => (
                                 <Tr key={index}>
-                                    <Td>{row.parentesco || 'No especificado'}</Td>
-                                    <Td>{row.linea_parentesco || 'No especificado'}</Td>
                                     <Td>
-                                        <Tag
-                                            className="border-0 mr-2 mt-2 text-blue-600 bg-blue-100 dark:text-blue-100 dark:bg-blue-500/20"
-                                        >
+                                        {row.parentesco || 'No especificado'}
+                                    </Td>
+                                    <Td>
+                                        {row.linea_parentesco ||
+                                            'No especificado'}
+                                    </Td>
+                                    <Td>
+                                        <Tag className="border-0 mr-2 mt-2 text-blue-600 bg-blue-100 dark:text-blue-100 dark:bg-blue-500/20">
                                             {row.estado}
                                         </Tag>
                                     </Td>
@@ -168,8 +174,12 @@ function EstadoHBS({setMensaje}) {
                             ))
                         ) : (
                             <Tr>
-                                <Td colSpan={3} className="text-center text-gray-500">
-                                    No hay estados HBS registrados para este paciente.
+                                <Td
+                                    colSpan={3}
+                                    className="text-center text-gray-500"
+                                >
+                                    No hay estados HBS registrados para este
+                                    paciente.
                                 </Td>
                             </Tr>
                         )}
@@ -196,7 +206,10 @@ function EstadoHBS({setMensaje}) {
                         <SelectParentesco
                             control={control}
                             errors={errors}
-                            validation={validationAntecedentesFamiliares.estadoHBS.parentesco}
+                            validation={
+                                validationAntecedentesFamiliares.estadoHBS
+                                    .parentesco
+                            }
                             className="col-span-2"
                         />
 
@@ -204,7 +217,10 @@ function EstadoHBS({setMensaje}) {
                         <SelectLinea
                             control={control}
                             errors={errors}
-                            validation={validationAntecedentesFamiliares.estadoHBS.linea_parentesco}
+                            validation={
+                                validationAntecedentesFamiliares.estadoHBS
+                                    .linea_parentesco
+                            }
                             selectedParentesco={selectedParentesco}
                             className="col-span-2"
                         />
@@ -212,7 +228,10 @@ function EstadoHBS({setMensaje}) {
                         <InputSelect
                             control={control}
                             errors={errors}
-                            validation={validationAntecedentesFamiliares.estadoHBS.estado}
+                            validation={
+                                validationAntecedentesFamiliares.estadoHBS
+                                    .estado
+                            }
                             options={options}
                             name="estado"
                             placeholder="Seleccione un estado"

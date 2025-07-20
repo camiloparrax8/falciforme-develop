@@ -112,7 +112,6 @@ export default function ModalOculares({ isOpen, onClose, onRequestClose }) {
 
             
             const result = await updateOculares(datosFormateados);
-            console.log('Respuesta de actualización:', result);
             
             // Si tenemos una respuesta del servidor, consideramos que la operación fue exitosa
             if (result) {

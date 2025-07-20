@@ -1,24 +1,33 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useForm } from 'react-hook-form'
 import Button from '@/components/ui/Button'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import validationRedPrimaria from '../../../../validation/validationRedPrimaria'
 import SelectDepartment from '@/views/common/form/SelectDepartment'
 import SelectCity from '@/views/common/form/SelectCity'
 import SectionTitle from '@/views/common/form/SectionTitle'
 import InputForm from '@/views/common/form/InputForm'
 import InputDatePickerForm from '@/views/common/form/InputDate'
-import { Dialog } from '@/components/ui'
-import {crearRedPrimaria} from '@/customService/services/redPrimariaService'
+import { actualizarRedPrimaraPaciente } from '@/customService/services/redPrimariaService'
 import { useToken, useSessionUser } from '@/store/authStore'
 
+interface EditFormRedPrimariaProps {
+    idPaciente: number
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    redPrimariaData?: any
+    onClose?: () => void
+}
 
-function FormRedPrimaria({ isOpen, onClose, onRequestClose, setMensajes }) {
+function EditFormRedPrimaria({
+    idPaciente,
+    redPrimariaData,
+    onClose,
+}: EditFormRedPrimariaProps) {
     const {
         control,
         handleSubmit,
         formState: { errors },
-        reset
+        reset,
     } = useForm({
         defaultValues: {
             fecha: '',
@@ -27,49 +36,71 @@ function FormRedPrimaria({ isOpen, onClose, onRequestClose, setMensajes }) {
             telefono: '',
             telefono_urgencias: '',
             departamento: '',
-            municipio: ''
+            municipio: '',
         },
     })
+
     const [selectedDepartment, setSelectedDepartment] = useState(null)
     const [loading, setLoading] = useState(false)
     const { token } = useToken()
     const { user } = useSessionUser()
-    
+
+    // Cargar datos de la red primaria al montar el componente
+    useEffect(() => {
+        if (redPrimariaData) {
+            setSelectedDepartment(redPrimariaData.departamento)
+            reset({
+                fecha: redPrimariaData.fecha || '',
+                hospital: redPrimariaData.hospital || '',
+                correo: redPrimariaData.correo || '',
+                telefono: redPrimariaData.telefono || '',
+                telefono_urgencias: redPrimariaData.telefono_urgencias || '',
+                departamento: redPrimariaData.departamento || '',
+                municipio: redPrimariaData.municipio || '',
+            })
+        }
+    }, [redPrimariaData, reset])
 
     const onSubmit = async (data) => {
         try {
             setLoading(true)
-            setMensajes([])
 
-            const response = await crearRedPrimaria(token, user.id, data)
+            if (!redPrimariaData?.id) {
+                console.error('No se encontró el ID de la red primaria')
+                return
+            }
 
-            setMensajes({ status: 'success', message: response.message || 'Red primaria creada con éxito.' })
-            onClose() 
+            // Preparar los datos para el servicio
+            const formDataToSend = {
+                idPaciente: idPaciente,
+                idRedPrimaria: redPrimariaData.id,
+                ...data,
+                id_user_update: user.id,
+            }
+
+            const response = await actualizarRedPrimaraPaciente(
+                token,
+                formDataToSend,
+            )
+
+
+            if (onClose) onClose()
         } catch (error) {
-            setMensajes({
-                status: 'error',
-                message: error.response?.data?.message || 'Error al asignar el acompañante.',
-            })
+            console.error('Error al actualizar red primaria:', error)
         } finally {
             setLoading(false)
         }
     }
 
     return (
-        <Dialog
-            width={1200}
-            height={500}
-            isOpen={isOpen}
-            onClose={onClose}
-            onRequestClose={onRequestClose}
-        >
+        <div className="max-h-[60vh] overflow-y-auto p-4">
             <form
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full"
                 onSubmit={handleSubmit(onSubmit)}
             >
                 {/* Sección Información Básica */}
                 <SectionTitle
-                    text="Información Básica"
+                    text="Información Básica de la Red Primaria"
                     className="col-span-1 md:col-span-2 lg:col-span-4"
                 />
                 <InputDatePickerForm
@@ -146,14 +177,25 @@ function FormRedPrimaria({ isOpen, onClose, onRequestClose, setMensajes }) {
                     value=""
                 />
 
-                {/* Botón */}
-                <div className="col-span-4 flex justify-end mt-6">
-                    <Button type="submit">Guardar</Button>
+                {/* Botones */}
+                <div className="col-span-4 flex justify-end gap-2 mt-4">
+                    {onClose && (
+                        <Button
+                            type="button"
+                            variant="plain"
+                            disabled={loading}
+                            onClick={onClose}
+                        >
+                            Cancelar
+                        </Button>
+                    )}
+                    <Button type="submit" variant="solid" disabled={loading}>
+                        {loading ? 'Actualizando...' : 'Actualizar'}
+                    </Button>
                 </div>
             </form>
-        </Dialog>
-            
+        </div>
     )
 }
 
-export default FormRedPrimaria
+export default EditFormRedPrimaria

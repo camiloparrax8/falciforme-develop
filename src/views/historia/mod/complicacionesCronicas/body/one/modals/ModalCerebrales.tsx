@@ -121,7 +121,6 @@ export default function ModalCerebrales({ isOpen, onClose, onRequestClose }) {
                 };
 
                 const result = await actualizarComplicacionesCronicas(token, complicacionData.id, camposActualizados);
-                console.log('Respuesta de actualización:', result);
                 
                 if (result) {
                     // Actualizar el contexto inmediatamente
@@ -156,7 +155,6 @@ export default function ModalCerebrales({ isOpen, onClose, onRequestClose }) {
                 };
 
                 const result = await crearComplicacionesCronicas(token, nuevaComplicacion);
-                console.log('Respuesta de creación:', result);
                 
                 if (result) {
                     // Actualizar el contexto inmediatamente

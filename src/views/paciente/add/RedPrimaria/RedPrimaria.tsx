@@ -22,7 +22,6 @@ const RedPrimaria = () => {
     const [isFirstLoad, setIsFirstLoad] = useState(true) // Controla si es la primera carga
     const [refresh, setRefresh] = useState(false) // Estado para actualizar la red primaria asignada
 
-    console.log(hospitales);
     
 
     const { token } = useToken()

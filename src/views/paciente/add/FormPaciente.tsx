@@ -1,3 +1,5 @@
+/* eslint-disable import/newline-after-import */
+/* eslint-disable react/jsx-sort-props */
 import { useForm } from "react-hook-form";
 import Button from "@/components/ui/Button";
 import { useEffect, useState } from "react";
@@ -63,7 +65,6 @@ function PatientForm() {
             message: response.data.message || "Paciente creado con éxito",
           },
         ]);
-        console.log(response.data);
         setPaciente(response.data);
         setDisabled(true);
         window.scrollTo({ top: 0, behavior: "smooth" });
@@ -101,10 +102,10 @@ function PatientForm() {
             <Alert
               key={index}
               title={msg.status === "error" ? "Atención" : "Correcto"}
-              showIcon
               type={msg.status === "error" ? "danger" : "success"}
-              closable // Muestra el botón de cierre
               duration={60000}
+              closable
+              showIcon
             >
               {msg.message}
             </Alert>
@@ -218,9 +219,9 @@ function PatientForm() {
           control={control}
           errors={errors}
           validation={validationPaciente.departamento}
-          onDepartmentChange={setSelectedDepartment}
           className="col-span-1"
           disabled={disabled}
+          onDepartmentChange={setSelectedDepartment}
         />
         <SelectCity
           control={control}

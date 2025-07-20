@@ -1,36 +1,40 @@
-import axiosInstance from "../adapters/axiosInstance";
+import axiosInstance from '../adapters/axiosInstance';
 
-export const BuscarEnfermedadCronica = async (token, id) => {
+export const BuscarEnfermedadCronica = async (token, id_paciente) => {
     try {
-        const result = await axiosInstance.get(`/enfermedad-cronica/${id}`, {
-            headers: { Authorization: token }
-        });
-        return result.data;
+        const response = await axiosInstance.get(
+            `/enfermedad-cronica/${id_paciente}`,
+            {
+                headers: {
+                    Authorization: token,
+                },
+            },
+        );
+        return response.data;
     } catch (error) {
-        console.log("Error al buscar la enfermedad cronica:", error.response?.data || error.message);
+        console.error('Error al buscar enfermedad crónica:', error);
         throw error;
     }
 };
 
-
-export const crearEnfermedadCronica = async (token, idUsuario, idPaciente, formData) => {
+export const crearEnfermedadCronica = async (token, id_user, id_paciente, datos) => {
     try {
-        const data = {
-            id_paciente: idPaciente,
-            enfermedad: formData.enfermedad,
-            enfermedad_especifica: formData.enfermedad_especifica,
-            portador: "Sí",
-            linea_parentesco_portador: formData.parentescos,
-            id_user_create: idUsuario
-        };
-
-        const result = await axiosInstance.post(`/enfermedad-cronica`, data, {
-            headers: { Authorization: token }
-        });
-
-        return result.data;
+        const response = await axiosInstance.post(
+            '/enfermedad-cronica',
+            {
+                id_paciente,
+                ...datos,
+                id_user_create: id_user
+            },
+            {
+                headers: {
+                    Authorization: token,
+                },
+            },
+        );
+        return response.data;
     } catch (error) {
-        console.error("Error al crear la enfermedad crónica:", error.response?.data || error.message);
+        console.error('Error al crear enfermedad crónica:', error);
         throw error;
     }
 };
@@ -39,47 +43,31 @@ export const crearEnfermedadCronica = async (token, idUsuario, idPaciente, formD
  * Actualiza una enfermedad crónica existente
  * @async
  * @param {string} token - Token de autenticación
- * @param {Object} formData - Datos a actualizar
- * @param {number} formData.id - ID de la enfermedad crónica
- * @param {string} [formData.enfermedad] - Enfermedad
- * @param {string} [formData.enfermedad_especifica] - Enfermedad específica
- * @param {string} [formData.portador] - Portador (Sí/No)
- * @param {string} [formData.linea_parentesco_portador] - Línea de parentesco del portador
- * @param {number} formData.id_user_update - ID del usuario que actualiza
+ * @param {Object} datos - Datos a actualizar
+ * @param {number} datos.id - ID de la enfermedad crónica
+ * @param {string} [datos.enfermedad] - Enfermedad
+ * @param {string} [datos.enfermedad_especifica] - Enfermedad específica
+ * @param {string} [datos.portador] - Portador (Sí/No)
+ * @param {string} [datos.linea_parentesco_portador] - Línea de parentesco del portador
+ * @param {number} datos.id_user_update - ID del usuario que actualiza
  * @returns {Promise<Object>} Objeto con el estado de la operación
  * @throws {Error} Si hay un error en la actualización
  */
-export const actualizarEnfermedadCronica = async (token, formData) => {
+export const actualizarEnfermedadCronica = async (token, datos) => {
     try {
-        const data = {
-            id: formData.id,
-            enfermedad: formData.enfermedad,
-            enfermedad_especifica: formData.enfermedad_especifica,
-            portador: formData.portador,
-            linea_parentesco_portador: formData.linea_parentesco_portador,
-            id_user_update: formData.id_user_update
-        };
-
-        const result = await axiosInstance.put(`/enfermedad-cronica`, data, {
-            headers: { Authorization: token },
-        });
-
-        return result.data;
+        const response = await axiosInstance.put(
+            '/enfermedad-cronica',
+            datos,
+            {
+                headers: {
+                    Authorization: token,
+                },
+            },
+        );
+        return response.data;
     } catch (error) {
-        console.error("Error al actualizar la enfermedad crónica:", error.response?.data || error.message);
-        if (error.response && error.response.data) {
-            return {
-                status: 'error',
-                message: error.response.data.message || "Error al actualizar la enfermedad crónica",
-                errors: error.response.data.errors,
-                data: null
-            };
-        }
-        return {
-            status: 'error',
-            message: "Error al actualizar la enfermedad crónica",
-            data: null
-        };
+        console.error('Error al actualizar enfermedad crónica:', error);
+        throw error;
     }
 };
 

@@ -4,13 +4,12 @@ import { Controller } from 'react-hook-form';
 
 function SelectParentesco({ control, errors, validation, className }) {
     const parentescos = [
-        { id: 1, value: 'padre', label: 'Padre' },
-        { id: 2, value: 'madre', label: 'Madre' },
-        { id: 3, value: 'hermano', label: 'Hermano/a' },
-        { id: 4, value: 'primo', label: 'Primo/a' },
-        { id: 5, value: 'abuelo', label: 'Abuelo/a' },
-        { id: 6, value: 'tio', label: 'Tío/a' },
-        // Agregar más opciones según sea necesario
+        { id: 1, value: 'Padre', label: 'Padre' },
+        { id: 2, value: 'Madre', label: 'Madre' },
+        { id: 3, value: 'Hermano', label: 'Hermano' },
+        { id: 4, value: 'Primo', label: 'Primo' },
+        { id: 5, value: 'Abuelo', label: 'Abuelo' },
+        { id: 6, value: 'Tio', label: 'Tio' },
     ];
 
     return (

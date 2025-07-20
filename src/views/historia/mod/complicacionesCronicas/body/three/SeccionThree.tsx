@@ -18,7 +18,6 @@ function SeccionTres(){
     // Métodos para abrir y cerrar modales
     const openDialog = (setDialog) => setDialog(true);
     const closeDialog = (setDialog) => {
-        console.log('Modal closed');
         setDialog(false);
     };
     

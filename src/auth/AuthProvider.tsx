@@ -100,7 +100,6 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         // Redirige al usuario a la ruta predeterminada
         navigate("/home");
 
-        console.log(resp);
 
         return {
           status: "success",

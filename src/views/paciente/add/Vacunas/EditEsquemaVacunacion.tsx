@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useForm } from 'react-hook-form'
 import Button from '@/components/ui/Button'
@@ -330,7 +331,6 @@ function EditEsquemaVacunacion({
     const seleccionarVacunaParaEditar = (esquema) => {
         if (!esquema) return
 
-        console.log('Editando esquema:', esquema)
         setEsquemaEditando(esquema)
         setModoEdicion(true)
 
@@ -708,33 +708,6 @@ function EditEsquemaVacunacion({
                         paciente
                     </div>
                 )}
-            </div>
-
-            {/* Botones de navegación */}
-            <div
-                style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    gap: '8px',
-                    marginTop: '12px',
-                }}
-            >
-                <Button
-                    variant="default"
-                    type="button"
-                    size="sm"
-                    onClick={scrollToForm}
-                >
-                    Subir al formulario
-                </Button>
-                <Button
-                    variant="default"
-                    type="button"
-                    size="sm"
-                    onClick={scrollToTable}
-                >
-                    Ir a la tabla
-                </Button>
             </div>
         </div>
     )

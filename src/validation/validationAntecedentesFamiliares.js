@@ -9,23 +9,44 @@ const validationAntecedentesFamiliares = {
         estado: {
             required: 'Debe seleccionar un estado',
             validate: (value) =>
-                ['portador', 'no_portador', 'desconocido'].includes(value) ||
+                ['Portador', 'No portador', 'Desconocido'].includes(value) ||
                 'El estado seleccionado no es válido',
         },
     },
     enfermedadesCronicas: {
         enfermedad: {
-            required: 'Debe seleccionar una enfermedad crónica',
+            required: 'La enfermedad es obligatoria',
+            maxLength: {
+                value: 150,
+                message: 'La enfermedad debe tener como máximo 150 caracteres'
+            }
         },
         enfermedad_especifica: {
-            required: 'Debe seleccionar una enfermedad específica',
+            required: 'La enfermedad específica es obligatoria',
+            maxLength: {
+                value: 255,
+                message: 'La enfermedad específica debe tener como máximo 255 caracteres'
+            }
         },
-        parentescosMultiples: {
+        portador: {
+            required: 'El campo portador es obligatorio',
             validate: (value) =>
-                Array.isArray(value) && value.length > 0
-                    ? true
-                    : 'Debe seleccionar al menos un parentesco',
+                ['Sí', 'No'].includes(value) ||
+                'El valor de portador debe ser "Sí" o "No"'
         },
+        linea_parentesco_portador: {
+            required: 'La línea de parentesco del portador es obligatoria',
+            validate: (value) => {
+                if (!Array.isArray(value) || value.length === 0) {
+                    return 'Debe seleccionar al menos un parentesco';
+                }
+                const parentescosString = value.join(', ');
+                if (parentescosString.length > 100) {
+                    return 'La línea de parentesco no debe exceder los 100 caracteres';
+                }
+                return true;
+            }
+        }
     },
 }
 
